@@ -1,0 +1,21 @@
+<!-- launch/udp_onlysend_node.launch -->
+<launch>
+    <!-- UDP车辆控制发送器节点 -->
+    <node pkg="udp_com_main" 
+          type="udp_com_main" 
+          name="udp_onlysend_node" 
+          output="screen">
+        
+        <!-- 目标设备IP地址 -->
+        <param name="remote_ip" value="192.168.1.30"/>
+        
+        <!-- 目标端口号 -->
+        <param name="remote_port" value="8888"/>
+        
+        <!-- 启动时是否发送测试帧 -->
+        <param name="send_test_frame" value="false"/>
+        
+        <!-- 可选：重映射输入话题 -->
+        <remap from="cmd_vel" to="/cmd_vel"/>
+    </node>
+</launch>

@@ -1,0 +1,9 @@
+Symlinking /home/nvidia/crawler_control/devel/share/socketcan_bridge/cmake/socketcan_bridgeConfig.cmake
+Symlinking /home/nvidia/crawler_control/devel/share/socketcan_bridge/cmake/socketcan_bridgeConfig-version.cmake
+Symlinking /home/nvidia/crawler_control/devel/lib/libtopic_to_socketcan.so
+Symlinking /home/nvidia/crawler_control/devel/lib/libsocketcan_recover_ctrl.so
+Symlinking /home/nvidia/crawler_control/devel/lib/libsocketcan_to_topic.so
+Symlinking /home/nvidia/crawler_control/devel/lib/socketcan_bridge/socketcan_bridge_node
+Symlinking /home/nvidia/crawler_control/devel/lib/socketcan_bridge/topic_to_socketcan_node
+Symlinking /home/nvidia/crawler_control/devel/lib/socketcan_bridge/socketcan_to_topic_node
+Symlinking /home/nvidia/crawler_control/devel/lib/pkgconfig/socketcan_bridge.pc

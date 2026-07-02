@@ -1,0 +1,8 @@
+prefix=/home/nvidia/crawler_control/install
+
+Name: udp_com_main
+Description: Description of udp_com_main
+Version: 1.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: roscpp std_msgs mower_msgs

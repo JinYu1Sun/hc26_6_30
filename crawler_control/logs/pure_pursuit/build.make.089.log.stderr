@@ -1,0 +1,73 @@
+[01m[K/home/nvidia/crawler_control/src/pure_pursuit/src/pure_pursuit.cpp:[m[K In constructor ‘[01m[KPurePursuit::PurePursuit()[m[K’:
+[01m[K/home/nvidia/crawler_control/src/pure_pursuit/src/pure_pursuit.cpp:45:3:[m[K [01;31m[Kerror: [m[K‘[01m[Klast_pos_time[m[K’ was not declared in this scope
+   45 |   [01;31m[Klast_pos_time[m[K = ros::Time::now();
+      |   [01;31m[K^~~~~~~~~~~~~[m[K
+[01m[K/home/nvidia/crawler_control/src/pure_pursuit/src/pure_pursuit.cpp:[m[K In member function ‘[01m[Kvoid PurePursuit::callbackFromPos(const PositionConstPtr&)[m[K’:
+[01m[K/home/nvidia/crawler_control/src/pure_pursuit/src/pure_pursuit.cpp:622:4:[m[K [01;31m[Kerror: [m[K‘[01m[Klast_pos_time[m[K’ was not declared in this scope
+  622 |    [01;31m[Klast_pos_time[m[K = ros::Time::now();
+      |    [01;31m[K^~~~~~~~~~~~~[m[K
+[01m[K/home/nvidia/crawler_control/src/pure_pursuit/src/pure_pursuit.cpp:[m[K In member function ‘[01m[Kvoid PurePursuit::run()[m[K’:
+[01m[K/home/nvidia/crawler_control/src/pure_pursuit/src/pure_pursuit.cpp:850:29:[m[K [01;31m[Kerror: [m[K‘[01m[Klast_pos_time[m[K’ was not declared in this scope
+  850 |     if ((ros::Time::now() - [01;31m[Klast_pos_time[m[K).toSec() > 1.0) {
+      |                             [01;31m[K^~~~~~~~~~~~~[m[K
+In file included from [01m[K/opt/ros/noetic/include/ros/ros.h:40[m[K,
+                 from [01m[K/home/nvidia/crawler_control/src/pure_pursuit/include/pure_pursuit/pure_pursuit.h:11[m[K,
+                 from [01m[K/home/nvidia/crawler_control/src/pure_pursuit/src/pure_pursuit.cpp:5[m[K:
+[01m[K/home/nvidia/crawler_control/src/pure_pursuit/src/pure_pursuit.cpp:[m[K At global scope:
+[01m[K/opt/ros/noetic/include/ros/console.h:384:3:[m[K [01;31m[Kerror: [m[Kexpected unqualified-id before ‘[01m[Kdo[m[K’
+  384 |   [01;31m[Kdo[m[K \
+      |   [01;31m[K^~[m[K
+[01m[K/opt/ros/noetic/include/ros/console.h:575:35:[m[K [01;36m[Knote: [m[Kin expansion of macro ‘[01m[KROS_LOG_COND[m[K’
+  575 | #define ROS_LOG(level, name, ...) [01;36m[KROS_LOG_COND[m[K(true, level, name, __VA_ARGS__)
+      |                                   [01;36m[K^~~~~~~~~~~~[m[K
+[01m[K/opt/ros/noetic/include/rosconsole/macros_generated.h:110:23:[m[K [01;36m[Knote: [m[Kin expansion of macro ‘[01m[KROS_LOG[m[K’
+  110 | #define ROS_INFO(...) [01;36m[KROS_LOG[m[K(::ros::console::levels::Info, ROSCONSOLE_DEFAULT_NAME, __VA_ARGS__)
+      |                       [01;36m[K^~~~~~~[m[K
+[01m[K/home/nvidia/crawler_control/src/pure_pursuit/src/pure_pursuit.cpp:1056:3:[m[K [01;36m[Knote: [m[Kin expansion of macro ‘[01m[KROS_INFO[m[K’
+ 1056 |   [01;36m[KROS_INFO[m[K("local_waypose.point.x,local_waypose.heading:%.3f,%.3f", local_waypose.point.x, local_waypose.heading);
+      |   [01;36m[K^~~~~~~~[m[K
+[01m[K/opt/ros/noetic/include/ros/console.h:392:5:[m[K [01;31m[Kerror: [m[Kexpected unqualified-id before ‘[01m[Kwhile[m[K’
+  392 |   } [01;31m[Kwhile[m[K(false)
+      |     [01;31m[K^~~~~[m[K
+[01m[K/opt/ros/noetic/include/ros/console.h:575:35:[m[K [01;36m[Knote: [m[Kin expansion of macro ‘[01m[KROS_LOG_COND[m[K’
+  575 | #define ROS_LOG(level, name, ...) [01;36m[KROS_LOG_COND[m[K(true, level, name, __VA_ARGS__)
+      |                                   [01;36m[K^~~~~~~~~~~~[m[K
+[01m[K/opt/ros/noetic/include/rosconsole/macros_generated.h:110:23:[m[K [01;36m[Knote: [m[Kin expansion of macro ‘[01m[KROS_LOG[m[K’
+  110 | #define ROS_INFO(...) [01;36m[KROS_LOG[m[K(::ros::console::levels::Info, ROSCONSOLE_DEFAULT_NAME, __VA_ARGS__)
+      |                       [01;36m[K^~~~~~~[m[K
+[01m[K/home/nvidia/crawler_control/src/pure_pursuit/src/pure_pursuit.cpp:1056:3:[m[K [01;36m[Knote: [m[Kin expansion of macro ‘[01m[KROS_INFO[m[K’
+ 1056 |   [01;36m[KROS_INFO[m[K("local_waypose.point.x,local_waypose.heading:%.3f,%.3f", local_waypose.point.x, local_waypose.heading);
+      |   [01;36m[K^~~~~~~~[m[K
+[01m[K/opt/ros/noetic/include/ros/console.h:384:3:[m[K [01;31m[Kerror: [m[Kexpected unqualified-id before ‘[01m[Kdo[m[K’
+  384 |   [01;31m[Kdo[m[K \
+      |   [01;31m[K^~[m[K
+[01m[K/opt/ros/noetic/include/ros/console.h:575:35:[m[K [01;36m[Knote: [m[Kin expansion of macro ‘[01m[KROS_LOG_COND[m[K’
+  575 | #define ROS_LOG(level, name, ...) [01;36m[KROS_LOG_COND[m[K(true, level, name, __VA_ARGS__)
+      |                                   [01;36m[K^~~~~~~~~~~~[m[K
+[01m[K/opt/ros/noetic/include/rosconsole/macros_generated.h:110:23:[m[K [01;36m[Knote: [m[Kin expansion of macro ‘[01m[KROS_LOG[m[K’
+  110 | #define ROS_INFO(...) [01;36m[KROS_LOG[m[K(::ros::console::levels::Info, ROSCONSOLE_DEFAULT_NAME, __VA_ARGS__)
+      |                       [01;36m[K^~~~~~~[m[K
+[01m[K/home/nvidia/crawler_control/src/pure_pursuit/src/pure_pursuit.cpp:1059:5:[m[K [01;36m[Knote: [m[Kin expansion of macro ‘[01m[KROS_INFO[m[K’
+ 1059 |     [01;36m[KROS_INFO[m[K("CT99#dev_flag %d,last_tv %d,t_value = %d, det_tv = %d",dev_flag, last_tv,t_value,
+      |     [01;36m[K^~~~~~~~[m[K
+[01m[K/opt/ros/noetic/include/ros/console.h:392:5:[m[K [01;31m[Kerror: [m[Kexpected unqualified-id before ‘[01m[Kwhile[m[K’
+  392 |   } [01;31m[Kwhile[m[K(false)
+      |     [01;31m[K^~~~~[m[K
+[01m[K/opt/ros/noetic/include/ros/console.h:575:35:[m[K [01;36m[Knote: [m[Kin expansion of macro ‘[01m[KROS_LOG_COND[m[K’
+  575 | #define ROS_LOG(level, name, ...) [01;36m[KROS_LOG_COND[m[K(true, level, name, __VA_ARGS__)
+      |                                   [01;36m[K^~~~~~~~~~~~[m[K
+[01m[K/opt/ros/noetic/include/rosconsole/macros_generated.h:110:23:[m[K [01;36m[Knote: [m[Kin expansion of macro ‘[01m[KROS_LOG[m[K’
+  110 | #define ROS_INFO(...) [01;36m[KROS_LOG[m[K(::ros::console::levels::Info, ROSCONSOLE_DEFAULT_NAME, __VA_ARGS__)
+      |                       [01;36m[K^~~~~~~[m[K
+[01m[K/home/nvidia/crawler_control/src/pure_pursuit/src/pure_pursuit.cpp:1059:5:[m[K [01;36m[Knote: [m[Kin expansion of macro ‘[01m[KROS_INFO[m[K’
+ 1059 |     [01;36m[KROS_INFO[m[K("CT99#dev_flag %d,last_tv %d,t_value = %d, det_tv = %d",dev_flag, last_tv,t_value,
+      |     [01;36m[K^~~~~~~~[m[K
+[01m[K/home/nvidia/crawler_control/src/pure_pursuit/src/pure_pursuit.cpp:1061:5:[m[K [01;31m[Kerror: [m[Kexpected unqualified-id before ‘[01m[Kreturn[m[K’
+ 1061 |     [01;31m[Kreturn[m[K t_value;
+      |     [01;31m[K^~~~~~[m[K
+[01m[K/home/nvidia/crawler_control/src/pure_pursuit/src/pure_pursuit.cpp:1063:1:[m[K [01;31m[Kerror: [m[Kexpected declaration before ‘[01m[K}[m[K’ token
+ 1063 | [01;31m[K}[m[K
+      | [01;31m[K^[m[K
+make[2]: *** [CMakeFiles/pure_pursuit.dir/build.make:76: CMakeFiles/pure_pursuit.dir/src/pure_pursuit.cpp.o] Error 1
+make[1]: *** [CMakeFiles/Makefile2:170: CMakeFiles/pure_pursuit.dir/all] Error 2
+make: *** [Makefile:141: all] Error 2

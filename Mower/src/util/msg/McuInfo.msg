@@ -1,0 +1,8 @@
+Header header
+uint8 linux_algo_ready
+uint8 linux_algo_auto_en_req
+uint8 linux_algo_js_en_req
+uint8 mcu_auto_drive_mode_state
+uint8 mcu_chassis_control_state
+uint8 mcu_autoen
+uint32 mcu_system_error_code

@@ -1,0 +1,8 @@
+[01m[K/home/nvidia/crawler_control/src/pure_pursuit/src/pure_pursuit.cpp:[m[K In member function ‘[01m[Kvoid PurePursuit::setPath_main()[m[K’:
+[01m[K/home/nvidia/crawler_control/src/pure_pursuit/src/pure_pursuit.cpp:68:85:[m[K [01;31m[Kerror: [m[Kexpected ‘[01m[K;[m[K’ before ‘[01m[K)[m[K’ token
+   68 |     local_waypoints[i].point.x,local_waypoints[i].point.y,local_waypoints[i].heading[01;31m[K)[m[K;
+      |                                                                                     [01;31m[K^[m[K
+      |                                                                                     [32m[K;[m[K
+make[2]: *** [CMakeFiles/pure_pursuit.dir/build.make:76: CMakeFiles/pure_pursuit.dir/src/pure_pursuit.cpp.o] Error 1
+make[1]: *** [CMakeFiles/Makefile2:170: CMakeFiles/pure_pursuit.dir/all] Error 2
+make: *** [Makefile:141: all] Error 2

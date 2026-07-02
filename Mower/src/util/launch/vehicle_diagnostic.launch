@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<launch>
+    <!-- Vehicle Diagnostic Node -->
+    <node name="vehicle_diagnostic_node" pkg="util" type="vehicle_diagnostic_node" output="screen">
+        <!-- Configuration parameters -->
+        <param name="timeout_position" value="0.5" />      <!-- Position data timeout (seconds) -->
+        <param name="timeout_path" value="1.0" />          <!-- Path data timeout (seconds) -->
+        <param name="timeout_vehicle_cmd" value="0.5" />   <!-- Vehicle command timeout (seconds) -->
+        <param name="min_speed_threshold" value="0.1" />   <!-- Minimum speed threshold -->
+        <param name="position_unchanged_threshold" value="5" />  <!-- Frames for position unchanged detection -->
+        <param name="position_tolerance" value="0.02" />    <!-- Position change tolerance (meters) -->
+    </node>
+</launch> 

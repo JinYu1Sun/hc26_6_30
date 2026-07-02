@@ -1,0 +1,29 @@
+<launch>
+
+
+    <!--<node pkg="socketcan_bridge" type="socketcan_bridge_node" name="socketcan_bridge_node" ns='can1' output="screen">
+        <param name="can_device" value="can1"/>
+    </node>-->
+
+    <node pkg="agv_can_bridge" type="agv_can_bridge" name="agv_can_bridge" output="screen">
+        <remap from="/can1/received_messages" to="/can0/received_messages"/>
+        <remap from="/can1/sent_messages" to="/can0/sent_messages"/>
+        <!-- </node> -->
+
+        <!-- CAN发送节点 -->
+        <!-- <node pkg="agv_can_bridge" type="agv_can_bridge" name="agv_can_bridge" output="screen"> -->
+        <param name="can_device" value="can0" />
+
+        <param name="can_topic" value="sent_messages" /> 
+
+        <param name="bitrate" value="500000" />
+    </node> 
+
+    <!-- socketcan桥接节点 --> 
+     <!-- <node name="socketcan_bridge" pkg="socketcan_bridge" type="socketcan_bridge_node" output="screen">
+        <param name="can_device" value="can0" />
+        <remap from="sent_messages" to="sent_messages" />
+        <remap from="received_messages" to="received_messages" />
+    </node> -->
+    
+</launch>

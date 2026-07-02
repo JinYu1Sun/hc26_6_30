@@ -1,0 +1,5 @@
+Header header 
+uint8 fault_lidar_left
+uint8 fault_lidar_right
+uint8 fault_lidar_front
+uint8 fault_lidar_rear

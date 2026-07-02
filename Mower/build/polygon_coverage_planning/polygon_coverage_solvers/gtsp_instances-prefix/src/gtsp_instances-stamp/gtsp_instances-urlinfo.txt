@@ -1,0 +1,3 @@
+repository='external project URL'
+module='/home/nvidia/Mower/src/polygon_coverage_planning/polygon_coverage_solvers/include/InstancesBinary.zip'
+tag='MD5=255831bd47de71df8419a54741f0a6be'

@@ -1,0 +1,4 @@
+[01m[K/home/nvidia/crawler_control/src/pure_pursuit/src/pure_pursuit.cpp:[m[K In function ‘[01m[Kint calculateTurnValue(bool, waypose, waypose*, unsigned char, int)[m[K’:
+[01m[K/home/nvidia/crawler_control/src/pure_pursuit/src/pure_pursuit.cpp:1330:1:[m[K [01;35m[Kwarning: [m[Kcontrol reaches end of non-void function [[01;35m[K-Wreturn-type[m[K]
+ 1330 | [01;35m[K}[m[K
+      | [01;35m[K^[m[K

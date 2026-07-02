@@ -1,0 +1,7 @@
+Symlinking /home/nvidia/crawler_control/devel/share/socketcan_interface/cmake/socketcan_interfaceConfig-version.cmake
+Symlinking /home/nvidia/crawler_control/devel/share/socketcan_interface/cmake/socketcan_interfaceConfig.cmake
+Symlinking /home/nvidia/crawler_control/devel/lib/libsocketcan_interface_string.so
+Symlinking /home/nvidia/crawler_control/devel/lib/libsocketcan_interface_plugin.so
+Symlinking /home/nvidia/crawler_control/devel/lib/socketcan_interface/socketcan_dump
+Symlinking /home/nvidia/crawler_control/devel/lib/socketcan_interface/socketcan_bcm
+Symlinking /home/nvidia/crawler_control/devel/lib/pkgconfig/socketcan_interface.pc

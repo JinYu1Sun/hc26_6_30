@@ -1,0 +1,30 @@
+Header header
+
+uint8 fault_can		#can总线故障
+uint8 fault_plan_connect	#规划节点故障
+uint8 fault_ctrler_connect	#mcu故障
+uint8 fault_vcu				#vcu故障
+uint8 fault_ebooster		#ebooster故障
+uint8 fault_esc				#esc故障
+uint8 fault_eps				#eps故障
+uint8 fault_epb				#epb故障
+uint8 fault_obu				#obu故障
+uint8 fault_bcm				#bcm故障
+uint8 fault_rcu				#rcu故障
+uint8 fault_hmi				#hmi故障
+uint8 fault_gps				#gps定位故障
+uint8 fault_camera_front1				#前摄像头１故障
+uint8 fault_camera_front2				#前摄像头２故障
+uint8 fault_camera_front3				#前摄像头３故障
+uint8 fault_camera_left1				#左摄像头１故障
+uint8 fault_camera_left2				#左摄像头２故障
+uint8 fault_camera_right1				#右摄像头１故障
+uint8 fault_camera_right2				#右摄像头２故障
+uint8 fault_camera_behind				#后摄像头故障
+uint8 fault_lidar_front1				#前激光雷达２故障
+uint8 fault_lidar_front2				#前激光雷达２故障
+uint8 fault_lidar_left				#左激光雷达故障
+uint8 fault_lidar_right				#右激光雷达故障
+uint8 fault_lidar_behind				#后激光雷达故障
+uint8 fault_millimeterwave				#毫米波雷达故障
+uint8 fault_ultrasonic                                  #Ultrasonic雷达故障

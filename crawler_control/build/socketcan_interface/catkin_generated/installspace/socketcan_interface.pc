@@ -1,0 +1,8 @@
+prefix=/home/nvidia/crawler_control/install
+
+Name: socketcan_interface
+Description: Description of socketcan_interface
+Version: 0.8.5
+Cflags: -I${prefix}/include -I/usr/local/include -I/usr/include
+Libs: -L${prefix}/lib -lsocketcan_interface_string /usr/local/lib/libboost_chrono.so.1.72.0 /usr/local/lib/libboost_system.so.1.72.0 /usr/local/lib/libboost_thread.so.1.72.0 /usr/lib/aarch64-linux-gnu/libconsole_bridge.so.0.4
+Requires: 

@@ -1,0 +1,20 @@
+# config/udp_vehicle_config.yaml
+udp_onlysend_node:
+  # 网络配置
+  local_address: "0.0.0.0"      # 监听所有网络接口
+  remote_address: "192.168.1.100" # 目标设备IP地址
+  local_port: 8888              # 本地端口
+  remote_port: 8888             # 目标端口
+  use_multicast: false          # 是否使用多播
+  
+  # 车辆控制参数
+  command:
+    scale_factor: 100           # 速度缩放因子
+    timeout_ms: 1000            # 命令超时时间
+    retry_count: 3              # 重试次数
+    
+  # 调试选项
+  debug:
+    log_raw_data: false         # 记录原始数据
+    log_timing: true            # 记录时间信息
+    verbose: false              # 详细日志

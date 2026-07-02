@@ -1,0 +1,8 @@
+prefix=/home/nvidia/crawler_control/install
+
+Name: task
+Description: Description of task
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

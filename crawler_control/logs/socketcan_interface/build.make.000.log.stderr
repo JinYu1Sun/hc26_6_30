@@ -1,0 +1,9 @@
+In file included from [01m[K/home/nvidia/crawler_control/src/socketcan_interface/src/canbcm.cpp:1[m[K:
+[01m[K/home/nvidia/crawler_control/src/socketcan_interface/include/socketcan_interface/bcm.h:[m[K In member function ‘[01m[Kvoid can::BCMsocket::Message::setHeader(can::Header)[m[K’:
+[01m[K/home/nvidia/crawler_control/src/socketcan_interface/include/socketcan_interface/bcm.h:41:14:[m[K [01;36m[Knote: [m[Kparameter passing for argument of type ‘[01m[Kcan::Header[m[K’ changed in GCC 9.1
+   41 |         void [01;36m[KsetHeader[m[K(Header header){
+      |              [01;36m[K^~~~~~~~~[m[K
+[01m[K/home/nvidia/crawler_control/src/socketcan_interface/include/socketcan_interface/bcm.h:[m[K In member function ‘[01m[Kbool can::BCMsocket::startTX(DurationType, can::Header, size_t, can::Frame*) [with DurationType = boost::chrono::duration<double>][m[K’:
+[01m[K/home/nvidia/crawler_control/src/socketcan_interface/include/socketcan_interface/bcm.h:81:42:[m[K [01;36m[Knote: [m[Kparameter passing for argument of type ‘[01m[Kcan::Header[m[K’ changed in GCC 9.1
+   81 |     template<typename DurationType> bool [01;36m[KstartTX[m[K(DurationType period, Header header, size_t num, Frame *frames) {
+      |                                          [01;36m[K^~~~~~~[m[K

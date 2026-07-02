@@ -1,0 +1,1 @@
+rosbag record -o x.bag /mower/control_error /lawn_mower/global_path /vehicle/cmd /Mower/position  /mower_perception/obstacles  /lawn_mower/avoid_state /lawer_mower/avoid_traj /lawer_mower/global_trajectory  

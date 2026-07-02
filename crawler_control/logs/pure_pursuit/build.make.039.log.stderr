@@ -1,0 +1,7 @@
+[01m[K/home/nvidia/crawler_control/src/pure_pursuit/src/pure_pursuit.cpp:[m[K In member function ‘[01m[Kvoid PurePursuit::setControl_main()[m[K’:
+[01m[K/home/nvidia/crawler_control/src/pure_pursuit/src/pure_pursuit.cpp:463:15:[m[K [01;31m[Kerror: [m[K‘[01m[Kl[m[K’ was not declared in this scope
+  463 |               [01;31m[Kl[m[K
+      |               [01;31m[K^[m[K
+make[2]: *** [CMakeFiles/pure_pursuit.dir/build.make:76: CMakeFiles/pure_pursuit.dir/src/pure_pursuit.cpp.o] Error 1
+make[1]: *** [CMakeFiles/Makefile2:170: CMakeFiles/pure_pursuit.dir/all] Error 2
+make: *** [Makefile:141: all] Error 2

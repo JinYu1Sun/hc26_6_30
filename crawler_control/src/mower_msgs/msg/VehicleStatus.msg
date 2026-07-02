@@ -1,0 +1,4 @@
+Header header
+uint8 battery_soc
+uint8 warning_state_one
+uint8 warning_state_two

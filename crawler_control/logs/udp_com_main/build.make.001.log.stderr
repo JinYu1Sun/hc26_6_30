@@ -1,0 +1,8 @@
+[01m[K/home/nvidia/crawler_control/src/udp_com_main/src/udp_onlysend_node.cpp:[m[K In member function ‘[01m[Kvoid UdpVehicleSender::vehicleCmdCallback(const ConstPtr&)[m[K’:
+[01m[K/home/nvidia/crawler_control/src/udp_com_main/src/udp_onlysend_node.cpp:187:62:[m[K [01;31m[Kerror: [m[K‘[01m[Kconst struct mower_msgs::VehicleCmd_<std::allocator<void> >[m[K’ has no member named ‘[01m[Kmower_bools[m[K’; did you mean ‘[01m[Kmover_bool[m[K’?
+  187 |         std::vector<uint8_t> udp_data = createUdpPacket(msg->[01;31m[Kmower_bools[m[K,msg->drive_value, msg->turn_value);
+      |                                                              [01;31m[K^~~~~~~~~~~[m[K
+      |                                                              [32m[Kmover_bool[m[K
+make[2]: *** [CMakeFiles/udp_com_main.dir/build.make:63: CMakeFiles/udp_com_main.dir/src/udp_onlysend_node.cpp.o] Error 1
+make[1]: *** [CMakeFiles/Makefile2:754: CMakeFiles/udp_com_main.dir/all] Error 2
+make: *** [Makefile:141: all] Error 2

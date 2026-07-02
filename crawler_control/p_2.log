@@ -1,0 +1,2748 @@
+[0m[ INFO] [1747703836.128679958]: control node is ready![0m
+[0m[ INFO] [1747703836.130376681]: hl_control version: 1.0_2025/05/06_1400[0m
+Chassis Type: 0
+Wheel Track: 1.35
+Basic Config ## m_bool: 0, --m_height: 1
+[33m[ WARN] [1747703839.136616440]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747703842.186676112]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747703845.237126979]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747703848.286728936]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747703851.336476155]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747703854.386258822]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747703857.436375104]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747703860.486259703]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747703863.537082259]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747703866.586572821]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747703869.637015710]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747703872.686454404]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747703875.736880077]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747703878.787074621]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747703881.836165444]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747703884.886477708]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747703887.936320670]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747703890.986359157]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747703894.036386420]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747703897.086410412]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747703900.136317120]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747703903.186311935]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747703906.236801558]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747703909.286191860]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747703912.337291888]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747703915.386161872]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747703918.436387986]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747703921.486205104]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747703924.537069250]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747703927.586457204]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747703930.637228991]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747703933.686373629]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747703936.737095961]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747703939.786314233]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747703942.836373047]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747703945.886656731]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747703948.936346635]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747703951.987502663]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747703955.037088728]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747703958.086426936]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747703961.136163601]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747703964.186280003]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747703967.237035720]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747703970.287688785]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747703973.336317067]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747703976.386480809]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747703979.436946095]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747703982.486455138]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747703985.536177444]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747703988.587895532]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747703991.637212455]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747703994.686358392]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747703997.736258198]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704000.786273945]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704003.836242575]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704006.886294412]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704009.936911964]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704012.986336599]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704016.037331815]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704019.086264547]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704022.137359567]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704025.186985065]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704028.236468895]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704031.286512399]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704034.337076367]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704037.386705179]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704040.436535720]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704043.486439450]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704046.537118067]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704049.586463366]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704052.636973535]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704055.686460929]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704058.737376024]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[0m[ INFO] [1747703839.132589374]:  $$ no planning[0m
+[0m[ INFO] [1747703842.182603573]:  $$ no planning[0m
+[0m[ INFO] [1747703845.232556666]:  $$ no planning[0m
+[0m[ INFO] [1747703848.282579275]:  $$ no planning[0m
+[0m[ INFO] [1747703851.332544613]:  $$ no planning[0m
+[0m[ INFO] [1747703854.382579391]:  $$ no planning[0m
+[0m[ INFO] [1747703857.432562290]:  $$ no planning[0m
+[0m[ INFO] [1747703860.482586090]:  $$ no planning[0m
+[0m[ INFO] [1747703863.532556269]:  $$ no planning[0m
+[0m[ INFO] [1747703866.582584000]:  $$ no planning[0m
+[0m[ INFO] [1747703869.632559448]:  $$ no planning[0m
+[0m[ INFO] [1747703872.682570641]:  $$ no planning[0m
+[0m[ INFO] [1747703875.732579053]:  $$ no planning[0m
+[0m[ INFO] [1747703878.782603128]:  $$ no planning[0m
+[0m[ INFO] [1747703881.832568793]:  $$ no planning[0m
+[0m[ INFO] [1747703884.882594809]:  $$ no planning[0m
+[0m[ INFO] [1747703887.932561678]:  $$ no planning[0m
+[0m[ INFO] [1747703890.982609573]:  $$ no planning[0m
+[0m[ INFO] [1747703894.032545762]:  $$ no planning[0m
+[0m[ INFO] [1747703897.082583418]:  $$ no planning[0m
+[0m[ INFO] [1747703900.132557104]:  $$ no planning[0m
+[0m[ INFO] [1747703903.182602096]:  $$ no planning[0m
+[0m[ INFO] [1747703906.232562521]:  $$ no planning[0m
+[0m[ INFO] [1747703909.282589801]:  $$ no planning[0m
+[0m[ INFO] [1747703912.332557859]:  $$ no planning[0m
+[0m[ INFO] [1747703915.382586247]:  $$ no planning[0m
+[0m[ INFO] [1747703918.432554368]:  $$ no planning[0m
+[0m[ INFO] [1747703921.482582435]:  $$ no planning[0m
+[0m[ INFO] [1747703924.532559836]:  $$ no planning[0m
+[0m[ INFO] [1747703927.582576161]:  $$ no planning[0m
+[0m[ INFO] [1747703930.632561045]:  $$ no planning[0m
+[0m[ INFO] [1747703933.682592976]:  $$ no planning[0m
+[0m[ INFO] [1747703936.732560274]:  $$ no planning[0m
+[0m[ INFO] [1747703939.782595085]:  $$ no planning[0m
+[0m[ INFO] [1747703942.832557127]:  $$ no planning[0m
+[0m[ INFO] [1747703945.882581252]:  $$ no planning[0m
+[0m[ INFO] [1747703948.932563643]:  $$ no planning[0m
+[0m[ INFO] [1747703951.982589846]:  $$ no planning[0m
+[0m[ INFO] [1747703955.032559281]:  $$ no planning[0m
+[0m[ INFO] [1747703958.082578758]:  $$ no planning[0m
+[0m[ INFO] [1747703961.132560743]:  $$ no planning[0m
+[0m[ INFO] [1747703964.182588182]:  $$ no planning[0m
+[0m[ INFO] [1747703967.232551748]:  $$ no planning[0m
+[0m[ INFO] [1747703970.282596508]:  $$ no planning[0m
+[0m[ INFO] [1747703973.332560252]:  $$ no planning[0m
+[0m[ INFO] [1747703976.382579638]:  $$ no planning[0m
+[0m[ INFO] [1747703979.432558350]:  $$ no planning[0m
+[0m[ INFO] [1747703982.482584081]:  $$ no planning[0m
+[0m[ INFO] [1747703985.532551162]:  $$ no planning[0m
+[0m[ INFO] [1747703988.582582513]:  $$ no planning[0m
+[0m[ INFO] [1747703991.632556574]:  $$ no planning[0m
+[0m[ INFO] [1747703994.682625834]:  $$ no planning[0m
+[0m[ INFO] [1747703997.732556586]:  $$ no planning[0m
+[0m[ INFO] [1747704000.782609133]:  $$ no planning[0m
+[0m[ INFO] [1747704003.832553442]:  $$ no planning[0m
+[0m[ INFO] [1747704006.882601600]:  $$ no planning[0m
+[0m[ INFO] [1747704009.932559836]:  $$ no planning[0m
+[0m[ INFO] [1747704012.982588329]:  $$ no planning[0m
+[0m[ INFO] [1747704016.032555994]:  $$ no planning[0m
+[0m[ INFO] [1747704019.082595064]:  $$ no planning[0m
+[0m[ INFO] [1747704022.132564227]:  $$ no planning[0m
+[0m[ INFO] [1747704025.182583816]:  $$ no planning[0m
+[0m[ INFO] [1747704028.232553261]:  $$ no planning[0m
+[0m[ INFO] [1747704031.282592219]:  $$ no planning[0m
+[0m[ INFO] [1747704034.332553226]:  $$ no planning[0m
+[0m[ INFO] [1747704037.382602402]:  $$ no planning[0m
+[0m[ INFO] [1747704040.432556051]:  $$ no planning[0m
+[0m[ INFO] [1747704043.482596298]:  $$ no planning[0m
+[0m[ INFO] [1747704046.532559757]:  $$ no planning[0m
+[0m[ INFO] [1747704049.582593558]:  $$ no planning[0m
+[0m[ INFO] [1747704052.632566845]:  $$ no planning[0m
+[0m[ INFO] [1747704055.682593359]:  $$ no planning[0m
+[0m[ INFO] [1747704058.732555306]:  $$ no planning[0m
+[0m[ IN[33m[ WARN] [1747704061.787836038]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704064.836344327]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704067.887271619]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704070.936327751]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704073.986421939]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704077.036553347]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704080.086780056]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704083.137002230]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704086.186637949]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704089.237540460]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704092.286192662]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704095.337300543]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704098.386281329]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704101.437132854]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704104.486538191]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704107.537046202]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704110.587849686]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704113.637232132]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704116.686891563]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704119.737070196]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704122.787724306]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704125.836923811]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704128.886236666]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704131.936606087]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704134.986549154]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704138.036602405]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704141.086227891]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704144.136662456]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704147.186596106]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704150.236182584]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704153.286130397]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704156.336806128]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704159.386277431]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704162.437045769]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704165.486674910]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704168.537286661]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704171.586321524]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704174.637251842]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704177.686299792]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704180.736750949]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704183.786197597]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704186.836261149]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704189.887138903]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704192.936193750]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704195.986291389]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704199.036799983]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704202.086300253]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704205.136911248]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704208.186783896]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704211.236358112]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704214.286967020]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704217.337246286]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704220.387913916]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704223.436253306]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704226.486292660]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704229.537427082]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704232.586240962]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704235.637188793]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704238.686374797]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704241.736405770]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704244.786252371]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704247.837325368]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704250.887855694]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704253.937065245]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704256.986596434]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704260.036758785]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704263.086653999]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704266.136274228]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704269.186709613]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704272.237114344]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704275.286267784]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704278.337093006]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704281.386205282]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+FO] [1747704061.782576077]:  $$ no planning[0m
+[0m[ INFO] [1747704064.832558744]:  $$ no planning[0m
+[0m[ INFO] [1747704067.882592762]:  $$ no planning[0m
+[0m[ INFO] [1747704070.932550808]:  $$ no planning[0m
+[0m[ INFO] [1747704073.982584547]:  $$ no planning[0m
+[0m[ INFO] [1747704077.032562798]:  $$ no planning[0m
+[0m[ INFO] [1747704080.082590333]:  $$ no planning[0m
+[0m[ INFO] [1747704083.132557620]:  $$ no planning[0m
+[0m[ INFO] [1747704086.182592071]:  $$ no planning[0m
+[0m[ INFO] [1747704089.232550234]:  $$ no planning[0m
+[0m[ INFO] [1747704092.282602029]:  $$ no planning[0m
+[0m[ INFO] [1747704095.332558228]:  $$ no planning[0m
+[0m[ INFO] [1747704098.382579018]:  $$ no planning[0m
+[0m[ INFO] [1747704101.432557263]:  $$ no planning[0m
+[0m[ INFO] [1747704104.482598811]:  $$ no planning[0m
+[0m[ INFO] [1747704107.532557079]:  $$ no planning[0m
+[0m[ INFO] [1747704110.582588828]:  $$ no planning[0m
+[0m[ INFO] [1747704113.632559067]:  $$ no planning[0m
+[0m[ INFO] [1747704116.682600685]:  $$ no planning[0m
+[0m[ INFO] [1747704119.732560272]:  $$ no planning[0m
+[0m[ INFO] [1747704122.782606684]:  $$ no planning[0m
+[0m[ INFO] [1747704125.832559876]:  $$ no planning[0m
+[0m[ INFO] [1747704128.882590511]:  $$ no planning[0m
+[0m[ INFO] [1747704131.932558672]:  $$ no planning[0m
+[0m[ INFO] [1747704134.982605967]:  $$ no planning[0m
+[0m[ INFO] [1747704138.032563567]:  $$ no planning[0m
+[0m[ INFO] [1747704141.082605512]:  $$ no planning[0m
+[0m[ INFO] [1747704144.132555041]:  $$ no planning[0m
+[0m[ INFO] [1747704147.182591221]:  $$ no planning[0m
+[0m[ INFO] [1747704150.232560526]:  $$ no planning[0m
+[0m[ INFO] [1747704153.282600662]:  $$ no planning[0m
+[0m[ INFO] [1747704156.332562901]:  $$ no planning[0m
+[0m[ INFO] [1747704159.382601771]:  $$ no planning[0m
+[0m[ INFO] [1747704162.432557029]:  $$ no planning[0m
+[0m[ INFO] [1747704165.482581351]:  $$ no planning[0m
+[0m[ INFO] [1747704168.532559419]:  $$ no planning[0m
+[0m[ INFO] [1747704171.582591879]:  $$ no planning[0m
+[0m[ INFO] [1747704174.632561625]:  $$ no planning[0m
+[0m[ INFO] [1747704177.682595363]:  $$ no planning[0m
+[0m[ INFO] [1747704180.732559914]:  $$ no planning[0m
+[0m[ INFO] [1747704183.782584180]:  $$ no planning[0m
+[0m[ INFO] [1747704186.832560594]:  $$ no planning[0m
+[0m[ INFO] [1747704189.882602899]:  $$ no planning[0m
+[0m[ INFO] [1747704192.932559277]:  $$ no planning[0m
+[0m[ INFO] [1747704195.982580401]:  $$ no planning[0m
+[0m[ INFO] [1747704199.032563123]:  $$ no planning[0m
+[0m[ INFO] [1747704202.082597425]:  $$ no planning[0m
+[0m[ INFO] [1747704205.132564081]:  $$ no planning[0m
+[0m[ INFO] [1747704208.182580317]:  $$ no planning[0m
+[0m[ INFO] [1747704211.232557489]:  $$ no planning[0m
+[0m[ INFO] [1747704214.282586733]:  $$ no planning[0m
+[0m[ INFO] [1747704217.332560294]:  $$ no planning[0m
+[0m[ INFO] [1747704220.382589024]:  $$ no planning[0m
+[0m[ INFO] [1747704223.432558158]:  $$ no planning[0m
+[0m[ INFO] [1747704226.482582408]:  $$ no planning[0m
+[0m[ INFO] [1747704229.532557628]:  $$ no planning[0m
+[0m[ INFO] [1747704232.582588248]:  $$ no planning[0m
+[0m[ INFO] [1747704235.632558962]:  $$ no planning[0m
+[0m[ INFO] [1747704238.682606719]:  $$ no planning[0m
+[0m[ INFO] [1747704241.732562010]:  $$ no planning[0m
+[0m[ INFO] [1747704244.782595496]:  $$ no planning[0m
+[0m[ INFO] [1747704247.832559757]:  $$ no planning[0m
+[0m[ INFO] [1747704250.882598965]:  $$ no planning[0m
+[0m[ INFO] [1747704253.932558495]:  $$ no planning[0m
+[0m[ INFO] [1747704256.982603038]:  $$ no planning[0m
+[0m[ INFO] [1747704260.032555717]:  $$ no planning[0m
+[0m[ INFO] [1747704263.082586105]:  $$ no planning[0m
+[0m[ INFO] [1747704266.132561031]:  $$ no planning[0m
+[0m[ INFO] [1747704269.182591220]:  $$ no planning[0m
+[0m[ INFO] [1747704272.232556867]:  $$ no planning[0m
+[0m[ INFO] [1747704275.282608700]:  $$ no planning[0m
+[0m[ INFO] [1747704278.332559789]:  $$ no planning[0m
+[0m[ INFO] [1747704281.382585016]:  $$ no planning[0m
+[0m[ INFO] [174[33m[ WARN] [1747704284.437537647]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704287.487075733]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704290.536432346]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704293.586192775]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704296.637162968]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704299.686299991]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704302.736051247]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704305.786188254]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704308.836902382]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704311.886401020]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704314.936412201]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704317.986301718]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704321.037248831]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704324.087191342]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704327.136340044]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704330.186191789]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704333.236437741]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704336.286213658]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704339.336304657]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704342.387383308]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704345.436697563]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704348.486544486]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704351.537015282]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704354.586557266]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704357.637390575]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704360.686341943]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704363.737143136]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704366.786579222]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704369.837114073]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704372.886438461]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704375.937137987]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704378.987005399]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704382.037224641]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704385.086246962]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704388.137435569]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704391.187230740]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704394.237426744]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704397.286417025]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704400.337201563]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704403.386418587]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704406.437156458]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704409.486517456]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704412.537154383]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704415.586201474]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704418.636326750]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704421.686324313]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704424.737394454]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704427.786449474]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704430.837141566]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704433.886428556]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704436.937142102]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704439.986772819]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704443.036109920]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704446.086331442]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704449.136530325]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704452.186312808]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704455.236910000]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704458.286629500]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704461.336203001]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704464.386584525]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704467.436245603]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704470.486240108]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704473.537228353]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704476.586185427]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704479.636735851]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704482.687526209]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704485.736197323]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704488.786176820]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704491.836857989]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704494.886453902]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704497.936874178]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704500.986180592]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704504.036255867]: Restart success![0m
+killing /obstacle_avoidance
+killed
+7704284.432555871]:  $$ no planning[0m
+[0m[ INFO] [1747704287.482600339]:  $$ no planning[0m
+[0m[ INFO] [1747704290.532558633]:  $$ no planning[0m
+[0m[ INFO] [1747704293.582602270]:  $$ no planning[0m
+[0m[ INFO] [1747704296.632560082]:  $$ no planning[0m
+[0m[ INFO] [1747704299.682584298]:  $$ no planning[0m
+[0m[ INFO] [1747704302.732552073]:  $$ no planning[0m
+[0m[ INFO] [1747704305.782594134]:  $$ no planning[0m
+[0m[ INFO] [1747704308.832554641]:  $$ no planning[0m
+[0m[ INFO] [1747704311.882584077]:  $$ no planning[0m
+[0m[ INFO] [1747704314.932559033]:  $$ no planning[0m
+[0m[ INFO] [1747704317.982598442]:  $$ no planning[0m
+[0m[ INFO] [1747704321.032559414]:  $$ no planning[0m
+[0m[ INFO] [1747704324.082586598]:  $$ no planning[0m
+[0m[ INFO] [1747704327.132553086]:  $$ no planning[0m
+[0m[ INFO] [1747704330.182591076]:  $$ no planning[0m
+[0m[ INFO] [1747704333.232558621]:  $$ no planning[0m
+[0m[ INFO] [1747704336.282604176]:  $$ no planning[0m
+[0m[ INFO] [1747704339.332554756]:  $$ no planning[0m
+[0m[ INFO] [1747704342.382583360]:  $$ no planning[0m
+[0m[ INFO] [1747704345.432556898]:  $$ no planning[0m
+[0m[ INFO] [1747704348.482601715]:  $$ no planning[0m
+[0m[ INFO] [1747704351.532558289]:  $$ no planning[0m
+[0m[ INFO] [1747704354.582588927]:  $$ no planning[0m
+[0m[ INFO] [1747704357.632562051]:  $$ no planning[0m
+[0m[ INFO] [1747704360.682585130]:  $$ no planning[0m
+[0m[ INFO] [1747704363.732557211]:  $$ no planning[0m
+[0m[ INFO] [1747704366.782591234]:  $$ no planning[0m
+[0m[ INFO] [1747704369.832556282]:  $$ no planning[0m
+[0m[ INFO] [1747704372.882589197]:  $$ no planning[0m
+[0m[ INFO] [1747704375.932556253]:  $$ no planning[0m
+[0m[ INFO] [1747704378.982586133]:  $$ no planning[0m
+[0m[ INFO] [1747704382.032560313]:  $$ no planning[0m
+[0m[ INFO] [1747704385.082618664]:  $$ no planning[0m
+[0m[ INFO] [1747704388.132559619]:  $$ no planning[0m
+[0m[ INFO] [1747704391.182584140]:  $$ no planning[0m
+[0m[ INFO] [1747704394.232555371]:  $$ no planning[0m
+[0m[ INFO] [1747704397.282585938]:  $$ no planning[0m
+[0m[ INFO] [1747704400.332515891]:  $$ no planning[0m
+[0m[ INFO] [1747704403.382610380]:  $$ no planning[0m
+[0m[ INFO] [1747704406.432564453]:  $$ no planning[0m
+[0m[ INFO] [1747704409.482581661]:  $$ no planning[0m
+[0m[ INFO] [1747704412.532552649]:  $$ no planning[0m
+[0m[ INFO] [1747704415.582596057]:  $$ no planning[0m
+[0m[ INFO] [1747704418.632562064]:  $$ no planning[0m
+[0m[ INFO] [1747704421.682602061]:  $$ no planning[0m
+[0m[ INFO] [1747704424.732560362]:  $$ no planning[0m
+[0m[ INFO] [1747704427.782580273]:  $$ no planning[0m
+[0m[ INFO] [1747704430.832562169]:  $$ no planning[0m
+[0m[ INFO] [1747704433.882585212]:  $$ no planning[0m
+[0m[ INFO] [1747704436.932557168]:  $$ no planning[0m
+[0m[ INFO] [1747704439.982606041]:  $$ no planning[0m
+[0m[ INFO] [1747704443.032539223]:  $$ no planning[0m
+[0m[ INFO] [1747704446.082595110]:  $$ no planning[0m
+[0m[ INFO] [1747704449.132562946]:  $$ no planning[0m
+[0m[ INFO] [1747704452.182591612]:  $$ no planning[0m
+[0m[ INFO] [1747704455.232564465]:  $$ no planning[0m
+[0m[ INFO] [1747704458.282586567]:  $$ no planning[0m
+[0m[ INFO] [1747704461.332556847]:  $$ no planning[0m
+[0m[ INFO] [1747704464.382597465]:  $$ no planning[0m
+[0m[ INFO] [1747704467.432558744]:  $$ no planning[0m
+[0m[ INFO] [1747704470.482589698]:  $$ no planning[0m
+[0m[ INFO] [1747704473.532557657]:  $$ no planning[0m
+[0m[ INFO] [1747704476.582599146]:  $$ no planning[0m
+[0m[ INFO] [1747704479.632560241]:  $$ no planning[0m
+[0m[ INFO] [1747704482.682584561]:  $$ no planning[0m
+[0m[ INFO] [1747704485.732559170]:  $$ no planning[0m
+[0m[ INFO] [1747704488.782590892]:  $$ no planning[0m
+[0m[ INFO] [1747704491.832565000]:  $$ no planning[0m
+[0m[ INFO] [1747704494.882595069]:  $$ no planning[0m
+[0m[ INFO] [1747704497.932557573]:  $$ no planning[0m
+[0m[ INFO] [1747704500.982602760]:  $$ no planning[0m
+[0m[ INFO] [1747704504.032556080]:  $$ no planning[0m
+[0m[ INFO] [1747704507.[33m[ WARN] [1747704507.086521504]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704510.136765095]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704513.186267586]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704516.237357287]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704519.287285529]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704522.336381330]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704525.387725650]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704528.437146810]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704531.486893834]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704534.537091590]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704537.586604094]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704540.637414829]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704543.686525395]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704546.736452871]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704549.787657997]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704552.836352288]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704555.886994624]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704558.937078292]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704561.986233781]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704565.037030826]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704568.086187888]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704571.137025861]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704574.186295873]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704577.237347522]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704580.286171116]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704583.336762535]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704586.386342743]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704589.437118212]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704592.486421130]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704595.536329860]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704598.586475392]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704601.637008253]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704604.687803633]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704607.736357268]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704610.786583148]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704613.836679188]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704616.886377924]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704619.937900306]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704622.986285243]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704626.036343109]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704629.086384629]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704632.136184035]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704635.186321684]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704638.237087912]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704641.286168574]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704644.337617333]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704647.387636748]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704650.437354736]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704653.487641148]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704656.536470697]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704659.586687955]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704662.636864066]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704665.686290082]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704668.736833044]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704671.786189896]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704674.836981785]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704677.886776061]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704680.936438239]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704683.987612385]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704687.036279305]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704690.086257110]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704693.136241539]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704696.186244202]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704699.236266543]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704702.286511855]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704705.337167214]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704708.386503350]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704711.436206790]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704714.486524772]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704717.537391880]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704720.586411843]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704723.636679845]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704726.686110237]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+082586798]:  $$ no planning[0m
+[0m[ INFO] [1747704510.132558124]:  $$ no planning[0m
+[0m[ INFO] [1747704513.182600407]:  $$ no planning[0m
+[0m[ INFO] [1747704516.232553435]:  $$ no planning[0m
+[0m[ INFO] [1747704519.282578545]:  $$ no planning[0m
+[0m[ INFO] [1747704522.332555331]:  $$ no planning[0m
+[0m[ INFO] [1747704525.382600957]:  $$ no planning[0m
+[0m[ INFO] [1747704528.432561461]:  $$ no planning[0m
+[0m[ INFO] [1747704531.482584237]:  $$ no planning[0m
+[0m[ INFO] [1747704534.532559907]:  $$ no planning[0m
+[0m[ INFO] [1747704537.582581961]:  $$ no planning[0m
+[0m[ INFO] [1747704540.632555136]:  $$ no planning[0m
+[0m[ INFO] [1747704543.682594625]:  $$ no planning[0m
+[0m[ INFO] [1747704546.732554549]:  $$ no planning[0m
+[0m[ INFO] [1747704549.782588057]:  $$ no planning[0m
+[0m[ INFO] [1747704552.832562578]:  $$ no planning[0m
+[0m[ INFO] [1747704555.882603393]:  $$ no planning[0m
+[0m[ INFO] [1747704558.932564624]:  $$ no planning[0m
+[0m[ INFO] [1747704561.982591563]:  $$ no planning[0m
+[0m[ INFO] [1747704565.032558536]:  $$ no planning[0m
+[0m[ INFO] [1747704568.082601128]:  $$ no planning[0m
+[0m[ INFO] [1747704571.132556803]:  $$ no planning[0m
+[0m[ INFO] [1747704574.182589045]:  $$ no planning[0m
+[0m[ INFO] [1747704577.232559318]:  $$ no planning[0m
+[0m[ INFO] [1747704580.282604004]:  $$ no planning[0m
+[0m[ INFO] [1747704583.332556333]:  $$ no planning[0m
+[0m[ INFO] [1747704586.382588938]:  $$ no planning[0m
+[0m[ INFO] [1747704589.432555456]:  $$ no planning[0m
+[0m[ INFO] [1747704592.482600123]:  $$ no planning[0m
+[0m[ INFO] [1747704595.532564535]:  $$ no planning[0m
+[0m[ INFO] [1747704598.582593423]:  $$ no planning[0m
+[0m[ INFO] [1747704601.632556796]:  $$ no planning[0m
+[0m[ INFO] [1747704604.682598618]:  $$ no planning[0m
+[0m[ INFO] [1747704607.732559910]:  $$ no planning[0m
+[0m[ INFO] [1747704610.782586520]:  $$ no planning[0m
+[0m[ INFO] [1747704613.832564157]:  $$ no planning[0m
+[0m[ INFO] [1747704616.882588278]:  $$ no planning[0m
+[0m[ INFO] [1747704619.932551830]:  $$ no planning[0m
+[0m[ INFO] [1747704622.982546959]:  $$ no planning[0m
+[0m[ INFO] [1747704626.032557600]:  $$ no planning[0m
+[0m[ INFO] [1747704629.082591335]:  $$ no planning[0m
+[0m[ INFO] [1747704632.132555898]:  $$ no planning[0m
+[0m[ INFO] [1747704635.182584007]:  $$ no planning[0m
+[0m[ INFO] [1747704638.232564997]:  $$ no planning[0m
+[0m[ INFO] [1747704641.282593910]:  $$ no planning[0m
+[0m[ INFO] [1747704644.332557538]:  $$ no planning[0m
+[0m[ INFO] [1747704647.382589684]:  $$ no planning[0m
+[0m[ INFO] [1747704650.432557541]:  $$ no planning[0m
+[0m[ INFO] [1747704653.482595050]:  $$ no planning[0m
+[0m[ INFO] [1747704656.532557623]:  $$ no planning[0m
+[0m[ INFO] [1747704659.582575740]:  $$ no planning[0m
+[0m[ INFO] [1747704662.632555398]:  $$ no planning[0m
+[0m[ INFO] [1747704665.682598071]:  $$ no planning[0m
+[0m[ INFO] [1747704668.732554584]:  $$ no planning[0m
+[0m[ INFO] [1747704671.782593375]:  $$ no planning[0m
+[0m[ INFO] [1747704674.832558649]:  $$ no planning[0m
+[0m[ INFO] [1747704677.882587043]:  $$ no planning[0m
+[0m[ INFO] [1747704680.932554638]:  $$ no planning[0m
+[0m[ INFO] [1747704683.982588943]:  $$ no planning[0m
+[0m[ INFO] [1747704687.032558397]:  $$ no planning[0m
+[0m[ INFO] [1747704690.082593644]:  $$ no planning[0m
+[0m[ INFO] [1747704693.132565176]:  $$ no planning[0m
+[0m[ INFO] [1747704696.182611840]:  $$ no planning[0m
+[0m[ INFO] [1747704699.232557123]:  $$ no planning[0m
+[0m[ INFO] [1747704702.282583517]:  $$ no planning[0m
+[0m[ INFO] [1747704705.332540200]:  $$ no planning[0m
+[0m[ INFO] [1747704708.382595684]:  $$ no planning[0m
+[0m[ INFO] [1747704711.432567388]:  $$ no planning[0m
+[0m[ INFO] [1747704714.482588530]:  $$ no planning[0m
+[0m[ INFO] [1747704717.532556284]:  $$ no planning[0m
+[0m[ INFO] [1747704720.582582035]:  $$ no planning[0m
+[0m[ INFO] [1747704723.632561965]:  $$ no planning[0m
+[0m[ INFO] [1747704726.682597367]:  $$ no planning[0m
+[0m[ INFO] [1747704729.73255950[33m[ WARN] [1747704729.737004975]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704732.786443755]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704735.837216806]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704738.886297199]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704741.935959022]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704744.986463310]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704748.036168242]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704751.086208333]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704754.136426991]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704757.186260582]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704760.236792029]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704763.287611353]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704766.337200954]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704769.386362263]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704772.436725636]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704775.486365240]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704778.536220526]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704781.587717842]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704784.637246419]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704787.686291535]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704790.736305336]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704793.786603274]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704796.837466447]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704799.886215219]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704802.936444194]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704805.986690648]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704809.037719625]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704812.086436812]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704815.136811345]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704818.188044979]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704821.236989486]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704824.286180153]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704827.336754660]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704830.386443524]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704833.436678103]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704836.486192808]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704839.536859697]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704842.586396967]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704845.637412376]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704848.686382905]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704851.736166576]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704854.786176280]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704857.836328863]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704860.886204485]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704863.936407912]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704866.986264891]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704870.036865863]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704873.086401376]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704876.137130094]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704879.186336022]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704882.236347025]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704885.286247378]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704888.337089991]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704891.386403032]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704894.436191953]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704897.487105642]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704900.536407780]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704903.586308375]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704906.636826248]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704909.686615304]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704912.737340385]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704915.786457325]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704918.836826979]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704921.886288575]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704924.937095352]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704927.986445168]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704931.036320904]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704934.086254147]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704937.137336436]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704940.186372002]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704943.236762209]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704946.286509399]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704949.336743108]: Restart success![0m
+killing /obstacle_avoidance
+killed
+2]:  $$ no planning[0m
+[0m[ INFO] [1747704732.782590043]:  $$ no planning[0m
+[0m[ INFO] [1747704735.832559391]:  $$ no planning[0m
+[0m[ INFO] [1747704738.882588099]:  $$ no planning[0m
+[0m[ INFO] [1747704741.932562699]:  $$ no planning[0m
+[0m[ INFO] [1747704744.982581757]:  $$ no planning[0m
+[0m[ INFO] [1747704748.032558696]:  $$ no planning[0m
+[0m[ INFO] [1747704751.082597988]:  $$ no planning[0m
+[0m[ INFO] [1747704754.132564223]:  $$ no planning[0m
+[0m[ INFO] [1747704757.182580635]:  $$ no planning[0m
+[0m[ INFO] [1747704760.232566274]:  $$ no planning[0m
+[0m[ INFO] [1747704763.282590087]:  $$ no planning[0m
+[0m[ INFO] [1747704766.332559603]:  $$ no planning[0m
+[0m[ INFO] [1747704769.382589130]:  $$ no planning[0m
+[0m[ INFO] [1747704772.432552810]:  $$ no planning[0m
+[0m[ INFO] [1747704775.482588937]:  $$ no planning[0m
+[0m[ INFO] [1747704778.532555427]:  $$ no planning[0m
+[0m[ INFO] [1747704781.582598397]:  $$ no planning[0m
+[0m[ INFO] [1747704784.632559499]:  $$ no planning[0m
+[0m[ INFO] [1747704787.682581507]:  $$ no planning[0m
+[0m[ INFO] [1747704790.732559595]:  $$ no planning[0m
+[0m[ INFO] [1747704793.782591349]:  $$ no planning[0m
+[0m[ INFO] [1747704796.832558913]:  $$ no planning[0m
+[0m[ INFO] [1747704799.882594089]:  $$ no planning[0m
+[0m[ INFO] [1747704802.932560881]:  $$ no planning[0m
+[0m[ INFO] [1747704805.982583489]:  $$ no planning[0m
+[0m[ INFO] [1747704809.032557523]:  $$ no planning[0m
+[0m[ INFO] [1747704812.082604477]:  $$ no planning[0m
+[0m[ INFO] [1747704815.132552854]:  $$ no planning[0m
+[0m[ INFO] [1747704818.182592469]:  $$ no planning[0m
+[0m[ INFO] [1747704821.232553805]:  $$ no planning[0m
+[0m[ INFO] [1747704824.282596049]:  $$ no planning[0m
+[0m[ INFO] [1747704827.332558924]:  $$ no planning[0m
+[0m[ INFO] [1747704830.382583540]:  $$ no planning[0m
+[0m[ INFO] [1747704833.432565088]:  $$ no planning[0m
+[0m[ INFO] [1747704836.482612321]:  $$ no planning[0m
+[0m[ INFO] [1747704839.532550902]:  $$ no planning[0m
+[0m[ INFO] [1747704842.582590873]:  $$ no planning[0m
+[0m[ INFO] [1747704845.632560876]:  $$ no planning[0m
+[0m[ INFO] [1747704848.682593002]:  $$ no planning[0m
+[0m[ INFO] [1747704851.732556615]:  $$ no planning[0m
+[0m[ INFO] [1747704854.782603345]:  $$ no planning[0m
+[0m[ INFO] [1747704857.832571795]:  $$ no planning[0m
+[0m[ INFO] [1747704860.882585692]:  $$ no planning[0m
+[0m[ INFO] [1747704863.932562617]:  $$ no planning[0m
+[0m[ INFO] [1747704866.982601234]:  $$ no planning[0m
+[0m[ INFO] [1747704870.032554313]:  $$ no planning[0m
+[0m[ INFO] [1747704873.082585616]:  $$ no planning[0m
+[0m[ INFO] [1747704876.132563208]:  $$ no planning[0m
+[0m[ INFO] [1747704879.182588106]:  $$ no planning[0m
+[0m[ INFO] [1747704882.232553795]:  $$ no planning[0m
+[0m[ INFO] [1747704885.282579464]:  $$ no planning[0m
+[0m[ INFO] [1747704888.332554468]:  $$ no planning[0m
+[0m[ INFO] [1747704891.382609450]:  $$ no planning[0m
+[0m[ INFO] [1747704894.432557799]:  $$ no planning[0m
+[0m[ INFO] [1747704897.482602439]:  $$ no planning[0m
+[0m[ INFO] [1747704900.532565141]:  $$ no planning[0m
+[0m[ INFO] [1747704903.582625292]:  $$ no planning[0m
+[0m[ INFO] [1747704906.632558507]:  $$ no planning[0m
+[0m[ INFO] [1747704909.682626547]:  $$ no planning[0m
+[0m[ INFO] [1747704912.732558870]:  $$ no planning[0m
+[0m[ INFO] [1747704915.782593149]:  $$ no planning[0m
+[0m[ INFO] [1747704918.832562183]:  $$ no planning[0m
+[0m[ INFO] [1747704921.882597332]:  $$ no planning[0m
+[0m[ INFO] [1747704924.932555284]:  $$ no planning[0m
+[0m[ INFO] [1747704927.982593600]:  $$ no planning[0m
+[0m[ INFO] [1747704931.032559355]:  $$ no planning[0m
+[0m[ INFO] [1747704934.082569560]:  $$ no planning[0m
+[0m[ INFO] [1747704937.132556682]:  $$ no planning[0m
+[0m[ INFO] [1747704940.182613620]:  $$ no planning[0m
+[0m[ INFO] [1747704943.232557927]:  $$ no planning[0m
+[0m[ INFO] [1747704946.282585670]:  $$ no planning[0m
+[0m[ INFO] [1747704949.332558507]:  $$ no planning[0m
+[0m[ INFO] [1747704952.382594689]:  $$ [33m[ WARN] [1747704952.386349198]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704955.437338742]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704958.486478984]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704961.537085752]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704964.586226623]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704967.637119956]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704970.686792123]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704973.737536559]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704976.786357131]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704979.836893986]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704982.886415678]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704985.936329278]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704988.986770942]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704992.037392082]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747704995.086538888]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747704998.136878413]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705001.186185172]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705004.236889294]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705007.286171172]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705010.336564635]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705013.386208427]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705016.436827399]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705019.487947780]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705022.537077350]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705025.586192061]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705028.636300078]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705031.687844927]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705034.736888161]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705037.786209808]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705040.836088553]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705043.886242798]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705046.936794853]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705049.986366183]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705053.037057082]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705056.086441490]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705059.136957284]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705062.186189930]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705065.236365265]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705068.286522560]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705071.336818520]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705074.386307531]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705077.437289652]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705080.486944022]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705083.537170540]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705086.586563576]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705089.636890374]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705092.686230234]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705095.736339224]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705098.787710972]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705101.836247912]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705104.887874386]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705107.936302238]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705110.986278830]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705114.037438765]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705117.086635694]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705120.136221663]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705123.186348791]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705126.236222823]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705129.286390009]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705132.337058331]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705135.386220048]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705138.436611366]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705141.486263013]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705144.536754284]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705147.586279242]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705150.637346501]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705153.686804925]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705156.736233272]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705159.786364063]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705162.836886604]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705165.887799863]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705168.937361646]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705171.986338553]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+no planning[0m
+[0m[ INFO] [1747704955.432559467]:  $$ no planning[0m
+[0m[ INFO] [1747704958.482598328]:  $$ no planning[0m
+[0m[ INFO] [1747704961.532556181]:  $$ no planning[0m
+[0m[ INFO] [1747704964.582595797]:  $$ no planning[0m
+[0m[ INFO] [1747704967.632560496]:  $$ no planning[0m
+[0m[ INFO] [1747704970.682582433]:  $$ no planning[0m
+[0m[ INFO] [1747704973.732560862]:  $$ no planning[0m
+[0m[ INFO] [1747704976.782585949]:  $$ no planning[0m
+[0m[ INFO] [1747704979.832558597]:  $$ no planning[0m
+[0m[ INFO] [1747704982.882583886]:  $$ no planning[0m
+[0m[ INFO] [1747704985.932553328]:  $$ no planning[0m
+[0m[ INFO] [1747704988.982588836]:  $$ no planning[0m
+[0m[ INFO] [1747704992.032554598]:  $$ no planning[0m
+[0m[ INFO] [1747704995.082578837]:  $$ no planning[0m
+[0m[ INFO] [1747704998.132567696]:  $$ no planning[0m
+[0m[ INFO] [1747705001.182598444]:  $$ no planning[0m
+[0m[ INFO] [1747705004.232558097]:  $$ no planning[0m
+[0m[ INFO] [1747705007.282601181]:  $$ no planning[0m
+[0m[ INFO] [1747705010.332554887]:  $$ no planning[0m
+[0m[ INFO] [1747705013.382588482]:  $$ no planning[0m
+[0m[ INFO] [1747705016.432559499]:  $$ no planning[0m
+[0m[ INFO] [1747705019.482594825]:  $$ no planning[0m
+[0m[ INFO] [1747705022.532559299]:  $$ no planning[0m
+[0m[ INFO] [1747705025.582598933]:  $$ no planning[0m
+[0m[ INFO] [1747705028.632559777]:  $$ no planning[0m
+[0m[ INFO] [1747705031.682581959]:  $$ no planning[0m
+[0m[ INFO] [1747705034.732563748]:  $$ no planning[0m
+[0m[ INFO] [1747705037.782584231]:  $$ no planning[0m
+[0m[ INFO] [1747705040.832553122]:  $$ no planning[0m
+[0m[ INFO] [1747705043.882579044]:  $$ no planning[0m
+[0m[ INFO] [1747705046.932560234]:  $$ no planning[0m
+[0m[ INFO] [1747705049.982584825]:  $$ no planning[0m
+[0m[ INFO] [1747705053.032555480]:  $$ no planning[0m
+[0m[ INFO] [1747705056.082596834]:  $$ no planning[0m
+[0m[ INFO] [1747705059.132554277]:  $$ no planning[0m
+[0m[ INFO] [1747705062.182607010]:  $$ no planning[0m
+[0m[ INFO] [1747705065.232561571]:  $$ no planning[0m
+[0m[ INFO] [1747705068.282597198]:  $$ no planning[0m
+[0m[ INFO] [1747705071.332560509]:  $$ no planning[0m
+[0m[ INFO] [1747705074.382597183]:  $$ no planning[0m
+[0m[ INFO] [1747705077.432564875]:  $$ no planning[0m
+[0m[ INFO] [1747705080.482591160]:  $$ no planning[0m
+[0m[ INFO] [1747705083.532564518]:  $$ no planning[0m
+[0m[ INFO] [1747705086.582589029]:  $$ no planning[0m
+[0m[ INFO] [1747705089.632555464]:  $$ no planning[0m
+[0m[ INFO] [1747705092.682581872]:  $$ no planning[0m
+[0m[ INFO] [1747705095.732562283]:  $$ no planning[0m
+[0m[ INFO] [1747705098.782584648]:  $$ no planning[0m
+[0m[ INFO] [1747705101.832562302]:  $$ no planning[0m
+[0m[ INFO] [1747705104.882579672]:  $$ no planning[0m
+[0m[ INFO] [1747705107.932554065]:  $$ no planning[0m
+[0m[ INFO] [1747705110.982579081]:  $$ no planning[0m
+[0m[ INFO] [1747705114.032561215]:  $$ no planning[0m
+[0m[ INFO] [1747705117.082604506]:  $$ no planning[0m
+[0m[ INFO] [1747705120.132557557]:  $$ no planning[0m
+[0m[ INFO] [1747705123.182588394]:  $$ no planning[0m
+[0m[ INFO] [1747705126.232558173]:  $$ no planning[0m
+[0m[ INFO] [1747705129.282583307]:  $$ no planning[0m
+[0m[ INFO] [1747705132.332567097]:  $$ no planning[0m
+[0m[ INFO] [1747705135.382600231]:  $$ no planning[0m
+[0m[ INFO] [1747705138.432554448]:  $$ no planning[0m
+[0m[ INFO] [1747705141.482598619]:  $$ no planning[0m
+[0m[ INFO] [1747705144.532564275]:  $$ no planning[0m
+[0m[ INFO] [1747705147.582602304]:  $$ no planning[0m
+[0m[ INFO] [1747705150.632554650]:  $$ no planning[0m
+[0m[ INFO] [1747705153.682596707]:  $$ no planning[0m
+[0m[ INFO] [1747705156.732562926]:  $$ no planning[0m
+[0m[ INFO] [1747705159.782594642]:  $$ no planning[0m
+[0m[ INFO] [1747705162.832557807]:  $$ no planning[0m
+[0m[ INFO] [1747705165.882595968]:  $$ no planning[0m
+[0m[ INFO] [1747705168.932558947]:  $$ no planning[0m
+[0m[ INFO] [1747705171.982583660]:  $$ no planning[0m
+[0m[ INFO] [1747705175.032566987]:  $$ no plann[33m[ WARN] [1747705175.037144655]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705178.086581296]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705181.136311976]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705184.186359575]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705187.237064763]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705190.286366257]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705193.336275161]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705196.386216704]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705199.437191462]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705202.486211528]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705205.537407598]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705208.587674123]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705211.636335813]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705214.686941689]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705217.736383934]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705220.787775250]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705223.836212875]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705226.886263481]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705229.937018365]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705232.986300817]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705236.037086882]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705239.086660583]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705242.136969342]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705245.186254274]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705248.237075876]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705251.286776681]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705254.337102496]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705257.386191857]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705260.436448419]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705263.486961958]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705266.537056528]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705269.586588695]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705272.636415512]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705275.686200856]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705278.736402057]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705281.786248962]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705284.836904276]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705287.887261765]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705290.936493859]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705293.986259426]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705297.036819577]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705300.086842030]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705303.137407424]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705306.186315691]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705309.237335929]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705312.286778807]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705315.337180421]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705318.386379066]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705321.436894142]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705324.486706858]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705327.536452721]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705330.586472655]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705333.636354396]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705336.686313409]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705339.737256563]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705342.786266565]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705345.836241135]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705348.886313506]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705351.936574558]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705354.986314186]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705358.037068818]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705361.086166995]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705364.136350092]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705367.186146264]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705370.236078699]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705373.286330190]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705376.336801617]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705379.386456005]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705382.436913036]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705385.486738756]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705388.537018304]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705391.586807397]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705394.636559928]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705397.686134294]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+ing[0m
+[0m[ INFO] [1747705178.082577949]:  $$ no planning[0m
+[0m[ INFO] [1747705181.132558140]:  $$ no planning[0m
+[0m[ INFO] [1747705184.182603658]:  $$ no planning[0m
+[0m[ INFO] [1747705187.232561081]:  $$ no planning[0m
+[0m[ INFO] [1747705190.282597988]:  $$ no planning[0m
+[0m[ INFO] [1747705193.332559629]:  $$ no planning[0m
+[0m[ INFO] [1747705196.382595672]:  $$ no planning[0m
+[0m[ INFO] [1747705199.432559136]:  $$ no planning[0m
+[0m[ INFO] [1747705202.482609120]:  $$ no planning[0m
+[0m[ INFO] [1747705205.532551329]:  $$ no planning[0m
+[0m[ INFO] [1747705208.582596984]:  $$ no planning[0m
+[0m[ INFO] [1747705211.632555288]:  $$ no planning[0m
+[0m[ INFO] [1747705214.682582171]:  $$ no planning[0m
+[0m[ INFO] [1747705217.732558896]:  $$ no planning[0m
+[0m[ INFO] [1747705220.782589340]:  $$ no planning[0m
+[0m[ INFO] [1747705223.832552961]:  $$ no planning[0m
+[0m[ INFO] [1747705226.882579214]:  $$ no planning[0m
+[0m[ INFO] [1747705229.932558876]:  $$ no planning[0m
+[0m[ INFO] [1747705232.982593254]:  $$ no planning[0m
+[0m[ INFO] [1747705236.032556543]:  $$ no planning[0m
+[0m[ INFO] [1747705239.082592242]:  $$ no planning[0m
+[0m[ INFO] [1747705242.132560095]:  $$ no planning[0m
+[0m[ INFO] [1747705245.182580408]:  $$ no planning[0m
+[0m[ INFO] [1747705248.232553825]:  $$ no planning[0m
+[0m[ INFO] [1747705251.282586608]:  $$ no planning[0m
+[0m[ INFO] [1747705254.332555740]:  $$ no planning[0m
+[0m[ INFO] [1747705257.382594953]:  $$ no planning[0m
+[0m[ INFO] [1747705260.432559795]:  $$ no planning[0m
+[0m[ INFO] [1747705263.482595432]:  $$ no planning[0m
+[0m[ INFO] [1747705266.532562222]:  $$ no planning[0m
+[0m[ INFO] [1747705269.582582979]:  $$ no planning[0m
+[0m[ INFO] [1747705272.632555656]:  $$ no planning[0m
+[0m[ INFO] [1747705275.682592816]:  $$ no planning[0m
+[0m[ INFO] [1747705278.732558842]:  $$ no planning[0m
+[0m[ INFO] [1747705281.782600409]:  $$ no planning[0m
+[0m[ INFO] [1747705284.832559319]:  $$ no planning[0m
+[0m[ INFO] [1747705287.882580285]:  $$ no planning[0m
+[0m[ INFO] [1747705290.932563986]:  $$ no planning[0m
+[0m[ INFO] [1747705293.982606904]:  $$ no planning[0m
+[0m[ INFO] [1747705297.032562430]:  $$ no planning[0m
+[0m[ INFO] [1747705300.082583315]:  $$ no planning[0m
+[0m[ INFO] [1747705303.132555219]:  $$ no planning[0m
+[0m[ INFO] [1747705306.182588927]:  $$ no planning[0m
+[0m[ INFO] [1747705309.232555215]:  $$ no planning[0m
+[0m[ INFO] [1747705312.282609726]:  $$ no planning[0m
+[0m[ INFO] [1747705315.332560033]:  $$ no planning[0m
+[0m[ INFO] [1747705318.382593837]:  $$ no planning[0m
+[0m[ INFO] [1747705321.432556993]:  $$ no planning[0m
+[0m[ INFO] [1747705324.482591379]:  $$ no planning[0m
+[0m[ INFO] [1747705327.532556064]:  $$ no planning[0m
+[0m[ INFO] [1747705330.582586047]:  $$ no planning[0m
+[0m[ INFO] [1747705333.632557486]:  $$ no planning[0m
+[0m[ INFO] [1747705336.682602101]:  $$ no planning[0m
+[0m[ INFO] [1747705339.732561867]:  $$ no planning[0m
+[0m[ INFO] [1747705342.782595772]:  $$ no planning[0m
+[0m[ INFO] [1747705345.832567141]:  $$ no planning[0m
+[0m[ INFO] [1747705348.882587062]:  $$ no planning[0m
+[0m[ INFO] [1747705351.932564555]:  $$ no planning[0m
+[0m[ INFO] [1747705354.982590206]:  $$ no planning[0m
+[0m[ INFO] [1747705358.032558288]:  $$ no planning[0m
+[0m[ INFO] [1747705361.082599820]:  $$ no planning[0m
+[0m[ INFO] [1747705364.132561854]:  $$ no planning[0m
+[0m[ INFO] [1747705367.182597009]:  $$ no planning[0m
+[0m[ INFO] [1747705370.232546629]:  $$ no planning[0m
+[0m[ INFO] [1747705373.282587042]:  $$ no planning[0m
+[0m[ INFO] [1747705376.332556375]:  $$ no planning[0m
+[0m[ INFO] [1747705379.382581685]:  $$ no planning[0m
+[0m[ INFO] [1747705382.432568015]:  $$ no planning[0m
+[0m[ INFO] [1747705385.482588333]:  $$ no planning[0m
+[0m[ INFO] [1747705388.532558624]:  $$ no planning[0m
+[0m[ INFO] [1747705391.582584299]:  $$ no planning[0m
+[0m[ INFO] [1747705394.632557157]:  $$ no planning[0m
+[0m[ INFO] [1747705397.682591344]:  $$ no planning[0m
+[33m[ WARN] [1747705400.736387578]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705403.786415896]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705406.837096077]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705409.887808539]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705412.936285253]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705415.987767742]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705419.037002793]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705422.086588919]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705425.136359206]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705428.186306489]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705431.236804988]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705434.286517553]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705437.336390699]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705440.387036863]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705443.436938017]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705446.486446941]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705449.536145247]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705452.586327366]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705455.636864758]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705458.686183477]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705461.737426878]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705464.786085713]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705467.837041530]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705470.886191266]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705473.936209805]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705476.986243925]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705480.036355438]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705483.086414939]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705486.136305351]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705489.186263642]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705492.237387655]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705495.286887218]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705498.336444885]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705501.386651613]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705504.437123236]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705507.486213983]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705510.536722993]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705513.586119131]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705516.636748388]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705519.686205715]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705522.736729101]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705525.786285374]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705528.837205213]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705531.886202536]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705534.936374011]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705537.986319241]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705541.036970907]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705544.086180603]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705547.137141645]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705550.186500553]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705553.237337348]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705556.286337147]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705559.336663584]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705562.386216326]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705565.437171192]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705568.486455853]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705571.536349845]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705574.586824264]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705577.636317103]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705580.686373493]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705583.736320683]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705586.786349465]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705589.836807682]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705592.886748118]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705595.937561240]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705598.986194760]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705602.036430743]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705605.087021447]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705608.137134734]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705611.186572570]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705614.236743707]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705617.287652283]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705620.336362219]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[0m[ INFO] [1747705400.732561132]:  $$ no planning[0m
+[0m[ INFO] [1747705403.782610762]:  $$ no planning[0m
+[0m[ INFO] [1747705406.832557578]:  $$ no planning[0m
+[0m[ INFO] [1747705409.882582948]:  $$ no planning[0m
+[0m[ INFO] [1747705412.932560474]:  $$ no planning[0m
+[0m[ INFO] [1747705415.982599913]:  $$ no planning[0m
+[0m[ INFO] [1747705419.032551401]:  $$ no planning[0m
+[0m[ INFO] [1747705422.082612997]:  $$ no planning[0m
+[0m[ INFO] [1747705425.132564505]:  $$ no planning[0m
+[0m[ INFO] [1747705428.182569837]:  $$ no planning[0m
+[0m[ INFO] [1747705431.232558017]:  $$ no planning[0m
+[0m[ INFO] [1747705434.282572479]:  $$ no planning[0m
+[0m[ INFO] [1747705437.332558781]:  $$ no planning[0m
+[0m[ INFO] [1747705440.382606367]:  $$ no planning[0m
+[0m[ INFO] [1747705443.432559202]:  $$ no planning[0m
+[0m[ INFO] [1747705446.482580557]:  $$ no planning[0m
+[0m[ INFO] [1747705449.532554070]:  $$ no planning[0m
+[0m[ INFO] [1747705452.582587834]:  $$ no planning[0m
+[0m[ INFO] [1747705455.632550101]:  $$ no planning[0m
+[0m[ INFO] [1747705458.682603725]:  $$ no planning[0m
+[0m[ INFO] [1747705461.732555184]:  $$ no planning[0m
+[0m[ INFO] [1747705464.782590028]:  $$ no planning[0m
+[0m[ INFO] [1747705467.832562616]:  $$ no planning[0m
+[0m[ INFO] [1747705470.882601658]:  $$ no planning[0m
+[0m[ INFO] [1747705473.932555075]:  $$ no planning[0m
+[0m[ INFO] [1747705476.982599723]:  $$ no planning[0m
+[0m[ INFO] [1747705480.032559393]:  $$ no planning[0m
+[0m[ INFO] [1747705483.082581168]:  $$ no planning[0m
+[0m[ INFO] [1747705486.132549946]:  $$ no planning[0m
+[0m[ INFO] [1747705489.182607888]:  $$ no planning[0m
+[0m[ INFO] [1747705492.232561019]:  $$ no planning[0m
+[0m[ INFO] [1747705495.282603256]:  $$ no planning[0m
+[0m[ INFO] [1747705498.332560198]:  $$ no planning[0m
+[0m[ INFO] [1747705501.382592774]:  $$ no planning[0m
+[0m[ INFO] [1747705504.432558431]:  $$ no planning[0m
+[0m[ INFO] [1747705507.482584790]:  $$ no planning[0m
+[0m[ INFO] [1747705510.532557433]:  $$ no planning[0m
+[0m[ INFO] [1747705513.582610742]:  $$ no planning[0m
+[0m[ INFO] [1747705516.632561418]:  $$ no planning[0m
+[0m[ INFO] [1747705519.682592811]:  $$ no planning[0m
+[0m[ INFO] [1747705522.732560085]:  $$ no planning[0m
+[0m[ INFO] [1747705525.782598003]:  $$ no planning[0m
+[0m[ INFO] [1747705528.832560695]:  $$ no planning[0m
+[0m[ INFO] [1747705531.882592928]:  $$ no planning[0m
+[0m[ INFO] [1747705534.932559693]:  $$ no planning[0m
+[0m[ INFO] [1747705537.982580381]:  $$ no planning[0m
+[0m[ INFO] [1747705541.032553212]:  $$ no planning[0m
+[0m[ INFO] [1747705544.082609108]:  $$ no planning[0m
+[0m[ INFO] [1747705547.132559529]:  $$ no planning[0m
+[0m[ INFO] [1747705550.182595896]:  $$ no planning[0m
+[0m[ INFO] [1747705553.232554553]:  $$ no planning[0m
+[0m[ INFO] [1747705556.282591311]:  $$ no planning[0m
+[0m[ INFO] [1747705559.332549642]:  $$ no planning[0m
+[0m[ INFO] [1747705562.382603326]:  $$ no planning[0m
+[0m[ INFO] [1747705565.432555123]:  $$ no planning[0m
+[0m[ INFO] [1747705568.482579710]:  $$ no planning[0m
+[0m[ INFO] [1747705571.532550823]:  $$ no planning[0m
+[0m[ INFO] [1747705574.582588046]:  $$ no planning[0m
+[0m[ INFO] [1747705577.632553154]:  $$ no planning[0m
+[0m[ INFO] [1747705580.682583912]:  $$ no planning[0m
+[0m[ INFO] [1747705583.732558590]:  $$ no planning[0m
+[0m[ INFO] [1747705586.782580780]:  $$ no planning[0m
+[0m[ INFO] [1747705589.832551080]:  $$ no planning[0m
+[0m[ INFO] [1747705592.882605599]:  $$ no planning[0m
+[0m[ INFO] [1747705595.932560072]:  $$ no planning[0m
+[0m[ INFO] [1747705598.982604833]:  $$ no planning[0m
+[0m[ INFO] [1747705602.032559368]:  $$ no planning[0m
+[0m[ INFO] [1747705605.082590663]:  $$ no planning[0m
+[0m[ INFO] [1747705608.132565930]:  $$ no planning[0m
+[0m[ INFO] [1747705611.182606984]:  $$ no planning[0m
+[0m[ INFO] [1747705614.232546785]:  $$ no planning[0m
+[0m[ INFO] [1747705617.282605993]:  $$ no planning[0m
+[0m[ INFO] [1747705620.332558877]:  $$ no planning[0m
+[0m[ IN[33m[ WARN] [1747705623.386752377]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705626.437010749]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705629.486503857]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705632.537540349]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705635.587837412]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705638.636231291]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705641.686370826]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705644.736506241]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705647.786201225]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705650.836297695]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705653.887466502]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705656.936173193]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705659.987467261]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705663.036963075]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705666.086356121]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705669.137914158]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705672.187210875]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705675.237095833]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705678.286349559]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705681.336785045]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705684.387682179]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705687.436764709]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705690.486500324]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705693.537461563]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705696.586441421]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705699.636438708]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705702.686389416]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705705.736819442]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705708.786664829]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705711.836240870]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705714.886243759]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705717.936778641]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705720.987724310]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705724.036648269]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705727.086329076]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705730.137032504]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705733.186193410]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705736.236772660]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705739.286364937]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705742.336813076]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705745.386521544]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705748.437206886]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705751.486477416]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705754.536933853]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705757.586480326]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705760.636558788]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705763.687706898]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705766.736324819]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705769.786393231]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705772.837027955]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705775.886823107]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705778.936482549]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705781.987693726]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705785.037248690]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705788.086205203]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705791.136553290]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705794.187790652]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705797.236382109]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705800.286472572]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705803.336863659]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705806.386237766]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705809.436696750]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705812.486162963]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705815.536343324]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705818.586302631]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705821.636284170]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705824.686708403]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705827.736231198]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705830.786339589]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705833.836793288]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705836.886257330]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705839.936645839]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705842.987812948]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+FO] [1747705623.382596834]:  $$ no planning[0m
+[0m[ INFO] [1747705626.432560413]:  $$ no planning[0m
+[0m[ INFO] [1747705629.482593600]:  $$ no planning[0m
+[0m[ INFO] [1747705632.532549965]:  $$ no planning[0m
+[0m[ INFO] [1747705635.582575309]:  $$ no planning[0m
+[0m[ INFO] [1747705638.632543409]:  $$ no planning[0m
+[0m[ INFO] [1747705641.682605214]:  $$ no planning[0m
+[0m[ INFO] [1747705644.732566416]:  $$ no planning[0m
+[0m[ INFO] [1747705647.782600482]:  $$ no planning[0m
+[0m[ INFO] [1747705650.832566644]:  $$ no planning[0m
+[0m[ INFO] [1747705653.882584025]:  $$ no planning[0m
+[0m[ INFO] [1747705656.932564289]:  $$ no planning[0m
+[0m[ INFO] [1747705659.982599153]:  $$ no planning[0m
+[0m[ INFO] [1747705663.032558854]:  $$ no planning[0m
+[0m[ INFO] [1747705666.082586220]:  $$ no planning[0m
+[0m[ INFO] [1747705669.132561364]:  $$ no planning[0m
+[0m[ INFO] [1747705672.182591510]:  $$ no planning[0m
+[0m[ INFO] [1747705675.232560726]:  $$ no planning[0m
+[0m[ INFO] [1747705678.282593514]:  $$ no planning[0m
+[0m[ INFO] [1747705681.332562972]:  $$ no planning[0m
+[0m[ INFO] [1747705684.382585712]:  $$ no planning[0m
+[0m[ INFO] [1747705687.432550542]:  $$ no planning[0m
+[0m[ INFO] [1747705690.482600629]:  $$ no planning[0m
+[0m[ INFO] [1747705693.532554926]:  $$ no planning[0m
+[0m[ INFO] [1747705696.582601631]:  $$ no planning[0m
+[0m[ INFO] [1747705699.632563236]:  $$ no planning[0m
+[0m[ INFO] [1747705702.682582363]:  $$ no planning[0m
+[0m[ INFO] [1747705705.732557815]:  $$ no planning[0m
+[0m[ INFO] [1747705708.782595079]:  $$ no planning[0m
+[0m[ INFO] [1747705711.832553915]:  $$ no planning[0m
+[0m[ INFO] [1747705714.882604588]:  $$ no planning[0m
+[0m[ INFO] [1747705717.932559415]:  $$ no planning[0m
+[0m[ INFO] [1747705720.982591873]:  $$ no planning[0m
+[0m[ INFO] [1747705724.032561271]:  $$ no planning[0m
+[0m[ INFO] [1747705727.082596329]:  $$ no planning[0m
+[0m[ INFO] [1747705730.132564279]:  $$ no planning[0m
+[0m[ INFO] [1747705733.182589241]:  $$ no planning[0m
+[0m[ INFO] [1747705736.232558832]:  $$ no planning[0m
+[0m[ INFO] [1747705739.282588160]:  $$ no planning[0m
+[0m[ INFO] [1747705742.332556793]:  $$ no planning[0m
+[0m[ INFO] [1747705745.382593719]:  $$ no planning[0m
+[0m[ INFO] [1747705748.432556383]:  $$ no planning[0m
+[0m[ INFO] [1747705751.482590392]:  $$ no planning[0m
+[0m[ INFO] [1747705754.532556095]:  $$ no planning[0m
+[0m[ INFO] [1747705757.582597078]:  $$ no planning[0m
+[0m[ INFO] [1747705760.632558384]:  $$ no planning[0m
+[0m[ INFO] [1747705763.682583390]:  $$ no planning[0m
+[0m[ INFO] [1747705766.732560262]:  $$ no planning[0m
+[0m[ INFO] [1747705769.782587745]:  $$ no planning[0m
+[0m[ INFO] [1747705772.832555858]:  $$ no planning[0m
+[0m[ INFO] [1747705775.882589448]:  $$ no planning[0m
+[0m[ INFO] [1747705778.932555555]:  $$ no planning[0m
+[0m[ INFO] [1747705781.982592233]:  $$ no planning[0m
+[0m[ INFO] [1747705785.032557931]:  $$ no planning[0m
+[0m[ INFO] [1747705788.082589739]:  $$ no planning[0m
+[0m[ INFO] [1747705791.132771549]:  $$ no planning[0m
+[0m[ INFO] [1747705794.182591303]:  $$ no planning[0m
+[0m[ INFO] [1747705797.232570192]:  $$ no planning[0m
+[0m[ INFO] [1747705800.282607692]:  $$ no planning[0m
+[0m[ INFO] [1747705803.332558892]:  $$ no planning[0m
+[0m[ INFO] [1747705806.382597533]:  $$ no planning[0m
+[0m[ INFO] [1747705809.432555574]:  $$ no planning[0m
+[0m[ INFO] [1747705812.482588684]:  $$ no planning[0m
+[0m[ INFO] [1747705815.532554798]:  $$ no planning[0m
+[0m[ INFO] [1747705818.582589403]:  $$ no planning[0m
+[0m[ INFO] [1747705821.632555008]:  $$ no planning[0m
+[0m[ INFO] [1747705824.682594972]:  $$ no planning[0m
+[0m[ INFO] [1747705827.732555732]:  $$ no planning[0m
+[0m[ INFO] [1747705830.782601209]:  $$ no planning[0m
+[0m[ INFO] [1747705833.832559631]:  $$ no planning[0m
+[0m[ INFO] [1747705836.882593320]:  $$ no planning[0m
+[0m[ INFO] [1747705839.932550809]:  $$ no planning[0m
+[0m[ INFO] [1747705842.982577117]:  $$ no planning[0m
+[0m[ INFO] [174[33m[ WARN] [1747705846.036432848]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705849.086285101]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705852.137155123]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705855.186298567]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705858.237177400]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705861.286776086]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705864.337049158]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705867.386228592]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705870.436382706]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705873.486634613]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705876.536880405]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705879.586556663]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705882.636440887]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705885.687932328]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705888.737346477]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705891.786542661]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705894.837141359]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705897.886124949]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705900.937138508]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705903.986210953]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705907.036319561]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705910.087877919]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705913.137056203]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705916.186563491]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705919.236896679]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705922.286384050]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705925.337178823]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705928.386243331]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705931.436891470]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705934.486230848]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705937.536610660]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705940.586193958]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705943.636962107]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705946.686476450]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705949.736377761]: Restart success![0m
+killing /obstacle_avoidance
+killed
+[33m[ WARN] [1747705952.786615597]: Restart success![0m
+ERROR: Unknown node(s):
+ * /obstacle_avoidance
+[33m[ WARN] [1747705955.837190784]: Restart success![0m
+killing /obstacle_avoidance
+killed

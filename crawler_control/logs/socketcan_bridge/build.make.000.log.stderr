@@ -1,0 +1,3 @@
+/usr/bin/ld: warning: libboost_thread.so.1.72.0, needed by /home/nvidia/crawler_control/devel/.private/socketcan_bridge/lib/libtopic_to_socketcan.so, may conflict with libboost_thread.so.1.71.0
+/usr/bin/ld: warning: libboost_thread.so.1.72.0, needed by /home/nvidia/crawler_control/devel/.private/socketcan_bridge/lib/libtopic_to_socketcan.so, may conflict with libboost_thread.so.1.71.0
+/usr/bin/ld: warning: libboost_thread.so.1.72.0, needed by /home/nvidia/crawler_control/devel/.private/socketcan_bridge/lib/libsocketcan_to_topic.so, may conflict with libboost_thread.so.1.71.0

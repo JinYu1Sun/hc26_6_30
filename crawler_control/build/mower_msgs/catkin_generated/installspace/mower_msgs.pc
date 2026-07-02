@@ -1,0 +1,8 @@
+prefix=/home/nvidia/crawler_control/install
+
+Name: mower_msgs
+Description: Description of mower_msgs
+Version: 0.0.0
+Cflags: -I${prefix}/include
+Libs: -L${prefix}/lib 
+Requires: 

@@ -1,0 +1,25 @@
+[35m[1mScanning dependencies of target socketcan_interface_string[0m
+[35m[1mScanning dependencies of target socketcan_interface_plugin[0m
+[ 12%] [32mBuilding CXX object CMakeFiles/socketcan_interface_plugin.dir/src/socketcan_interface_plugin.cpp.o[0m
+[ 25%] [32mBuilding CXX object CMakeFiles/socketcan_interface_string.dir/src/string.cpp.o[0m
+[ 37%] [32m[1mLinking CXX shared library /home/nvidia/crawler_control/devel/.private/socketcan_interface/lib/libsocketcan_interface_string.so[0m
+[ 37%] Built target socketcan_interface_string
+[35m[1mScanning dependencies of target socketcan_bcm[0m
+[35m[1mScanning dependencies of target socketcan_dump[0m
+[ 50%] [32mBuilding CXX object CMakeFiles/socketcan_bcm.dir/src/canbcm.cpp.o[0m
+[ 62%] [32mBuilding CXX object CMakeFiles/socketcan_dump.dir/src/candump.cpp.o[0m
+In file included from [01m[K/home/nvidia/crawler_control/src/socketcan_interface/src/canbcm.cpp:1[m[K:
+[01m[K/home/nvidia/crawler_control/src/socketcan_interface/include/socketcan_interface/bcm.h:[m[K In member function ‘[01m[Kvoid can::BCMsocket::Message::setHeader(can::Header)[m[K’:
+[01m[K/home/nvidia/crawler_control/src/socketcan_interface/include/socketcan_interface/bcm.h:41:14:[m[K [01;36m[Knote: [m[Kparameter passing for argument of type ‘[01m[Kcan::Header[m[K’ changed in GCC 9.1
+   41 |         void [01;36m[KsetHeader[m[K(Header header){
+      |              [01;36m[K^~~~~~~~~[m[K
+[01m[K/home/nvidia/crawler_control/src/socketcan_interface/include/socketcan_interface/bcm.h:[m[K In member function ‘[01m[Kbool can::BCMsocket::startTX(DurationType, can::Header, size_t, can::Frame*) [with DurationType = boost::chrono::duration<double>][m[K’:
+[01m[K/home/nvidia/crawler_control/src/socketcan_interface/include/socketcan_interface/bcm.h:81:42:[m[K [01;36m[Knote: [m[Kparameter passing for argument of type ‘[01m[Kcan::Header[m[K’ changed in GCC 9.1
+   81 |     template<typename DurationType> bool [01;36m[KstartTX[m[K(DurationType period, Header header, size_t num, Frame *frames) {
+      |                                          [01;36m[K^~~~~~~[m[K
+[ 75%] [32m[1mLinking CXX executable /home/nvidia/crawler_control/devel/.private/socketcan_interface/lib/socketcan_interface/socketcan_bcm[0m
+[ 75%] Built target socketcan_bcm
+[ 87%] [32m[1mLinking CXX shared library /home/nvidia/crawler_control/devel/.private/socketcan_interface/lib/libsocketcan_interface_plugin.so[0m
+[ 87%] Built target socketcan_interface_plugin
+[100%] [32m[1mLinking CXX executable /home/nvidia/crawler_control/devel/.private/socketcan_interface/lib/socketcan_interface/socketcan_dump[0m
+[100%] Built target socketcan_dump

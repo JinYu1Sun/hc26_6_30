@@ -1,0 +1,21 @@
+<launch>
+  <!-- 使用实时时间 -->
+  <param name="use_sim_time" value="false" />
+
+  <!-- 启动 A* 避障节点 -->
+  <node pkg="obstacle_avoidance" type="obstacle_avoidance_node" name="obstacle_avoidance" output="screen">
+    <param name="resolution" value="0.15" />
+    <param name="safety_distance" value="0.0" />
+    <param name="inflation_distance" value="0.7" />
+    <param name="planning_distance_threshold" value="1.5" />
+    <param name="slowdown_threshold" value="3.25" />
+    <param name="step_size" value="0.25" />
+    <param name="avoidance_completion_dis_threshold" value="0.1" />
+    <param name="avoidance_completion_ang_threshold" value="0.2" />
+    <param name="boundary_check_enabled" value="true" />
+    <param name="boundary_shrink_distance" value="0.0" />
+    <param name="required_emergency_frames" value="5" />
+    <!-- 若需使用地图文件，请取消以下一行注释并指定路径 -->
+    <!-- <param name="map_file" value="$(find obstacle_avoidance)/data/complex_map_boundary.txt" /> -->
+  </node>
+</launch>

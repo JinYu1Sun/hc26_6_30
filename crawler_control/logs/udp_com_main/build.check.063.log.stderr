@@ -1,0 +1,6 @@
+[31m[1mCMake Error[0m at /home/nvidia/crawler_control/src/udp_com_main/CMakeLists.txt:259 (target_link_libraries):
+  Cannot specify link libraries for target "udp_com_main" which is not built
+  by this project.
+
+
+make: *** [Makefile:644: cmake_check_build_system] Error 1

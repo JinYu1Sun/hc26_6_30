@@ -1,0 +1,8 @@
+Header header
+bool lidar2BaselinkStatus
+bool lidar2CameraStatus
+bool cameraIntrinsicStatus
+bool distcoeffStatus
+bool pointcloudStatus
+bool poseStatus
+bool yoloStatus
