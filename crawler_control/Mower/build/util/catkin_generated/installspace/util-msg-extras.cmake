@@ -1,0 +1,2 @@
+set(util_MESSAGE_FILES "msg/GpsPosition.msg;msg/VehicleInfoTest.msg;msg/moving_object.msg;msg/moving_objects.msg;msg/LocalPath.msg;msg/MapPath.msg;msg/PlanningMapPoint.msg;msg/PlanningMapPointList.msg;msg/PolygonWithHoles.msg;msg/PolygonWithHolesStamped.msg;msg/LocalPose.msg;msg/VehicleControl.msg;msg/Obstacle.msg;msg/ObstacleList.msg;msg/VehicleBrakeCmd.msg;msg/Vslam.msg;msg/Position.msg;msg/PerceptionStatus.msg;msg/DiagnosticResult.msg")
+set(util_SERVICE_FILES "srv/Intervene.srv")

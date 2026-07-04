@@ -1,0 +1,2 @@
+[33m[ WARN] [1782787124.124789356]: No polygon file specified to parameter server (parameter "polygon"). Expecting polygon from service call.[0m
+[33m[ WARN] [1782787124.151556639]: Cannot send visualization because altitude not set.[0m

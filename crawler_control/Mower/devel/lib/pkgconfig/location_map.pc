@@ -1,0 +1,8 @@
+prefix=/home/nvidia/Mower/devel
+
+Name: location_map
+Description: Description of location_map
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

@@ -1,0 +1,11 @@
+Header header
+uint8 INS_GpsFlag_Pos
+uint8 INS_NumSV
+uint8 INS_GpsFlag_Heading
+uint8 INS_Gps_Age
+uint8 INS_Car_Status
+uint8 INS_Status
+float64 INS_Std_Lat
+float64 INS_Std_Lon
+float64 INS_Std_LocatHeight
+float64 INS_Std_Heading
