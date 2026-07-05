@@ -453,6 +453,36 @@ std_msgs_generate_messages_py/fast:
 .PHONY : std_msgs_generate_messages_py/fast
 
 # Convenience name for target.
+planning/read_waypoints/CMakeFiles/rosgraph_msgs_generate_messages_cpp.dir/rule:
+	cd /home/nvidia/Mower/build && $(MAKE) -f CMakeFiles/Makefile2 planning/read_waypoints/CMakeFiles/rosgraph_msgs_generate_messages_cpp.dir/rule
+.PHONY : planning/read_waypoints/CMakeFiles/rosgraph_msgs_generate_messages_cpp.dir/rule
+
+# Convenience name for target.
+rosgraph_msgs_generate_messages_cpp: planning/read_waypoints/CMakeFiles/rosgraph_msgs_generate_messages_cpp.dir/rule
+
+.PHONY : rosgraph_msgs_generate_messages_cpp
+
+# fast build rule for target.
+rosgraph_msgs_generate_messages_cpp/fast:
+	cd /home/nvidia/Mower/build && $(MAKE) -f planning/read_waypoints/CMakeFiles/rosgraph_msgs_generate_messages_cpp.dir/build.make planning/read_waypoints/CMakeFiles/rosgraph_msgs_generate_messages_cpp.dir/build
+.PHONY : rosgraph_msgs_generate_messages_cpp/fast
+
+# Convenience name for target.
+planning/read_waypoints/CMakeFiles/read_waypoints_generate_messages.dir/rule:
+	cd /home/nvidia/Mower/build && $(MAKE) -f CMakeFiles/Makefile2 planning/read_waypoints/CMakeFiles/read_waypoints_generate_messages.dir/rule
+.PHONY : planning/read_waypoints/CMakeFiles/read_waypoints_generate_messages.dir/rule
+
+# Convenience name for target.
+read_waypoints_generate_messages: planning/read_waypoints/CMakeFiles/read_waypoints_generate_messages.dir/rule
+
+.PHONY : read_waypoints_generate_messages
+
+# fast build rule for target.
+read_waypoints_generate_messages/fast:
+	cd /home/nvidia/Mower/build && $(MAKE) -f planning/read_waypoints/CMakeFiles/read_waypoints_generate_messages.dir/build.make planning/read_waypoints/CMakeFiles/read_waypoints_generate_messages.dir/build
+.PHONY : read_waypoints_generate_messages/fast
+
+# Convenience name for target.
 planning/read_waypoints/CMakeFiles/read_waypoints.dir/rule:
 	cd /home/nvidia/Mower/build && $(MAKE) -f CMakeFiles/Makefile2 planning/read_waypoints/CMakeFiles/read_waypoints.dir/rule
 .PHONY : planning/read_waypoints/CMakeFiles/read_waypoints.dir/rule
@@ -483,6 +513,36 @@ _read_waypoints_generate_messages_check_deps_LocalPath/fast:
 .PHONY : _read_waypoints_generate_messages_check_deps_LocalPath/fast
 
 # Convenience name for target.
+planning/read_waypoints/CMakeFiles/_read_waypoints_generate_messages_check_deps_TurnCompleted.dir/rule:
+	cd /home/nvidia/Mower/build && $(MAKE) -f CMakeFiles/Makefile2 planning/read_waypoints/CMakeFiles/_read_waypoints_generate_messages_check_deps_TurnCompleted.dir/rule
+.PHONY : planning/read_waypoints/CMakeFiles/_read_waypoints_generate_messages_check_deps_TurnCompleted.dir/rule
+
+# Convenience name for target.
+_read_waypoints_generate_messages_check_deps_TurnCompleted: planning/read_waypoints/CMakeFiles/_read_waypoints_generate_messages_check_deps_TurnCompleted.dir/rule
+
+.PHONY : _read_waypoints_generate_messages_check_deps_TurnCompleted
+
+# fast build rule for target.
+_read_waypoints_generate_messages_check_deps_TurnCompleted/fast:
+	cd /home/nvidia/Mower/build && $(MAKE) -f planning/read_waypoints/CMakeFiles/_read_waypoints_generate_messages_check_deps_TurnCompleted.dir/build.make planning/read_waypoints/CMakeFiles/_read_waypoints_generate_messages_check_deps_TurnCompleted.dir/build
+.PHONY : _read_waypoints_generate_messages_check_deps_TurnCompleted/fast
+
+# Convenience name for target.
+planning/read_waypoints/CMakeFiles/read_waypoints_genlisp.dir/rule:
+	cd /home/nvidia/Mower/build && $(MAKE) -f CMakeFiles/Makefile2 planning/read_waypoints/CMakeFiles/read_waypoints_genlisp.dir/rule
+.PHONY : planning/read_waypoints/CMakeFiles/read_waypoints_genlisp.dir/rule
+
+# Convenience name for target.
+read_waypoints_genlisp: planning/read_waypoints/CMakeFiles/read_waypoints_genlisp.dir/rule
+
+.PHONY : read_waypoints_genlisp
+
+# fast build rule for target.
+read_waypoints_genlisp/fast:
+	cd /home/nvidia/Mower/build && $(MAKE) -f planning/read_waypoints/CMakeFiles/read_waypoints_genlisp.dir/build.make planning/read_waypoints/CMakeFiles/read_waypoints_genlisp.dir/build
+.PHONY : read_waypoints_genlisp/fast
+
+# Convenience name for target.
 planning/read_waypoints/CMakeFiles/read_waypoints_generate_messages_eus.dir/rule:
 	cd /home/nvidia/Mower/build && $(MAKE) -f CMakeFiles/Makefile2 planning/read_waypoints/CMakeFiles/read_waypoints_generate_messages_eus.dir/rule
 .PHONY : planning/read_waypoints/CMakeFiles/read_waypoints_generate_messages_eus.dir/rule
@@ -511,51 +571,6 @@ read_waypoints_geneus: planning/read_waypoints/CMakeFiles/read_waypoints_geneus.
 read_waypoints_geneus/fast:
 	cd /home/nvidia/Mower/build && $(MAKE) -f planning/read_waypoints/CMakeFiles/read_waypoints_geneus.dir/build.make planning/read_waypoints/CMakeFiles/read_waypoints_geneus.dir/build
 .PHONY : read_waypoints_geneus/fast
-
-# Convenience name for target.
-planning/read_waypoints/CMakeFiles/read_waypoints_genlisp.dir/rule:
-	cd /home/nvidia/Mower/build && $(MAKE) -f CMakeFiles/Makefile2 planning/read_waypoints/CMakeFiles/read_waypoints_genlisp.dir/rule
-.PHONY : planning/read_waypoints/CMakeFiles/read_waypoints_genlisp.dir/rule
-
-# Convenience name for target.
-read_waypoints_genlisp: planning/read_waypoints/CMakeFiles/read_waypoints_genlisp.dir/rule
-
-.PHONY : read_waypoints_genlisp
-
-# fast build rule for target.
-read_waypoints_genlisp/fast:
-	cd /home/nvidia/Mower/build && $(MAKE) -f planning/read_waypoints/CMakeFiles/read_waypoints_genlisp.dir/build.make planning/read_waypoints/CMakeFiles/read_waypoints_genlisp.dir/build
-.PHONY : read_waypoints_genlisp/fast
-
-# Convenience name for target.
-planning/read_waypoints/CMakeFiles/rosgraph_msgs_generate_messages_cpp.dir/rule:
-	cd /home/nvidia/Mower/build && $(MAKE) -f CMakeFiles/Makefile2 planning/read_waypoints/CMakeFiles/rosgraph_msgs_generate_messages_cpp.dir/rule
-.PHONY : planning/read_waypoints/CMakeFiles/rosgraph_msgs_generate_messages_cpp.dir/rule
-
-# Convenience name for target.
-rosgraph_msgs_generate_messages_cpp: planning/read_waypoints/CMakeFiles/rosgraph_msgs_generate_messages_cpp.dir/rule
-
-.PHONY : rosgraph_msgs_generate_messages_cpp
-
-# fast build rule for target.
-rosgraph_msgs_generate_messages_cpp/fast:
-	cd /home/nvidia/Mower/build && $(MAKE) -f planning/read_waypoints/CMakeFiles/rosgraph_msgs_generate_messages_cpp.dir/build.make planning/read_waypoints/CMakeFiles/rosgraph_msgs_generate_messages_cpp.dir/build
-.PHONY : rosgraph_msgs_generate_messages_cpp/fast
-
-# Convenience name for target.
-planning/read_waypoints/CMakeFiles/read_waypoints_generate_messages.dir/rule:
-	cd /home/nvidia/Mower/build && $(MAKE) -f CMakeFiles/Makefile2 planning/read_waypoints/CMakeFiles/read_waypoints_generate_messages.dir/rule
-.PHONY : planning/read_waypoints/CMakeFiles/read_waypoints_generate_messages.dir/rule
-
-# Convenience name for target.
-read_waypoints_generate_messages: planning/read_waypoints/CMakeFiles/read_waypoints_generate_messages.dir/rule
-
-.PHONY : read_waypoints_generate_messages
-
-# fast build rule for target.
-read_waypoints_generate_messages/fast:
-	cd /home/nvidia/Mower/build && $(MAKE) -f planning/read_waypoints/CMakeFiles/read_waypoints_generate_messages.dir/build.make planning/read_waypoints/CMakeFiles/read_waypoints_generate_messages.dir/build
-.PHONY : read_waypoints_generate_messages/fast
 
 # Convenience name for target.
 planning/read_waypoints/CMakeFiles/read_waypoints_generate_messages_nodejs.dir/rule:
@@ -644,14 +659,15 @@ help:
 	@echo "... roscpp_generate_messages_cpp"
 	@echo "... std_msgs_generate_messages_nodejs"
 	@echo "... std_msgs_generate_messages_py"
-	@echo "... read_waypoints"
-	@echo "... _read_waypoints_generate_messages_check_deps_LocalPath"
-	@echo "... read_waypoints_generate_messages_eus"
-	@echo "... read_waypoints_geneus"
-	@echo "... read_waypoints_genlisp"
+	@echo "... test"
 	@echo "... rosgraph_msgs_generate_messages_cpp"
 	@echo "... read_waypoints_generate_messages"
-	@echo "... test"
+	@echo "... read_waypoints"
+	@echo "... _read_waypoints_generate_messages_check_deps_LocalPath"
+	@echo "... _read_waypoints_generate_messages_check_deps_TurnCompleted"
+	@echo "... read_waypoints_genlisp"
+	@echo "... read_waypoints_generate_messages_eus"
+	@echo "... read_waypoints_geneus"
 	@echo "... read_waypoints_generate_messages_nodejs"
 	@echo "... edit_cache"
 	@echo "... read_waypoints_genpy"

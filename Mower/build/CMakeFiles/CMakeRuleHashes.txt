@@ -6,6 +6,7 @@ bfe015458de2b4069140c0d984a09830 /home/nvidia/Mower/devel/include/polygon_covera
 0b65b2bac60f31cb95c1febbea9ddf46 /home/nvidia/Mower/devel/include/polygon_coverage_msgs/PolygonWithHoles.h
 986d22c2b51aecbfb49e6e3918a0fcb4 /home/nvidia/Mower/devel/include/polygon_coverage_msgs/PolygonWithHolesStamped.h
 d089b0b42e867771a4a80bbaf5cbf8d2 /home/nvidia/Mower/devel/include/read_waypoints/LocalPath.h
+14d094f2c3e92426b0e4b73c5d3493f0 /home/nvidia/Mower/devel/include/read_waypoints/TurnCompleted.h
 2c3e28912a1a88ecde47e833110acf46 /home/nvidia/Mower/devel/include/util/DiagnosticResult.h
 129094b78be7a105cd33e737057cb66c /home/nvidia/Mower/devel/include/util/GpsPosition.h
 48e313b8c25c06e066203f02c7dc2b02 /home/nvidia/Mower/devel/include/util/Intervene.h
@@ -37,6 +38,8 @@ a244b43f3ca60d0ec311c901d8a9b2ef /home/nvidia/Mower/devel/lib/python3/dist-packa
 81700a624c7495edc8efbfb8e7c02232 /home/nvidia/Mower/devel/lib/python3/dist-packages/polygon_coverage_msgs/srv/__init__.py
 10c2f7401afac80baa94426b815e6139 /home/nvidia/Mower/devel/lib/python3/dist-packages/read_waypoints/msg/_LocalPath.py
 8375434302f56e301511cbcf35ac996f /home/nvidia/Mower/devel/lib/python3/dist-packages/read_waypoints/msg/__init__.py
+1cf01acbf6056c049f7a00b010590e92 /home/nvidia/Mower/devel/lib/python3/dist-packages/read_waypoints/srv/_TurnCompleted.py
+980c63fb0935292f327bf62a88599690 /home/nvidia/Mower/devel/lib/python3/dist-packages/read_waypoints/srv/__init__.py
 a7acc7dcb9c7ea328fabc3705ba77c98 /home/nvidia/Mower/devel/lib/python3/dist-packages/util/msg/_DiagnosticResult.py
 41a64f7e8cf82193d696eca2a68551fe /home/nvidia/Mower/devel/lib/python3/dist-packages/util/msg/_GpsPosition.py
 3f9e6faa81377aaee613be080da53ed6 /home/nvidia/Mower/devel/lib/python3/dist-packages/util/msg/_LocalPath.py
@@ -66,6 +69,7 @@ b84cf6ce188990d98c564aa58998b2f0 /home/nvidia/Mower/devel/share/common-lisp/ros/
 572dd4f5f9e680ead8808baaed0b6225 /home/nvidia/Mower/devel/share/common-lisp/ros/polygon_coverage_msgs/srv/PlannerService.lisp
 212edf6cdb4a348cbbe8336cd7619ce5 /home/nvidia/Mower/devel/share/common-lisp/ros/polygon_coverage_msgs/srv/PolygonService.lisp
 0071a58e4c607c6b4b72b59091fce999 /home/nvidia/Mower/devel/share/common-lisp/ros/read_waypoints/msg/LocalPath.lisp
+85fa39736af811368700cd349a8272d9 /home/nvidia/Mower/devel/share/common-lisp/ros/read_waypoints/srv/TurnCompleted.lisp
 a1caf62910ed79cb27699ddce489e52b /home/nvidia/Mower/devel/share/common-lisp/ros/util/msg/DiagnosticResult.lisp
 18841a8fd32fb1aeb642dc9ddacfaf24 /home/nvidia/Mower/devel/share/common-lisp/ros/util/msg/GpsPosition.lisp
 55bd4606330813b50721f372cc4fdce5 /home/nvidia/Mower/devel/share/common-lisp/ros/util/msg/LocalPath.lisp
@@ -93,6 +97,7 @@ ded01f66aa6238b6984226415d27c2e6 /home/nvidia/Mower/devel/share/common-lisp/ros/
 8a1140f66e3a907d178671780a23a58f /home/nvidia/Mower/devel/share/gennodejs/ros/polygon_coverage_msgs/srv/PlannerService.js
 4913e6c863189f4f6dca48dafbd554d9 /home/nvidia/Mower/devel/share/gennodejs/ros/polygon_coverage_msgs/srv/PolygonService.js
 845452d74b9be954ab4278cbc2610eab /home/nvidia/Mower/devel/share/gennodejs/ros/read_waypoints/msg/LocalPath.js
+6697c0d61e3348edac0fbf1a29a62c6b /home/nvidia/Mower/devel/share/gennodejs/ros/read_waypoints/srv/TurnCompleted.js
 a76be766f091f9e587659db3f426b92f /home/nvidia/Mower/devel/share/gennodejs/ros/util/msg/DiagnosticResult.js
 2280680c3fd34cb998d7436545ce8f24 /home/nvidia/Mower/devel/share/gennodejs/ros/util/msg/GpsPosition.js
 147ca53ff600221526cd2f18b211a133 /home/nvidia/Mower/devel/share/gennodejs/ros/util/msg/LocalPath.js
@@ -124,6 +129,7 @@ ab2f84a539465c3958d8323619552cd1 /home/nvidia/Mower/devel/share/gennodejs/ros/ut
 40c3c20113aa8a1702f10e45fe5014ac /home/nvidia/Mower/devel/share/roseus/ros/polygon_coverage_msgs/srv/PolygonService.l
 472e03d0e06f331d79e23a19315df2e5 /home/nvidia/Mower/devel/share/roseus/ros/read_waypoints/manifest.l
 e9b6c0a89b38291e6b3084c37e990a2f /home/nvidia/Mower/devel/share/roseus/ros/read_waypoints/msg/LocalPath.l
+4752c73fc2bc424ba814617f7af39963 /home/nvidia/Mower/devel/share/roseus/ros/read_waypoints/srv/TurnCompleted.l
 f9a36832942db92b953717a2815975e8 /home/nvidia/Mower/devel/share/roseus/ros/util/manifest.l
 325d31440ef5a356a24161f390fe4394 /home/nvidia/Mower/devel/share/roseus/ros/util/msg/DiagnosticResult.l
 f78dbac370288bc7f4419dd311620cb5 /home/nvidia/Mower/devel/share/roseus/ros/util/msg/GpsPosition.l
@@ -146,6 +152,13 @@ f5314c0521e0297790b226dedf109e0e /home/nvidia/Mower/devel/share/roseus/ros/util/
 38b4b364f501d1d25265dfb56fbf6620 /home/nvidia/Mower/devel/share/roseus/ros/util/msg/moving_objects.l
 1f6462461b6a011cbe1eac8da2b80e37 /home/nvidia/Mower/devel/share/roseus/ros/util/srv/Intervene.l
 ae3a089877db36c9d62b1bb3ecbd65bc CMakeFiles/clean_test_results
+c37d6467c67f50d4ad605d205f3c874c obstacle_avoidance/CMakeFiles/_obstacle_avoidance_generate_messages_check_deps_Point2D
+a69649094a6a3ea2a3aa6fb615fcf4c3 obstacle_avoidance/CMakeFiles/_obstacle_avoidance_generate_messages_check_deps_Point2DArray
+0f64ad7abfcd9b3188869a93da4a6b35 obstacle_avoidance/CMakeFiles/obstacle_avoidance_generate_messages_cpp
+0f64ad7abfcd9b3188869a93da4a6b35 obstacle_avoidance/CMakeFiles/obstacle_avoidance_generate_messages_eus
+0f64ad7abfcd9b3188869a93da4a6b35 obstacle_avoidance/CMakeFiles/obstacle_avoidance_generate_messages_lisp
+0f64ad7abfcd9b3188869a93da4a6b35 obstacle_avoidance/CMakeFiles/obstacle_avoidance_generate_messages_nodejs
+0f64ad7abfcd9b3188869a93da4a6b35 obstacle_avoidance/CMakeFiles/obstacle_avoidance_generate_messages_py
 9b98bb06eee5b34748d10f89c7a46d28 polygon_coverage_planning/polygon_coverage_ros/CMakeFiles/pwh_instances-complete
 09dfb29f5b200d5fbeabcd41e2c13c54 polygon_coverage_planning/polygon_coverage_ros/pwh_instances-prefix/src/pwh_instances-stamp/pwh_instances-build
 a3f77bdc541539d3f58cf39d626191d3 polygon_coverage_planning/polygon_coverage_ros/pwh_instances-prefix/src/pwh_instances-stamp/pwh_instances-configure

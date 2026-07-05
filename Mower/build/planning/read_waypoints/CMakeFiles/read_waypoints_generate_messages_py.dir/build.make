@@ -54,7 +54,9 @@ CMAKE_BINARY_DIR = /home/nvidia/Mower/build
 include planning/read_waypoints/CMakeFiles/read_waypoints_generate_messages_py.dir/progress.make
 
 planning/read_waypoints/CMakeFiles/read_waypoints_generate_messages_py: /home/nvidia/Mower/devel/lib/python3/dist-packages/read_waypoints/msg/_LocalPath.py
+planning/read_waypoints/CMakeFiles/read_waypoints_generate_messages_py: /home/nvidia/Mower/devel/lib/python3/dist-packages/read_waypoints/srv/_TurnCompleted.py
 planning/read_waypoints/CMakeFiles/read_waypoints_generate_messages_py: /home/nvidia/Mower/devel/lib/python3/dist-packages/read_waypoints/msg/__init__.py
+planning/read_waypoints/CMakeFiles/read_waypoints_generate_messages_py: /home/nvidia/Mower/devel/lib/python3/dist-packages/read_waypoints/srv/__init__.py
 
 
 /home/nvidia/Mower/devel/lib/python3/dist-packages/read_waypoints/msg/_LocalPath.py: /opt/ros/noetic/lib/genpy/genmsg_py.py
@@ -63,14 +65,28 @@ planning/read_waypoints/CMakeFiles/read_waypoints_generate_messages_py: /home/nv
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/nvidia/Mower/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Generating Python from MSG read_waypoints/LocalPath"
 	cd /home/nvidia/Mower/build/planning/read_waypoints && ../../catkin_generated/env_cached.sh /usr/bin/python3 /opt/ros/noetic/share/genpy/cmake/../../../lib/genpy/genmsg_py.py /home/nvidia/Mower/src/planning/read_waypoints/msg/LocalPath.msg -Iread_waypoints:/home/nvidia/Mower/src/planning/read_waypoints/msg -Istd_msgs:/opt/ros/noetic/share/std_msgs/cmake/../msg -p read_waypoints -o /home/nvidia/Mower/devel/lib/python3/dist-packages/read_waypoints/msg
 
+/home/nvidia/Mower/devel/lib/python3/dist-packages/read_waypoints/srv/_TurnCompleted.py: /opt/ros/noetic/lib/genpy/gensrv_py.py
+/home/nvidia/Mower/devel/lib/python3/dist-packages/read_waypoints/srv/_TurnCompleted.py: /home/nvidia/Mower/src/planning/read_waypoints/srv/TurnCompleted.srv
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/nvidia/Mower/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Generating Python code from SRV read_waypoints/TurnCompleted"
+	cd /home/nvidia/Mower/build/planning/read_waypoints && ../../catkin_generated/env_cached.sh /usr/bin/python3 /opt/ros/noetic/share/genpy/cmake/../../../lib/genpy/gensrv_py.py /home/nvidia/Mower/src/planning/read_waypoints/srv/TurnCompleted.srv -Iread_waypoints:/home/nvidia/Mower/src/planning/read_waypoints/msg -Istd_msgs:/opt/ros/noetic/share/std_msgs/cmake/../msg -p read_waypoints -o /home/nvidia/Mower/devel/lib/python3/dist-packages/read_waypoints/srv
+
 /home/nvidia/Mower/devel/lib/python3/dist-packages/read_waypoints/msg/__init__.py: /opt/ros/noetic/lib/genpy/genmsg_py.py
 /home/nvidia/Mower/devel/lib/python3/dist-packages/read_waypoints/msg/__init__.py: /home/nvidia/Mower/devel/lib/python3/dist-packages/read_waypoints/msg/_LocalPath.py
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/nvidia/Mower/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Generating Python msg __init__.py for read_waypoints"
+/home/nvidia/Mower/devel/lib/python3/dist-packages/read_waypoints/msg/__init__.py: /home/nvidia/Mower/devel/lib/python3/dist-packages/read_waypoints/srv/_TurnCompleted.py
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/nvidia/Mower/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Generating Python msg __init__.py for read_waypoints"
 	cd /home/nvidia/Mower/build/planning/read_waypoints && ../../catkin_generated/env_cached.sh /usr/bin/python3 /opt/ros/noetic/share/genpy/cmake/../../../lib/genpy/genmsg_py.py -o /home/nvidia/Mower/devel/lib/python3/dist-packages/read_waypoints/msg --initpy
+
+/home/nvidia/Mower/devel/lib/python3/dist-packages/read_waypoints/srv/__init__.py: /opt/ros/noetic/lib/genpy/genmsg_py.py
+/home/nvidia/Mower/devel/lib/python3/dist-packages/read_waypoints/srv/__init__.py: /home/nvidia/Mower/devel/lib/python3/dist-packages/read_waypoints/msg/_LocalPath.py
+/home/nvidia/Mower/devel/lib/python3/dist-packages/read_waypoints/srv/__init__.py: /home/nvidia/Mower/devel/lib/python3/dist-packages/read_waypoints/srv/_TurnCompleted.py
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/nvidia/Mower/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Generating Python srv __init__.py for read_waypoints"
+	cd /home/nvidia/Mower/build/planning/read_waypoints && ../../catkin_generated/env_cached.sh /usr/bin/python3 /opt/ros/noetic/share/genpy/cmake/../../../lib/genpy/genmsg_py.py -o /home/nvidia/Mower/devel/lib/python3/dist-packages/read_waypoints/srv --initpy
 
 read_waypoints_generate_messages_py: planning/read_waypoints/CMakeFiles/read_waypoints_generate_messages_py
 read_waypoints_generate_messages_py: /home/nvidia/Mower/devel/lib/python3/dist-packages/read_waypoints/msg/_LocalPath.py
+read_waypoints_generate_messages_py: /home/nvidia/Mower/devel/lib/python3/dist-packages/read_waypoints/srv/_TurnCompleted.py
 read_waypoints_generate_messages_py: /home/nvidia/Mower/devel/lib/python3/dist-packages/read_waypoints/msg/__init__.py
+read_waypoints_generate_messages_py: /home/nvidia/Mower/devel/lib/python3/dist-packages/read_waypoints/srv/__init__.py
 read_waypoints_generate_messages_py: planning/read_waypoints/CMakeFiles/read_waypoints_generate_messages_py.dir/build.make
 
 .PHONY : read_waypoints_generate_messages_py

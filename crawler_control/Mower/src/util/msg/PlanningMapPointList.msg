@@ -1,2 +1,0 @@
-Header header
-PlanningMapPoint[] global_point_list

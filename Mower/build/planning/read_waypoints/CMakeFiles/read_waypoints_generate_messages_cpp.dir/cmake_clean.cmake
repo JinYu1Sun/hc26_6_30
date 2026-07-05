@@ -1,5 +1,6 @@
 file(REMOVE_RECURSE
   "/home/nvidia/Mower/devel/include/read_waypoints/LocalPath.h"
+  "/home/nvidia/Mower/devel/include/read_waypoints/TurnCompleted.h"
   "CMakeFiles/read_waypoints_generate_messages_cpp"
 )
 

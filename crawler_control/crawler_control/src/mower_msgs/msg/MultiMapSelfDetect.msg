@@ -1,1 +1,0 @@
-bool is_multi_map_ok

@@ -1,1 +1,0 @@
-bool is_perception_ok

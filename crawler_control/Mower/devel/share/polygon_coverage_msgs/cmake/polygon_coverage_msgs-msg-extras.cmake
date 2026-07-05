@@ -1,2 +1,0 @@
-set(polygon_coverage_msgs_MESSAGE_FILES "/home/nvidia/Mower/src/polygon_coverage_planning/polygon_coverage_msgs/msg/PolygonWithHoles.msg;/home/nvidia/Mower/src/polygon_coverage_planning/polygon_coverage_msgs/msg/PolygonWithHolesStamped.msg")
-set(polygon_coverage_msgs_SERVICE_FILES "/home/nvidia/Mower/src/polygon_coverage_planning/polygon_coverage_msgs/srv/PlannerService.srv;/home/nvidia/Mower/src/polygon_coverage_planning/polygon_coverage_msgs/srv/PolygonService.srv")

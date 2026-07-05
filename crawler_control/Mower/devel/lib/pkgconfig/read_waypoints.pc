@@ -1,8 +1,0 @@
-prefix=/home/nvidia/Mower/devel
-
-Name: read_waypoints
-Description: Description of read_waypoints
-Version: 0.0.0
-Cflags: -I/home/nvidia/Mower/devel/include
-Libs: -L${prefix}/lib 
-Requires: 

@@ -42,6 +42,10 @@ if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/read_waypoints/srv" TYPE FILE FILES "/home/nvidia/Mower/src/planning/read_waypoints/srv/TurnCompleted.srv")
+endif()
+
+if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
   file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/read_waypoints/cmake" TYPE FILE FILES "/home/nvidia/Mower/build/planning/read_waypoints/catkin_generated/installspace/read_waypoints-msg-paths.cmake")
 endif()
 

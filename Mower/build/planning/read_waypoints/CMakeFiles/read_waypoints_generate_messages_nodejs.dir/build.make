@@ -54,6 +54,7 @@ CMAKE_BINARY_DIR = /home/nvidia/Mower/build
 include planning/read_waypoints/CMakeFiles/read_waypoints_generate_messages_nodejs.dir/progress.make
 
 planning/read_waypoints/CMakeFiles/read_waypoints_generate_messages_nodejs: /home/nvidia/Mower/devel/share/gennodejs/ros/read_waypoints/msg/LocalPath.js
+planning/read_waypoints/CMakeFiles/read_waypoints_generate_messages_nodejs: /home/nvidia/Mower/devel/share/gennodejs/ros/read_waypoints/srv/TurnCompleted.js
 
 
 /home/nvidia/Mower/devel/share/gennodejs/ros/read_waypoints/msg/LocalPath.js: /opt/ros/noetic/lib/gennodejs/gen_nodejs.py
@@ -62,8 +63,14 @@ planning/read_waypoints/CMakeFiles/read_waypoints_generate_messages_nodejs: /hom
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/nvidia/Mower/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Generating Javascript code from read_waypoints/LocalPath.msg"
 	cd /home/nvidia/Mower/build/planning/read_waypoints && ../../catkin_generated/env_cached.sh /usr/bin/python3 /opt/ros/noetic/share/gennodejs/cmake/../../../lib/gennodejs/gen_nodejs.py /home/nvidia/Mower/src/planning/read_waypoints/msg/LocalPath.msg -Iread_waypoints:/home/nvidia/Mower/src/planning/read_waypoints/msg -Istd_msgs:/opt/ros/noetic/share/std_msgs/cmake/../msg -p read_waypoints -o /home/nvidia/Mower/devel/share/gennodejs/ros/read_waypoints/msg
 
+/home/nvidia/Mower/devel/share/gennodejs/ros/read_waypoints/srv/TurnCompleted.js: /opt/ros/noetic/lib/gennodejs/gen_nodejs.py
+/home/nvidia/Mower/devel/share/gennodejs/ros/read_waypoints/srv/TurnCompleted.js: /home/nvidia/Mower/src/planning/read_waypoints/srv/TurnCompleted.srv
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/nvidia/Mower/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Generating Javascript code from read_waypoints/TurnCompleted.srv"
+	cd /home/nvidia/Mower/build/planning/read_waypoints && ../../catkin_generated/env_cached.sh /usr/bin/python3 /opt/ros/noetic/share/gennodejs/cmake/../../../lib/gennodejs/gen_nodejs.py /home/nvidia/Mower/src/planning/read_waypoints/srv/TurnCompleted.srv -Iread_waypoints:/home/nvidia/Mower/src/planning/read_waypoints/msg -Istd_msgs:/opt/ros/noetic/share/std_msgs/cmake/../msg -p read_waypoints -o /home/nvidia/Mower/devel/share/gennodejs/ros/read_waypoints/srv
+
 read_waypoints_generate_messages_nodejs: planning/read_waypoints/CMakeFiles/read_waypoints_generate_messages_nodejs
 read_waypoints_generate_messages_nodejs: /home/nvidia/Mower/devel/share/gennodejs/ros/read_waypoints/msg/LocalPath.js
+read_waypoints_generate_messages_nodejs: /home/nvidia/Mower/devel/share/gennodejs/ros/read_waypoints/srv/TurnCompleted.js
 read_waypoints_generate_messages_nodejs: planning/read_waypoints/CMakeFiles/read_waypoints_generate_messages_nodejs.dir/build.make
 
 .PHONY : read_waypoints_generate_messages_nodejs

@@ -1,0 +1,25 @@
+[0m[ INFO] [1783240820.246910908]: START LOAD VSLAM LOCATION[0m
+[0m[ INFO] [1783240821.396263165]: The saved map list: 0601/1017008888/260630/cctv/0702/0617/1017001/0630999/0603/[0m
+[0m[ INFO] [1783240821.398462783]: LocationMap initialized with interactive multi-map support[0m
+[0m[ INFO] [1783240821.398486367]: Listening for planning ready signals on topic: /planning_ready[0m
+[2026-07-05 17:20:17] string->data:init_location
+[2026-07-05 17:20:18] string->data:true
+[2026-07-05 17:22:18] string->data:p_mode
+[0m[ INFO] [1783243338.131411952]: p_mode![0m
+[0m[ INFO] [1783243338.231789557]: The saved map list: 0601/1017008888/260630/cctv/0702/0617/1017001/0630999/0603/[0m
+[2026-07-05 17:22:22] string->data:use_map/0702
+[33m[ WARN] [1783243342.190312587]: No path data found for map 1[0m
+[0m[ INFO] [1783243342.188901646]: use_map![0m
+[0m[ INFO] [1783243342.190376301]: The map contains polygons: 1[0m
+[0m[ INFO] [1783243342.190440270]: load Map success: 0702.yaml[0m
+[2026-07-05 17:22:22] string->data:single_map
+[0m[ INFO] [1783243342.884996874]: single_map![0m
+[2026-07-05 17:22:24] string->data:start_work
+[33m[ WARN] [1783243349.774212922]: Single_map mode confirm, now in map_hull: 1[0m
+[0m[ INFO] [1783243344.096741493]: Start work![0m
+[0m[ INFO] [1783243349.774161400]: single_map selected[0m
+[2026-07-05 17:22:29] 发布割草区域给UI显示, 地图编号: 1
+[2026-07-05 17:22:54] string->data:start_execution
+[2026-07-05 17:26:34] string->data:stop_execution
+[2026-07-05 17:27:07] string->data:stop
+[2026-07-05 17:27:07] 割草任务停止

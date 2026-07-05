@@ -6,6 +6,46 @@
 
 #IncludeRegexTransform: 
 
+/home/nvidia/Mower/devel/include/read_waypoints/TurnCompleted.h
+ros/service_traits.h
+-
+read_waypoints/TurnCompletedRequest.h
+-
+read_waypoints/TurnCompletedResponse.h
+-
+
+/home/nvidia/Mower/devel/include/read_waypoints/TurnCompletedRequest.h
+string
+-
+vector
+-
+memory
+-
+ros/types.h
+-
+ros/serialization.h
+-
+ros/builtin_message_traits.h
+-
+ros/message_operations.h
+-
+
+/home/nvidia/Mower/devel/include/read_waypoints/TurnCompletedResponse.h
+string
+-
+vector
+-
+memory
+-
+ros/types.h
+-
+ros/serialization.h
+-
+ros/builtin_message_traits.h
+-
+ros/message_operations.h
+-
+
 /home/nvidia/Mower/devel/include/util/LocalPath.h
 string
 -
@@ -83,6 +123,8 @@ cstdio
 -
 cmath
 -
+read_waypoints/TurnCompleted.h
+/home/nvidia/Mower/src/planning/read_waypoints/src/read_waypoints/TurnCompleted.h
 
 /opt/ros/noetic/include/geometry_msgs/Point.h
 string

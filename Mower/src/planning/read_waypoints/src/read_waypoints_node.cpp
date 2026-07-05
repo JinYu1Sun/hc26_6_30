@@ -18,6 +18,7 @@
 #include <deque>
 #include <cstdio>
 #include <cmath>
+#include "read_waypoints/TurnCompleted.h"
 #define DEBUG_LOGGING // 定义DEBUG_LOGGING以启用调试日志输出
 
 
@@ -104,7 +105,8 @@ private:
   ros::Subscriber sub_goal_point_;
   ros::Subscriber sub_position_;
   ros::Subscriber sub_signal_;
-  ros::Subscriber sub_recovery_target_;
+
+  ros::ServiceClient turn_completed_cli_;
 
   // 发布器
   ros::Publisher pub_path_;
@@ -143,7 +145,6 @@ private:
   // 初始化标志
   bool first_loop_ = true;
   bool avoid_first_loop_ = false;
-  std::atomic<bool> control_turn_finish_;
 
   // // 避障路径终点
   // double avoid_end_pos_x_ = 0.0;
@@ -157,7 +158,6 @@ public:
   WaypointManager() : nh_() {
     // 初始化避障状态
     avoid_status_.data = 0;
-    control_turn_finish_.store(false);
 
     // 初始化订阅器
     sub_trajectory_ = nh_.subscribe("/lawn_mower/global_trajectory", 1, &WaypointManager::trajectoryCallback, this);
@@ -166,7 +166,8 @@ public:
     sub_goal_point_ = nh_.subscribe("/lawn_mower/target_point", 1, &WaypointManager::goalPointCallback, this);
     sub_position_ = nh_.subscribe("/Mower/position", 1, &WaypointManager::positionCallback, this);
     sub_signal_ =nh_.subscribe("/signal", 1, &WaypointManager::signalCallback, this);
-    sub_recovery_target_ = nh_.subscribe("/turn_completed", 1, &WaypointManager::turnCompletedCallback, this);
+
+    turn_completed_cli_ = nh_.serviceClient<read_waypoints::TurnCompleted>("/turn_completed");
 
     // 初始化发布器
     pub_path_ = nh_.advertise<util::LocalPath>("/lawn_mower/global_path", 1); // 发布局部路径
@@ -431,7 +432,7 @@ public:
 
     ROS_INFO("local_x: %.4f, local_y: %.4f, gear: %ld,  error_heading: %.4f", local_x, local_y, gear, error_heading);
     // 当前点在车的前方1.5m或在后方3m外或横向偏差超过0.6m触发恢复
-    if (local_x > 1.5 || local_x < -3 || fabs(local_y) > 0.6)
+    if (local_x > 2.5 || local_x < -3 || fabs(local_y) > 2.6)
     {
       need_recovery_path_ = true;
       std::cout << getLogTime() << "已偏离原来割草路线" << std::endl;
@@ -442,21 +443,25 @@ public:
       ROS_INFO("gear=1 points is droped, %.4f, %.4f", path_x, path_y);
       return true;
     }
+    // 转弯点处理，如果是个转向点，应该会先通过pathRecoveryCallback()通知转向是否完成
     if (gear == 2)
     {
-      if (control_turn_finish_.load())
-        std::cout << getLogTime() << "收到转向完成信号" << std::endl;
-      else
-        std::cout << getLogTime() << "没有收到转向完成信号" << std::endl;
-    }
-    // 转弯点处理，如果是个转向点，应该会先通过pathRecoveryCallback()通知转向是否完成
-    if (gear == 2 && control_turn_finish_.load()) {
-      ROS_INFO("gear=2 points is droped, %.4f, %.4f", path_x, path_y);
-      control_turn_finish_.store(false);
-      if (min_pos_ == 0) {
-        ROS_WARN("First gear=2 point is dropped");
+      read_waypoints::TurnCompleted turn_completed_req;
+      turn_completed_req.request.x = path_x;
+      turn_completed_req.request.y = path_y;
+      if (turn_completed_cli_.call(turn_completed_req))
+      {
+        ROS_INFO("gear=2 points is droped, %.4f, %.4f", path_x, path_y);
+        if (min_pos_ == 0) {
+          ROS_WARN("First gear=2 point is dropped");
+        }
+        std::cout << getLogTime() << "转向完成!" << std::endl;
+        return true;
       }
-      return true;
+      else
+      {
+        std::cout << getLogTime() << "还未完成转向!" << std::endl;
+      }
     }
     ROS_INFO("%ld points is not droped, %.4f, %.4f, %.4f, %d, %.4f, %.4f, %.4f", min_pos_, path_x, path_y, path_heading, gear, 
       current_position.point.x, current_position.point.y, current_position.point.z);
@@ -825,14 +830,6 @@ public:
     }
   }
 
-  // 回调函数：抛弃点是否转向完成的标志，z=999表示转向完成
-  void turnCompletedCallback(const std_msgs::BoolConstPtr &msg) {
-    if (msg->data == true)
-    {
-      control_turn_finish_.store(true);
-    }
-  }
-
   /*
   单地图正常工作流程：
   1.收到use_map/map_name信号，进入单地图模式，设置已通过的路径点scv文件为map_name1.scv
@@ -999,7 +996,6 @@ public:
     need_recovery_path_ = false;
     first_loop_ = true;
     avoid_first_loop_ = false;
-    control_turn_finish_.store(false);
     repeat_mode_ = false;
     use_multi_map_ = false;
     

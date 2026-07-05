@@ -1,6 +1,6 @@
 # generated from genmsg/cmake/pkg-genmsg.cmake.em
 
-message(STATUS "read_waypoints: 1 messages, 0 services")
+message(STATUS "read_waypoints: 1 messages, 1 services")
 
 set(MSG_I_FLAGS "-Iread_waypoints:/home/nvidia/Mower/src/planning/read_waypoints/msg;-Istd_msgs:/opt/ros/noetic/share/std_msgs/cmake/../msg")
 
@@ -22,6 +22,11 @@ add_custom_target(_read_waypoints_generate_messages_check_deps_${_filename}
   COMMAND ${CATKIN_ENV} ${PYTHON_EXECUTABLE} ${GENMSG_CHECK_DEPS_SCRIPT} "read_waypoints" "/home/nvidia/Mower/src/planning/read_waypoints/msg/LocalPath.msg" "std_msgs/Header"
 )
 
+get_filename_component(_filename "/home/nvidia/Mower/src/planning/read_waypoints/srv/TurnCompleted.srv" NAME_WE)
+add_custom_target(_read_waypoints_generate_messages_check_deps_${_filename}
+  COMMAND ${CATKIN_ENV} ${PYTHON_EXECUTABLE} ${GENMSG_CHECK_DEPS_SCRIPT} "read_waypoints" "/home/nvidia/Mower/src/planning/read_waypoints/srv/TurnCompleted.srv" ""
+)
+
 #
 #  langs = gencpp;geneus;genlisp;gennodejs;genpy
 #
@@ -36,6 +41,12 @@ _generate_msg_cpp(read_waypoints
 )
 
 ### Generating Services
+_generate_srv_cpp(read_waypoints
+  "/home/nvidia/Mower/src/planning/read_waypoints/srv/TurnCompleted.srv"
+  "${MSG_I_FLAGS}"
+  ""
+  ${CATKIN_DEVEL_PREFIX}/${gencpp_INSTALL_DIR}/read_waypoints
+)
 
 ### Generating Module File
 _generate_module_cpp(read_waypoints
@@ -50,6 +61,8 @@ add_dependencies(read_waypoints_generate_messages read_waypoints_generate_messag
 
 # add dependencies to all check dependencies targets
 get_filename_component(_filename "/home/nvidia/Mower/src/planning/read_waypoints/msg/LocalPath.msg" NAME_WE)
+add_dependencies(read_waypoints_generate_messages_cpp _read_waypoints_generate_messages_check_deps_${_filename})
+get_filename_component(_filename "/home/nvidia/Mower/src/planning/read_waypoints/srv/TurnCompleted.srv" NAME_WE)
 add_dependencies(read_waypoints_generate_messages_cpp _read_waypoints_generate_messages_check_deps_${_filename})
 
 # target for backward compatibility
@@ -69,6 +82,12 @@ _generate_msg_eus(read_waypoints
 )
 
 ### Generating Services
+_generate_srv_eus(read_waypoints
+  "/home/nvidia/Mower/src/planning/read_waypoints/srv/TurnCompleted.srv"
+  "${MSG_I_FLAGS}"
+  ""
+  ${CATKIN_DEVEL_PREFIX}/${geneus_INSTALL_DIR}/read_waypoints
+)
 
 ### Generating Module File
 _generate_module_eus(read_waypoints
@@ -83,6 +102,8 @@ add_dependencies(read_waypoints_generate_messages read_waypoints_generate_messag
 
 # add dependencies to all check dependencies targets
 get_filename_component(_filename "/home/nvidia/Mower/src/planning/read_waypoints/msg/LocalPath.msg" NAME_WE)
+add_dependencies(read_waypoints_generate_messages_eus _read_waypoints_generate_messages_check_deps_${_filename})
+get_filename_component(_filename "/home/nvidia/Mower/src/planning/read_waypoints/srv/TurnCompleted.srv" NAME_WE)
 add_dependencies(read_waypoints_generate_messages_eus _read_waypoints_generate_messages_check_deps_${_filename})
 
 # target for backward compatibility
@@ -102,6 +123,12 @@ _generate_msg_lisp(read_waypoints
 )
 
 ### Generating Services
+_generate_srv_lisp(read_waypoints
+  "/home/nvidia/Mower/src/planning/read_waypoints/srv/TurnCompleted.srv"
+  "${MSG_I_FLAGS}"
+  ""
+  ${CATKIN_DEVEL_PREFIX}/${genlisp_INSTALL_DIR}/read_waypoints
+)
 
 ### Generating Module File
 _generate_module_lisp(read_waypoints
@@ -116,6 +143,8 @@ add_dependencies(read_waypoints_generate_messages read_waypoints_generate_messag
 
 # add dependencies to all check dependencies targets
 get_filename_component(_filename "/home/nvidia/Mower/src/planning/read_waypoints/msg/LocalPath.msg" NAME_WE)
+add_dependencies(read_waypoints_generate_messages_lisp _read_waypoints_generate_messages_check_deps_${_filename})
+get_filename_component(_filename "/home/nvidia/Mower/src/planning/read_waypoints/srv/TurnCompleted.srv" NAME_WE)
 add_dependencies(read_waypoints_generate_messages_lisp _read_waypoints_generate_messages_check_deps_${_filename})
 
 # target for backward compatibility
@@ -135,6 +164,12 @@ _generate_msg_nodejs(read_waypoints
 )
 
 ### Generating Services
+_generate_srv_nodejs(read_waypoints
+  "/home/nvidia/Mower/src/planning/read_waypoints/srv/TurnCompleted.srv"
+  "${MSG_I_FLAGS}"
+  ""
+  ${CATKIN_DEVEL_PREFIX}/${gennodejs_INSTALL_DIR}/read_waypoints
+)
 
 ### Generating Module File
 _generate_module_nodejs(read_waypoints
@@ -149,6 +184,8 @@ add_dependencies(read_waypoints_generate_messages read_waypoints_generate_messag
 
 # add dependencies to all check dependencies targets
 get_filename_component(_filename "/home/nvidia/Mower/src/planning/read_waypoints/msg/LocalPath.msg" NAME_WE)
+add_dependencies(read_waypoints_generate_messages_nodejs _read_waypoints_generate_messages_check_deps_${_filename})
+get_filename_component(_filename "/home/nvidia/Mower/src/planning/read_waypoints/srv/TurnCompleted.srv" NAME_WE)
 add_dependencies(read_waypoints_generate_messages_nodejs _read_waypoints_generate_messages_check_deps_${_filename})
 
 # target for backward compatibility
@@ -168,6 +205,12 @@ _generate_msg_py(read_waypoints
 )
 
 ### Generating Services
+_generate_srv_py(read_waypoints
+  "/home/nvidia/Mower/src/planning/read_waypoints/srv/TurnCompleted.srv"
+  "${MSG_I_FLAGS}"
+  ""
+  ${CATKIN_DEVEL_PREFIX}/${genpy_INSTALL_DIR}/read_waypoints
+)
 
 ### Generating Module File
 _generate_module_py(read_waypoints
@@ -182,6 +225,8 @@ add_dependencies(read_waypoints_generate_messages read_waypoints_generate_messag
 
 # add dependencies to all check dependencies targets
 get_filename_component(_filename "/home/nvidia/Mower/src/planning/read_waypoints/msg/LocalPath.msg" NAME_WE)
+add_dependencies(read_waypoints_generate_messages_py _read_waypoints_generate_messages_check_deps_${_filename})
+get_filename_component(_filename "/home/nvidia/Mower/src/planning/read_waypoints/srv/TurnCompleted.srv" NAME_WE)
 add_dependencies(read_waypoints_generate_messages_py _read_waypoints_generate_messages_check_deps_${_filename})
 
 # target for backward compatibility

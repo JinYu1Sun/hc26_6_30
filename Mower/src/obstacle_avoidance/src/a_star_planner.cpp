@@ -919,13 +919,12 @@ bool AStarPlanner::checkPathCollision()
             emergency_detection_frames_ = 0;
             emergency_confirmed_.store(false);
             
-            // 如果当前是状态3但碰撞点很远，应该降级到状态2
-            if (is_avoiding_.data == 3 && earliest_collision_idx > 13)
+            // 如果当前是状态2或3但碰撞点很远，切换为正常状态
+            if (is_avoiding_.data == 2 || is_avoiding_.data == 3)
             {
-                ROS_INFO("状态切换: 3(紧急预警) -> 2(普通预警) - 障碍物距离变远，降级为普通预警");
-                is_avoiding_.data = 2; // 降级到普通预警状态
+                ROS_INFO("状态切换: %d -> 0(正常状态) - 障碍物距离变远，切换为正常状态", is_avoiding_.data);
+                is_avoiding_.data = 0; // 切换到正常状态
                 avoidstate_pub.publish(is_avoiding_);
-                ROS_INFO("Collision point far away, downgrading from emergency to warning state");
             }
             return false;
         }

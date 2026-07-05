@@ -1,5 +1,6 @@
 file(REMOVE_RECURSE
   "/home/nvidia/Mower/devel/share/common-lisp/ros/read_waypoints/msg/LocalPath.lisp"
+  "/home/nvidia/Mower/devel/share/common-lisp/ros/read_waypoints/srv/TurnCompleted.lisp"
   "CMakeFiles/read_waypoints_generate_messages_lisp"
 )
 

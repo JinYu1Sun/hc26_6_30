@@ -49,7 +49,7 @@ CATKIN_SKIP_TESTING:BOOL=OFF
 CATKIN_SYMLINK_INSTALL:BOOL=OFF
 
 //List of ';' separated packages to build
-CATKIN_WHITELIST_PACKAGES:STRING=global_planning
+CATKIN_WHITELIST_PACKAGES:STRING=obstacle_avoidance
 
 //Link with static Boost libraries
 CGAL_Boost_USE_STATIC_LIBS:BOOL=OFF

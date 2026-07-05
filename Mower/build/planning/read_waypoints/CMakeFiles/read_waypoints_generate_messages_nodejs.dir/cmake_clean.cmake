@@ -1,5 +1,6 @@
 file(REMOVE_RECURSE
   "/home/nvidia/Mower/devel/share/gennodejs/ros/read_waypoints/msg/LocalPath.js"
+  "/home/nvidia/Mower/devel/share/gennodejs/ros/read_waypoints/srv/TurnCompleted.js"
   "CMakeFiles/read_waypoints_generate_messages_nodejs"
 )
 

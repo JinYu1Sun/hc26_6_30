@@ -54,6 +54,7 @@ CMAKE_BINARY_DIR = /home/nvidia/Mower/build
 include planning/read_waypoints/CMakeFiles/read_waypoints_generate_messages_eus.dir/progress.make
 
 planning/read_waypoints/CMakeFiles/read_waypoints_generate_messages_eus: /home/nvidia/Mower/devel/share/roseus/ros/read_waypoints/msg/LocalPath.l
+planning/read_waypoints/CMakeFiles/read_waypoints_generate_messages_eus: /home/nvidia/Mower/devel/share/roseus/ros/read_waypoints/srv/TurnCompleted.l
 planning/read_waypoints/CMakeFiles/read_waypoints_generate_messages_eus: /home/nvidia/Mower/devel/share/roseus/ros/read_waypoints/manifest.l
 
 
@@ -63,12 +64,18 @@ planning/read_waypoints/CMakeFiles/read_waypoints_generate_messages_eus: /home/n
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/nvidia/Mower/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Generating EusLisp code from read_waypoints/LocalPath.msg"
 	cd /home/nvidia/Mower/build/planning/read_waypoints && ../../catkin_generated/env_cached.sh /usr/bin/python3 /opt/ros/noetic/share/geneus/cmake/../../../lib/geneus/gen_eus.py /home/nvidia/Mower/src/planning/read_waypoints/msg/LocalPath.msg -Iread_waypoints:/home/nvidia/Mower/src/planning/read_waypoints/msg -Istd_msgs:/opt/ros/noetic/share/std_msgs/cmake/../msg -p read_waypoints -o /home/nvidia/Mower/devel/share/roseus/ros/read_waypoints/msg
 
+/home/nvidia/Mower/devel/share/roseus/ros/read_waypoints/srv/TurnCompleted.l: /opt/ros/noetic/lib/geneus/gen_eus.py
+/home/nvidia/Mower/devel/share/roseus/ros/read_waypoints/srv/TurnCompleted.l: /home/nvidia/Mower/src/planning/read_waypoints/srv/TurnCompleted.srv
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/nvidia/Mower/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Generating EusLisp code from read_waypoints/TurnCompleted.srv"
+	cd /home/nvidia/Mower/build/planning/read_waypoints && ../../catkin_generated/env_cached.sh /usr/bin/python3 /opt/ros/noetic/share/geneus/cmake/../../../lib/geneus/gen_eus.py /home/nvidia/Mower/src/planning/read_waypoints/srv/TurnCompleted.srv -Iread_waypoints:/home/nvidia/Mower/src/planning/read_waypoints/msg -Istd_msgs:/opt/ros/noetic/share/std_msgs/cmake/../msg -p read_waypoints -o /home/nvidia/Mower/devel/share/roseus/ros/read_waypoints/srv
+
 /home/nvidia/Mower/devel/share/roseus/ros/read_waypoints/manifest.l: /opt/ros/noetic/lib/geneus/gen_eus.py
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/nvidia/Mower/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Generating EusLisp manifest code for read_waypoints"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/nvidia/Mower/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Generating EusLisp manifest code for read_waypoints"
 	cd /home/nvidia/Mower/build/planning/read_waypoints && ../../catkin_generated/env_cached.sh /usr/bin/python3 /opt/ros/noetic/share/geneus/cmake/../../../lib/geneus/gen_eus.py -m -o /home/nvidia/Mower/devel/share/roseus/ros/read_waypoints read_waypoints std_msgs
 
 read_waypoints_generate_messages_eus: planning/read_waypoints/CMakeFiles/read_waypoints_generate_messages_eus
 read_waypoints_generate_messages_eus: /home/nvidia/Mower/devel/share/roseus/ros/read_waypoints/msg/LocalPath.l
+read_waypoints_generate_messages_eus: /home/nvidia/Mower/devel/share/roseus/ros/read_waypoints/srv/TurnCompleted.l
 read_waypoints_generate_messages_eus: /home/nvidia/Mower/devel/share/roseus/ros/read_waypoints/manifest.l
 read_waypoints_generate_messages_eus: planning/read_waypoints/CMakeFiles/read_waypoints_generate_messages_eus.dir/build.make
 

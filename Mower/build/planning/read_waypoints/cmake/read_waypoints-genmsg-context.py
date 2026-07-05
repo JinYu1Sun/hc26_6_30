@@ -1,7 +1,7 @@
 # generated from genmsg/cmake/pkg-genmsg.context.in
 
 messages_str = "/home/nvidia/Mower/src/planning/read_waypoints/msg/LocalPath.msg"
-services_str = ""
+services_str = "/home/nvidia/Mower/src/planning/read_waypoints/srv/TurnCompleted.srv"
 pkg_name = "read_waypoints"
 dependencies_str = "std_msgs"
 langs = "gencpp;geneus;genlisp;gennodejs;genpy"

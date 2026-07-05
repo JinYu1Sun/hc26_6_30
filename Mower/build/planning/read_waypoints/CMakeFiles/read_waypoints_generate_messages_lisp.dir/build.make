@@ -54,6 +54,7 @@ CMAKE_BINARY_DIR = /home/nvidia/Mower/build
 include planning/read_waypoints/CMakeFiles/read_waypoints_generate_messages_lisp.dir/progress.make
 
 planning/read_waypoints/CMakeFiles/read_waypoints_generate_messages_lisp: /home/nvidia/Mower/devel/share/common-lisp/ros/read_waypoints/msg/LocalPath.lisp
+planning/read_waypoints/CMakeFiles/read_waypoints_generate_messages_lisp: /home/nvidia/Mower/devel/share/common-lisp/ros/read_waypoints/srv/TurnCompleted.lisp
 
 
 /home/nvidia/Mower/devel/share/common-lisp/ros/read_waypoints/msg/LocalPath.lisp: /opt/ros/noetic/lib/genlisp/gen_lisp.py
@@ -62,8 +63,14 @@ planning/read_waypoints/CMakeFiles/read_waypoints_generate_messages_lisp: /home/
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/nvidia/Mower/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Generating Lisp code from read_waypoints/LocalPath.msg"
 	cd /home/nvidia/Mower/build/planning/read_waypoints && ../../catkin_generated/env_cached.sh /usr/bin/python3 /opt/ros/noetic/share/genlisp/cmake/../../../lib/genlisp/gen_lisp.py /home/nvidia/Mower/src/planning/read_waypoints/msg/LocalPath.msg -Iread_waypoints:/home/nvidia/Mower/src/planning/read_waypoints/msg -Istd_msgs:/opt/ros/noetic/share/std_msgs/cmake/../msg -p read_waypoints -o /home/nvidia/Mower/devel/share/common-lisp/ros/read_waypoints/msg
 
+/home/nvidia/Mower/devel/share/common-lisp/ros/read_waypoints/srv/TurnCompleted.lisp: /opt/ros/noetic/lib/genlisp/gen_lisp.py
+/home/nvidia/Mower/devel/share/common-lisp/ros/read_waypoints/srv/TurnCompleted.lisp: /home/nvidia/Mower/src/planning/read_waypoints/srv/TurnCompleted.srv
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/nvidia/Mower/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Generating Lisp code from read_waypoints/TurnCompleted.srv"
+	cd /home/nvidia/Mower/build/planning/read_waypoints && ../../catkin_generated/env_cached.sh /usr/bin/python3 /opt/ros/noetic/share/genlisp/cmake/../../../lib/genlisp/gen_lisp.py /home/nvidia/Mower/src/planning/read_waypoints/srv/TurnCompleted.srv -Iread_waypoints:/home/nvidia/Mower/src/planning/read_waypoints/msg -Istd_msgs:/opt/ros/noetic/share/std_msgs/cmake/../msg -p read_waypoints -o /home/nvidia/Mower/devel/share/common-lisp/ros/read_waypoints/srv
+
 read_waypoints_generate_messages_lisp: planning/read_waypoints/CMakeFiles/read_waypoints_generate_messages_lisp
 read_waypoints_generate_messages_lisp: /home/nvidia/Mower/devel/share/common-lisp/ros/read_waypoints/msg/LocalPath.lisp
+read_waypoints_generate_messages_lisp: /home/nvidia/Mower/devel/share/common-lisp/ros/read_waypoints/srv/TurnCompleted.lisp
 read_waypoints_generate_messages_lisp: planning/read_waypoints/CMakeFiles/read_waypoints_generate_messages_lisp.dir/build.make
 
 .PHONY : read_waypoints_generate_messages_lisp
