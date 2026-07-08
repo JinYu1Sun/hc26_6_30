@@ -1,6 +1,7 @@
 
 #ifndef PURE_PURSUIT_PURE_PURSUIT_H
 #define PURE_PURSUIT_PURE_PURSUIT_H
+#include <algorithm>
 #include <cmath>
 #include <vector>
 #include <memory>
@@ -31,6 +32,9 @@
 #include <sstream>
 #include <iomanip>
 #include <ctime>
+#include <geometry_msgs/Point.h>  //@cnk 历史遗留 include，当前 /turn_completed 已改用 std_msgs/Bool，保留以防其它模块依赖
+
+#include "pure_pursuit/TurnCompleted.h"
 
 
 #define PROJECT_VERSION 0
@@ -97,24 +101,24 @@ struct ControlError {
 };
 
 // PID控制器  @xhj add:debug
-class PIDController {
-public:
-    PIDController(float kp, float ki, float kd) : kp(kp), ki(ki), kd(kd), prev_error(0.00f), integral(0.00f) {}
+// class PIDController {
+// public:
+//     PIDController(float kp, float ki, float kd) : kp(kp), ki(ki), kd(kd), prev_error(0.00f), integral(0.00f) {}
 
-    float compute(float setpoint, float actual, float dt) {
-        float error = setpoint - actual;
-        integral += error * dt;
-        float derivative = (error - prev_error) / dt;
-        prev_error = error;
+//     float compute(float setpoint, float actual, float dt) {
+//         float error = setpoint - actual;
+//         integral += error * dt;
+//         float derivative = (error - prev_error) / dt;
+//         prev_error = error;
 
-        return kp * error + ki * integral + kd * derivative;
-    }
+//         return kp * error + ki * integral + kd * derivative;
+//     }
 
-private:
-    float kp, ki, kd;
-    float prev_error;
-    float integral;
-};
+// private:
+//     float kp, ki, kd;
+//     float prev_error;
+//     float integral;
+// };
 
 std::string timestampToDate(const ros::Time &time);
 std::string getVersion();
@@ -140,24 +144,44 @@ private:
     ros::NodeHandle private_nh_;
 
     // publisher
+    // path_too_far_pub_ 历史命名保留，实际发布话题为 /turn_completed，类型 std_msgs::Bool
     ros::Publisher pub_Command, pub_Controlok , pub_CtlError, path_too_far_pub_; //TODO
+    ros::ServiceServer turn_completed_srv_;
+
+    std::mutex turn_completed_mutex_;
+    pure_pursuit::TurnCompleted turn_completed_msg_;
 
 
     // subscriber
     std::string sub_planning_result_topic, sub_speed_info_topic, sub_gpsposition_topic, sub_pos_topic, sub_direct_control_topic,sub_stop_car_topic,sub_avoidstate_topic;
-    ros::Subscriber sub1_, sub2_, sub3_, sub4_, sub5_,substop,sub_avoid;
+    ros::Subscriber sub1_, sub2_, sub3_, sub4_, sub5_,substop,sub_avoid,sub_signal_;
 
     // constant
     const int LOOP_RATE_; // processing frequency
 
     // variables
     waypose local_waypoints[50];
-    waypose *goal;
-    unsigned char goal_id; // 0～255 [50]
     ControlCommand command;
 
     //@xhj ：limiting 
-    
+    //std::vector<double> prev_path_x; //CNK 0511
+    //std::vector<double> prev_path_y;
+    //size_t prev_path_size = 0;
+   // bool first_path = true;
+    // 转弯状态机：用于处理 gear=2 的转弯点
+    // NONE：    正常跟踪，未遇到转弯点
+    // APPROACH：接近 gear=2 转弯点，已减速
+    // EXECUTING：到达转弯点，执行原地旋转对准下一段路径
+    enum class TurnPhase { NONE, APPROACH, EXECUTING };
+    TurnPhase turn_phase_ = TurnPhase::NONE;
+    int turn_target_idx_ = -1;  // 当前正在处理的 gear=2 点索引
+    // 转弯完成保护：避免 planner 还没删掉旧 gear=2 点时再次进入同一转弯点
+    bool has_last_completed_turn_ = false;
+    float last_completed_turn_x_ = 0.0f;
+    float last_completed_turn_y_ = 0.0f;
+    ros::Time turn_completion_guard_end_time_;
+
+
     //@xhj : control_status
     bool c_start = false;
     bool c_finish = false;
@@ -169,11 +193,13 @@ private:
  
     int path_state = PATH_INIT;
     int lat_track_state = CONTROL_INIT;
-    int look_ahead_index;
+    int look_ahead_index = 0;
     int nearest_waypoint_id = -1;
 
-    const float kMaxPathDistance = 200;    // cm
-    const float kMaxLatError = 200;        // cm
+    ros::Time last_pos_time;  // 上次收到定位数据的时间戳，用于定位超时检测
+
+    const float kMaxPathDistance = 20000;    // cm
+    const float kMaxLatError = 2000;        // cm
     const float kStoppingLatError = 0.5;   // meter
     //const float L = 1.26;                  // wheel base
 
@@ -209,6 +235,7 @@ private:
     bool is_velocity_set_;
     bool is_carposition_set_;
     float desire_speed_com;
+   
 
     // callbacks
     void callbackFromPlanningResult(const util::LocalPathConstPtr &msg_planning_result);
@@ -216,7 +243,12 @@ private:
     void callbackFromPos(const util::PositionConstPtr &msg_carposition);
     void callbackFromDirectControl(const mower_msgs::Direct_ControlConstPtr &msg_direct_control);
     void callbackFromTaskstop(const std_msgs::Bool &task_msg);	
-    void callbackFromAvoidstate(const std_msgs::UInt8 &avoid_msg);	
+    void callbackFromAvoidstate(const std_msgs::UInt8 &avoid_msg);
+    void callbackFromSignal(const std_msgs::StringConstPtr &string);
+    //bool isSamePath(const util::LocalPath& new_path); 	  //cnk 0511
+    //void savePreviousPath(const util::LocalPath& path);   //cnk 0511
+
+    bool callbackTurnCompleted(pure_pursuit::TurnCompletedRequest &req, pure_pursuit::TurnCompletedResponse &res);
     
 
     // initializer
@@ -232,11 +264,8 @@ private:
     int getNearestIndex(int *index);  
     int getLatDistance(float *distance);  //计算当前侧向偏差
     float getDistanceToLine(waypose *p1, waypose *p2);
-  
-    void setControl_main(void);
 
-    int findGoalPoint(void);
-    int isGoalValid(void);
+    void setControl_main(void);
     
     void act(void);
     void latcontrol_algorithm(void);

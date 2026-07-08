@@ -1,2 +1,2 @@
 rosbag record -o x.bag /lawn_mower/global_path /vehicle/cmd /send_map_info /nanobot/gpsposition
-/nanobot/localpose /mower/control_error
+/nanobot/localpose

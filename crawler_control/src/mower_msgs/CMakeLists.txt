@@ -75,7 +75,6 @@ add_message_files(
     TimeAreaLeft.msg
     Position.msg
     Monitor.msg
-    ControlError.msg
     )
 
 ## Generate services in the 'srv' folder
