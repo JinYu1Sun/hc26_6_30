@@ -74,7 +74,7 @@ int PurePursuit::getNearestIndex(int *index) {
   float nearest_dis = 999.0;
   *index = -1;
 
-  if (planning_result.point_num < 1) {
+  if (planning_result.point_num < 1) {  
     return 0;
   }
 
@@ -82,9 +82,17 @@ int PurePursuit::getNearestIndex(int *index) {
   for (int i = 0; i < planning_result.point_num; i++) {
       if (i==0&&planning_result.gear[i] == 2) 
       {
-        nearest_index = i;
-        *index = nearest_index;
-        return 1;// gear=2 转弯点就是最近点
+        float dx_comp = planning_result.x[i] - last_completed_turn_x_;
+        float dy_comp = planning_result.y[i] - last_completed_turn_y_;
+        if(std::hypot(dx_comp, dy_comp)>0.01f)
+        {
+          nearest_index = i;
+          *index = nearest_index;
+          return 1;// gear=2 转弯点就是最近点
+        }else{
+          *index = nearest_index+1;
+          return 1;// gear=2 转弯点就是最近点
+        }
       }
       if (fabsf(local_waypoints[i].heading) >= M_PI / 2) continue;
       
@@ -102,9 +110,17 @@ int PurePursuit::getNearestIndex(int *index) {
     for (int i = 0; i < planning_result.point_num; i++) {
         // if (local_waypoints[i].point.x <= 0.0f) continue;
         if(planning_result.gear[i] == 2) {
-          nearest_index = i;
-          *index = nearest_index;
-          return 1;// gear=2 转弯点就是最近点
+          float dx_comp = planning_result.x[i] - last_completed_turn_x_;
+          float dy_comp = planning_result.y[i] - last_completed_turn_y_;
+          if(std::hypot(dx_comp, dy_comp)>0.01f)
+          {
+            nearest_index = i;
+            *index = nearest_index;
+            return 1;// gear=2 转弯点就是最近点
+          }else{
+            *index = nearest_index+1;
+            return 1;// gear=2 转弯点就是最近点
+          }
         }
         float dis = robot::geometry::hypotFast(
             local_waypoints[i].point.x * 100,
@@ -228,10 +244,8 @@ void PurePursuit::updateStateMachine() {
   // 一旦处于转弯状态机，强制预瞄到 latch 的转弯点
   if (gear2_idx!= -1) 
   {
-    float dx_comp = planning_result.x[gear2_idx] - last_completed_turn_x_;
-    float dy_comp = planning_result.y[gear2_idx] - last_completed_turn_y_;
     look_ahead_index = gear2_idx;
-    if (vehicle_state_ == VehicleState::TRACKING&&fabsf(local_waypoints[look_ahead_index].point.x) < 0.05f&&fabsf(local_waypoints[look_ahead_index].point.y) < 0.05f&&std::hypot(dx_comp, dy_comp)>0.01f) {
+    if (vehicle_state_ == VehicleState::TRACKING&&fabsf(local_waypoints[look_ahead_index].point.x) < 0.05f&&fabsf(local_waypoints[look_ahead_index].point.y) < 0.05f) {
       vehicle_state_ = VehicleState::EXECUTING;
     }
   }else{

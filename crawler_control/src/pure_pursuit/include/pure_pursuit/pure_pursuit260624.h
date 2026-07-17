@@ -123,7 +123,7 @@ std::string getVersion();
 //int quadraticFunction(double a, double b, double c, double xq);
 int calculateDriveValue(float current_speed,float desire_speed,bool flag,uint8_t avoid_state_data);
 int calculateTurnValue(bool latest_gear_flag, waypose local_waypose, waypose *c_goal, 
-                       unsigned char cgoal_id, int last_tv);
+                       unsigned char cgoal_id, int last_tv,float desire_speed);
 
 double getDelay(const ros::Time &now, const ros::Time &last);
 

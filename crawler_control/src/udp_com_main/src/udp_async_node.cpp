@@ -25,7 +25,7 @@
 #include <thread>
 #include <atomic>
 
-#define DATA_SIZE 14
+#define DATA_SIZE 15
 
 struct UdpPacket {
     std::vector<uint8_t> data;
@@ -254,7 +254,7 @@ private:
     
     void vehicleCmdCallback(const mower_msgs::VehicleCmd::ConstPtr &msg) {
         std::vector<uint8_t> data = createUdpPacket(
-            msg->mover_bool, msg->drive_value, msg->turn_value, msg->mower_height);
+            msg->mover_bool, msg->drive_value, msg->turn_value, msg->mower_height,msg->ad_control_enable);
         
         ssize_t sent = sendto(udp_socket_, data.data(), data.size(), 0,
                               (struct sockaddr*)&remote_addr_, sizeof(remote_addr_));
@@ -263,11 +263,11 @@ private:
         } else if (sent != DATA_SIZE) {
             ROS_WARN("Partial send: %zd/%d", sent, DATA_SIZE);
         } else {
-            ROS_INFO("TX: drive=%d, turn=%d", msg->drive_value, msg->turn_value);
+            ROS_INFO("TX: drive=%d, turn=%d,ad_control=%d", msg->drive_value, msg->turn_value,msg->ad_control_enable);
         }
     }
     
-    std::vector<uint8_t> createUdpPacket(int mover_bool, int drive_value, int turn_value, int mower_height) {
+    std::vector<uint8_t> createUdpPacket(int mover_bool, int drive_value, int turn_value, int mower_height,int ad_control_enable) {
         std::vector<uint8_t> data(DATA_SIZE);
         data[0] = 'V'; data[1] = 'E'; data[2] = 'H'; data[3] = 'C';
         
@@ -285,12 +285,13 @@ private:
         
         data[12] = static_cast<uint8_t>(mover_bool);
         data[13] = static_cast<uint8_t>(mower_height);
+        data[14] = static_cast<uint8_t>(ad_control_enable);
         return data;
     }
     
     void sendStopCommand() {
         ROS_INFO("Sending stop command...");
-        std::vector<uint8_t> stop_data = createUdpPacket(0, 0, 0, 0);
+        std::vector<uint8_t> stop_data = createUdpPacket(0, 0, 0, 0,0);
         stop_data[0] = '1'; stop_data[1] = '2';
         stop_data[2] = '3'; stop_data[3] = '4';
         for (int i = 0; i < 3; ++i) {

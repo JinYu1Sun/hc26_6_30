@@ -145,6 +145,9 @@ int PurePursuit::getNearestIndex(int *index) {
 
   for (i = 0; i < planning_result.point_num; i++) {
     // in 1224 修改了最近点逻辑？ 要判断 是否丢点
+    if (local_waypoints[i].point.x < -0.01f || fabs(local_waypoints[i].heading) > M_PI_2) {
+      continue;
+    }
 
     // cm >=0
     float dis = robot::geometry::hypotFast(local_waypoints[i].point.x * 100,
@@ -152,10 +155,6 @@ int PurePursuit::getNearestIndex(int *index) {
     if (dis < up_dis) {
       up_dis = dis;
       near_i = i;
-    }
-    if (dis > 300) {
-      // break;
-      continue;
     }
     /*if (local_waypoints[i].point.y <= 0.0f) // 局部转换，前向y正值最近的点
     @add continue; nearest_index = i; break;*/
@@ -495,11 +494,11 @@ void PurePursuit::setControl_main(void) {
         ROS_WARN("delta_heading,%.4f",
                   delta_heading);
         if (delta_heading < 0) {
-          command.turn_value = -10; // 1270
+          command.turn_value = -15; // 1270
           command.drive_value = 0; // 1500
           break;
         } else {
-          command.turn_value =10; // 1730
+          command.turn_value =15; // 1730
           command.drive_value = 0; // 1500
           break;
         }
@@ -720,7 +719,7 @@ void PurePursuit::callbackFromPlanningResult(
         if (fabsf(heading_error) > 0.03 && !already_moving_straight) {
           command.drive_value = 0; // 1500
           
-          command.turn_value = (heading_error > 0) ? -10 : 10; // 1270 : 1730
+          command.turn_value = (heading_error > 0) ? -15 : 15; // 1270 : 1730
           distance_increase_count = 0;
           ROS_INFO("Adjusting heading to target point...");
         } else {
@@ -759,7 +758,7 @@ void PurePursuit::callbackFromPlanningResult(
     } else {
       command.drive_value = 0; // 1500
       ROS_INFO("heading=%.4f",heading);
-      command.turn_value = (heading > 0) ? -10 : 10; // 1270 : 1730
+      command.turn_value = (heading > 0) ? -15 : 15; // 1270 : 1730
 
     }
   }
@@ -1217,10 +1216,10 @@ int calculateTurnValue(bool latest_gear_flag, waypose local_waypose,
     }
     t_value = tmp_value;
 
-    if (t_value > 3) {
-    t_value = 3;
-    } else if (t_value < -3) {
-        t_value = -3;
+    if (t_value > 9) {
+    t_value = 9;
+    } else if (t_value < -9) {
+        t_value = -9;
     }
   } else { // 250312 add
         t_value = 0;

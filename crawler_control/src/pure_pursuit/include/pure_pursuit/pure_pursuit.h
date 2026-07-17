@@ -6,6 +6,7 @@
 #include <memory>
 #include <mutex>
 #include <vector>
+#include <limits>
 // ROS includes
 #include <geometry_msgs/PoseStamped.h>
 #include <geometry_msgs/TwistStamped.h>
@@ -100,8 +101,8 @@ private:
     float nearest_speed_m_s = 0.0f;
     // 转弯完成保护：避免 planner 还没删掉旧 gear=2 点时再次进入同一转弯点
     bool has_last_completed_turn_ = false;
-    float last_completed_turn_x_ = 0.0f;
-    float last_completed_turn_y_ = 0.0f;
+    float last_completed_turn_x_ =  std::numeric_limits<float>::infinity();;
+    float last_completed_turn_y_ =  std::numeric_limits<float>::infinity();;
 
     bool c_finish = false;
     bool Task_stop =false;
