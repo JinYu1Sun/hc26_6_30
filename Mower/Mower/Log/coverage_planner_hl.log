@@ -1,0 +1,4 @@
+[33m[ WARN] [1784276777.834997180]: No polygon file specified to parameter server (parameter "polygon"). Expecting polygon from service call.[0m
+[33m[ WARN] [1784276777.874662022]: Cannot send visualization because altitude not set.[0m
+[33m[ WARN] [1784280194.471346315]: Polygon offsetting changes topology. Reducing offsetting distance.[0m
+[33m[ WARN] [1784280194.656134367]: Cannot send solution visualization because plan has not been made.[0m

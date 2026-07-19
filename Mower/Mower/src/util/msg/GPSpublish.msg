@@ -1,0 +1,15 @@
+Header header
+int8 localization_model
+float32 localization_error
+int8 localization_iteration
+int32 localization_time0
+int32 localization_time1
+float64 localization_pose_x
+float64 localization_pose_y
+float64 localization_pose_z
+float64 localization_pose_roll
+float64 localization_pose_pitch
+float64 localization_pose_yaw
+float64 heading
+int8 GPS_final_level
+int8 NDT_final_level

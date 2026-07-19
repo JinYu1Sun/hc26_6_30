@@ -1,0 +1,9 @@
+<launch>
+    <node pkg="pure_pursuit" type="pure_pursuit" name="pure_pursuit" output="screen">
+        <param name="v_min" value="0.05" />
+        <param name="w_max" value="0.3" />
+        <param name="min_lookahead_distance" value="1.5" />
+        <param name="regulated_min_radius" value="1.8" />
+        <param name="low_speed" value="0.3" />
+    </node>
+</launch>

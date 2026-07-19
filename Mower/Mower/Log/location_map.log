@@ -1,0 +1,176 @@
+[0m[ INFO] [1784276784.135404887]: START LOAD VSLAM LOCATION[0m
+[0m[ INFO] [1784276785.357234561]: The saved map list: 071702/071401/0601/0709/1017008888/071402/260630/test001/cctv/0702/0617/0713/1017001/0716/0630999/071602/0603/071701/[0m
+[0m[ INFO] [1784276785.361153350]: LocationMap initialized with interactive multi-map support[0m
+[0m[ INFO] [1784276785.361185415]: Listening for planning ready signals on topic: /planning_ready[0m
+[2026-07-17 16:26:28] string->data:close
+[2026-07-17 16:26:29] string->data:open
+[2026-07-17 16:26:33] string->data:close
+[2026-07-17 16:26:35] string->data:open
+[2026-07-17 16:26:38] string->data:close
+[2026-07-17 16:26:40] string->data:open
+[2026-07-17 16:26:44] string->data:close
+[2026-07-17 16:26:48] string->data:open
+[2026-07-17 16:26:55] string->data:close
+[2026-07-17 16:27:04] string->data:open
+[2026-07-17 16:27:25] string->data:close
+[2026-07-17 16:27:25] string->data:open
+[2026-07-17 16:27:28] string->data:close
+[2026-07-17 16:27:29] string->data:open
+[2026-07-17 16:27:55] string->data:close
+[2026-07-17 16:27:55] string->data:open
+[2026-07-17 16:27:59] string->data:reset
+[0m[ INFO] [1784276879.042941014]: Reset all data![0m
+[2026-07-17 16:27:59] string->data:close
+[2026-07-17 16:28:00] string->data:open
+[2026-07-17 16:28:03] string->data:close
+[2026-07-17 16:28:05] string->data:open
+[2026-07-17 16:28:07] string->data:close
+[2026-07-17 16:29:55] string->data:open
+[2026-07-17 16:30:15] string->data:close
+[2026-07-17 16:30:19] string->data:open
+[2026-07-17 16:31:32] string->data:close
+[2026-07-17 16:31:34] string->data:open
+[2026-07-17 16:31:36] string->data:close
+[2026-07-17 16:31:42] string->data:open
+[2026-07-17 16:31:43] string->data:close
+[2026-07-17 16:31:44] string->data:open
+[2026-07-17 16:31:44] string->data:close
+[2026-07-17 16:33:52] string->data:open
+[2026-07-17 16:35:35] string->data:close
+[2026-07-17 16:36:26] string->data:open
+[2026-07-17 16:36:33] string->data:close
+[2026-07-17 16:36:35] string->data:open
+[2026-07-17 16:36:39] string->data:close
+[2026-07-17 16:36:47] string->data:open
+[2026-07-17 16:36:52] string->data:close
+[2026-07-17 16:43:22] string->data:open
+[2026-07-17 16:43:32] string->data:close
+[2026-07-17 16:49:57] string->data:close
+[2026-07-17 16:49:57] string->data:open
+[2026-07-17 16:50:04] string->data:close
+[2026-07-17 16:50:05] string->data:open
+[2026-07-17 16:50:08] string->data:close
+[2026-07-17 16:50:11] string->data:open
+[2026-07-17 16:50:14] string->data:close
+[2026-07-17 16:50:16] string->data:open
+[2026-07-17 16:50:20] string->data:close
+[2026-07-17 16:50:22] string->data:open
+[2026-07-17 16:50:25] string->data:close
+[2026-07-17 16:50:27] string->data:open
+[2026-07-17 16:50:30] string->data:close
+[2026-07-17 16:50:35] string->data:open
+[2026-07-17 16:50:43] string->data:close
+[2026-07-17 16:50:57] string->data:open
+[2026-07-17 16:51:03] string->data:close
+[2026-07-17 16:51:07] string->data:open
+[2026-07-17 16:51:30] string->data:close
+[2026-07-17 16:51:30] string->data:open
+[2026-07-17 16:51:35] string->data:close
+[2026-07-17 16:51:38] string->data:open
+[2026-07-17 16:51:44] string->data:close
+[2026-07-17 16:52:27] string->data:open
+[2026-07-17 16:52:32] string->data:close
+[2026-07-17 16:52:32] string->data:open
+[2026-07-17 16:52:34] string->data:close
+[2026-07-17 16:52:38] string->data:open
+[2026-07-17 16:52:48] string->data:close
+[2026-07-17 16:52:54] string->data:open
+[2026-07-17 16:53:00] string->data:close
+[2026-07-17 16:53:11] string->data:open
+[2026-07-17 16:53:15] string->data:close
+[2026-07-17 16:53:52] string->data:open
+[2026-07-17 16:53:58] string->data:close
+[2026-07-17 16:54:05] string->data:open
+[2026-07-17 16:54:12] string->data:close
+[2026-07-17 16:54:22] string->data:open
+[2026-07-17 16:54:27] string->data:close
+[2026-07-17 16:58:10] string->data:open
+[2026-07-17 16:58:15] string->data:close
+[2026-07-17 16:58:16] string->data:open
+[2026-07-17 16:58:17] string->data:close
+[2026-07-17 16:58:19] string->data:open
+[2026-07-17 16:58:20] string->data:close
+[2026-07-17 16:58:21] string->data:open
+[2026-07-17 16:58:22] string->data:close
+[2026-07-17 16:58:23] string->data:open
+[2026-07-17 16:58:25] string->data:close
+[2026-07-17 16:58:25] string->data:open
+[2026-07-17 16:58:27] string->data:close
+[2026-07-17 16:58:28] string->data:open
+[2026-07-17 16:58:29] string->data:close
+[2026-07-17 16:58:36] string->data:open
+[2026-07-17 16:58:41] string->data:close
+[2026-07-17 16:58:52] string->data:open
+[2026-07-17 16:58:56] string->data:close
+[2026-07-17 16:59:01] string->data:open
+[2026-07-17 16:59:07] string->data:close
+[2026-07-17 16:59:11] string->data:open
+[2026-07-17 16:59:26] string->data:close
+[2026-07-17 16:59:35] string->data:open
+[2026-07-17 17:00:04] string->data:close
+[2026-07-17 17:00:35] string->data:open
+[2026-07-17 17:00:41] string->data:close
+[2026-07-17 17:00:47] string->data:open
+[2026-07-17 17:00:57] string->data:close
+[2026-07-17 17:01:07] string->data:open
+[2026-07-17 17:01:15] string->data:close
+[2026-07-17 17:01:20] string->data:open
+[2026-07-17 17:01:25] string->data:close
+[2026-07-17 17:01:32] string->data:open
+[2026-07-17 17:01:38] string->data:close
+[2026-07-17 17:02:12] string->data:open
+[2026-07-17 17:02:19] string->data:close
+[2026-07-17 17:02:22] string->data:open
+[2026-07-17 17:02:27] string->data:close
+[2026-07-17 17:02:31] string->data:open
+[2026-07-17 17:02:36] string->data:close
+[2026-07-17 17:02:40] string->data:open
+[2026-07-17 17:02:53] string->data:close
+[2026-07-17 17:04:19] string->data:open
+[2026-07-17 17:04:26] string->data:close
+[2026-07-17 17:04:31] string->data:open
+[2026-07-17 17:04:37] string->data:close
+[2026-07-17 17:04:45] string->data:open
+[2026-07-17 17:04:51] string->data:close
+[2026-07-17 17:04:59] string->data:open
+[2026-07-17 17:05:06] string->data:close
+[2026-07-17 17:05:10] string->data:open
+[2026-07-17 17:05:14] string->data:close
+[2026-07-17 17:05:17] string->data:open
+[2026-07-17 17:05:22] string->data:close
+[2026-07-17 17:09:04] string->data:open
+[2026-07-17 17:09:09] string->data:close
+[2026-07-17 17:15:36] string->data:init_location
+[2026-07-17 17:15:37] string->data:true
+[2026-07-17 17:19:32] string->data:m_mode
+[2026-07-17 17:19:42] string->data:start_brd
+[0m[ INFO] [1784279982.148692357]: [2026-07-17 17:19:42] 开始录制割草区域![0m
+[0m[ INFO] [1784279982.148772007]: [2026-07-17 17:19:42] 已清空当前界面![0m
+[2026-07-17 17:22:21] string->data:cease_brd
+[2026-07-17 17:22:21] 停止录制割草区域, 并发布已录制的地图给UI!
+[0m[ INFO] [1784280141.125524305]: [2026-07-17 17:22:21] 当前地图编号: 1[0m
+[0m[ INFO] [1784280141.125608819]: [2026-07-17 17:22:21] 最新地图编号: 1[0m
+[2026-07-17 17:22:51] string->data:save_map/071703
+[0m[ INFO] [1784280171.708800826]: Start_save![0m
+[2026-07-17 17:22:51] 开始保存地图!
+[0m[ INFO] [1784280171.764987952]: [2026-07-17 17:22:51] 地图保存成功: /home/nvidia/Mower/src/location_map/map_files/071703.yaml[0m
+[0m[ INFO] [1784280171.865316588]: The saved map list: 071702/071401/0601/0709/1017008888/071402/260630/test001/cctv/071703/0702/0617/0713/1017001/0716/0630999/071602/0603/071701/[0m
+[2026-07-17 17:22:54] string->data:reset
+[0m[ INFO] [1784280174.365397853]: Reset all data![0m
+[2026-07-17 17:22:57] string->data:p_mode
+[0m[ INFO] [1784280177.616701330]: p_mode![0m
+[0m[ INFO] [1784280177.717261652]: The saved map list: 071702/071401/0601/0709/1017008888/071402/260630/test001/cctv/071703/0702/0617/0713/1017001/0716/0630999/071602/0603/071701/[0m
+[2026-07-17 17:23:07] string->data:use_map/071703
+[33m[ WARN] [1784280187.053640387]: No path data found for map 1[0m
+[0m[ INFO] [1784280187.052615020]: use_map![0m
+[0m[ INFO] [1784280187.053702821]: The map contains polygons: 1[0m
+[0m[ INFO] [1784280187.053801287]: load Map success: 071703.yaml[0m
+[2026-07-17 17:23:08] string->data:single_map
+[0m[ INFO] [1784280188.485042326]: single_map![0m
+[2026-07-17 17:23:10] string->data:start_work
+[33m[ WARN] [1784280194.456660446]: Single_map mode confirm, now in map_hull: 1[0m
+[0m[ INFO] [1784280190.144669854]: Start work![0m
+[0m[ INFO] [1784280194.456606717]: single_map selected[0m
+[2026-07-17 17:23:14] 发布割草区域给UI显示, 地图编号: 1
+[2026-07-17 17:23:26] string->data:start_execution
+[2026-07-17 17:25:59] string->data:stop_execution

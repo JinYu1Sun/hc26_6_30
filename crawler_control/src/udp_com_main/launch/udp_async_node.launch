@@ -1,0 +1,28 @@
+<!-- launch/udp_async_node.launch -->
+<launch>
+    <!-- UDP 异步收发节点（带接收缓冲区） -->
+    <node pkg="udp_com_main"
+          type="udp_async_node"
+          name="udp_async_node"
+          output="screen">
+
+        <!-- 目标设备IP地址 -->
+        <param name="remote_ip" value="192.168.1.30"/>
+
+        <!-- 目标端口号 -->
+        <param name="remote_port" value="8888"/>
+
+        <!-- 本地绑定端口（收发节点必须绑定） -->
+        <param name="local_port" value="8888"/>
+
+        <!-- 接收缓冲区最大长度 -->
+        <param name="max_queue_size" value="100"/>
+
+        <!-- 可选：重映射话题
+             订阅 /vehicle/cmd  (mower_msgs/VehicleCmd)
+             发布 /vehicle/status (mower_msgs/VehicleStatus)
+        <remap from="/vehicle/cmd" to="/vehicle/cmd"/>
+        <remap from="/vehicle/status" to="/vehicle/status"/>
+        -->
+    </node>
+</launch>
