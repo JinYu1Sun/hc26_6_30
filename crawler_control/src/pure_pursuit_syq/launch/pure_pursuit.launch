@@ -1,4 +1,0 @@
-<launch>
-    <!-- <env name="ROS_LOG_DIR" value="/home/nvidia/crawler_control/logs/pure_pursuit"/> -->
-    <node pkg="pure_pursuit" type="pure_pursuit" name="pure_pursuit" output="screen"/>
-</launch>

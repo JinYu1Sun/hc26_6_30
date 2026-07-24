@@ -113,7 +113,7 @@ private:
     // 避障状态跟踪
     std_msgs::UInt8 is_avoiding_;      // 是否正在进行避障
     std::mutex avoiding_mutex_; // 保护避障状态的互斥量
-    geometry_msgs::Point avoidance_goal_; // 当前避障的目标点
+    geometry_msgs::Point avoidance_goal_; // 当前避障的目标点，由栅格坐标转换而来
     bool avoidfinish_flag_; // 避障完成标志
     std::mutex avoidfinish_mutex_; // 保护避障完成标志的互斥量
     
@@ -154,7 +154,8 @@ private:
     // ROS发布者
     ros::Publisher local_path_pub_;
     ros::Publisher avoidstate_pub;
-    ros::Publisher pub_stopflag;  // TODO: 2025/01/28 - 动态障碍物停车信号发布器
+    ros::Publisher pub_stopflag1;  // 边界停车信号发布器
+    ros::Publisher pub_stopflag2;  // 避障过程中紧急停车信号发布器
     ros::Publisher goal_point_pub_;
     ros::Publisher grid_map_pub_; // 用于调试的占用栅格地图发布器
     ros::Publisher obstacle_markers_pub_; // 用于调试的障碍物多边形发布器
@@ -174,7 +175,7 @@ private:
     bool isBoundaryChanged(const std::vector<geometry_msgs::Point>& new_boundary);  // 是否需要更新地图边界
     void calculateMapDimensions();  // 计算地图尺寸
     void generateGridMap();
-    void boundaryOpenCVImg(cv::Mat &map_img, cv::Mat &dist, const std::vector<geometry_msgs::Point> &map_boundary);
+    void boundaryOpenCVImg(cv::Mat &map_img, cv::Mat &dist, const std::vector<geometry_msgs::Point> &map_boundary, const bool &is_obstacle);
     void publishDebugMap();
     
     // A*算法核心函数

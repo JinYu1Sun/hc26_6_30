@@ -204,10 +204,6 @@ signal.h
 sys/wait.h
 -
 
-/home/nvidia/Mower/src/location_map/src/main.cpp
-location_map.h
-/home/nvidia/Mower/src/location_map/src/location_map.h
-
 /opt/ros/noetic/include/geometry_msgs/Point.h
 string
 -

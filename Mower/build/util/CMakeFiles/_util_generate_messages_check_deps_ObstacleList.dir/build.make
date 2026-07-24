@@ -54,7 +54,7 @@ CMAKE_BINARY_DIR = /home/nvidia/Mower/build
 include util/CMakeFiles/_util_generate_messages_check_deps_ObstacleList.dir/progress.make
 
 util/CMakeFiles/_util_generate_messages_check_deps_ObstacleList:
-	cd /home/nvidia/Mower/build/util && ../catkin_generated/env_cached.sh /usr/bin/python3 /opt/ros/noetic/share/genmsg/cmake/../../../lib/genmsg/genmsg_check_deps.py util /home/nvidia/Mower/src/util/msg/ObstacleList.msg std_msgs/Header:util/Obstacle
+	cd /home/nvidia/Mower/build/util && ../catkin_generated/env_cached.sh /usr/bin/python3 /opt/ros/noetic/share/genmsg/cmake/../../../lib/genmsg/genmsg_check_deps.py util /home/nvidia/Mower/src/util/msg/ObstacleList.msg util/Obstacle:std_msgs/Header
 
 _util_generate_messages_check_deps_ObstacleList: util/CMakeFiles/_util_generate_messages_check_deps_ObstacleList
 _util_generate_messages_check_deps_ObstacleList: util/CMakeFiles/_util_generate_messages_check_deps_ObstacleList.dir/build.make

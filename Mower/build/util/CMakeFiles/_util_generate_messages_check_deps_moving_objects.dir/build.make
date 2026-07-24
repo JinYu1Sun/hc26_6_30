@@ -54,7 +54,7 @@ CMAKE_BINARY_DIR = /home/nvidia/Mower/build
 include util/CMakeFiles/_util_generate_messages_check_deps_moving_objects.dir/progress.make
 
 util/CMakeFiles/_util_generate_messages_check_deps_moving_objects:
-	cd /home/nvidia/Mower/build/util && ../catkin_generated/env_cached.sh /usr/bin/python3 /opt/ros/noetic/share/genmsg/cmake/../../../lib/genmsg/genmsg_check_deps.py util /home/nvidia/Mower/src/util/msg/moving_objects.msg std_msgs/Header:util/moving_object
+	cd /home/nvidia/Mower/build/util && ../catkin_generated/env_cached.sh /usr/bin/python3 /opt/ros/noetic/share/genmsg/cmake/../../../lib/genmsg/genmsg_check_deps.py util /home/nvidia/Mower/src/util/msg/moving_objects.msg util/moving_object:std_msgs/Header
 
 _util_generate_messages_check_deps_moving_objects: util/CMakeFiles/_util_generate_messages_check_deps_moving_objects
 _util_generate_messages_check_deps_moving_objects: util/CMakeFiles/_util_generate_messages_check_deps_moving_objects.dir/build.make

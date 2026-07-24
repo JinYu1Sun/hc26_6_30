@@ -75,8 +75,8 @@ ros::Time last_map_received_time_;
 double map_collection_timeout_ = 2.0;  // 5秒超时
 bool collection_timeout_started_ = false;
 
-double vmax = 1.4;
-double vmin = 0.1;
+double vmax = 0.8;
+double vmin = 0.25;
 double amax = 0.1;
 double step_size = 0.25;
 bool RS_curve_gen_flag = 0;
@@ -556,13 +556,10 @@ void assembleMultiMapPaths() {
       }
     }
   }
-  for (int i = 0; i < traj_.size(); i++) // TODO
+  for (int i = 0; i < traj_.size(); i++)
   {
-    if (traj_[i][4] < 0.2 && traj_[i][4] > vmin) {
-      if (i != traj_.size() - 1) {
-        traj_[i][4] = vmin;
-      }
-    }
+    if (traj_[i][4] < vmin)
+      traj_[i][4] = vmin;
   }
 
   /* ofstream outFile1;
@@ -916,14 +913,10 @@ void wplCallback(const geometry_msgs::PoseArray &msg) {
       }
     }
   }
-  // (vmin, 0.2) 区间是低速点，会调整为最小速度，不清楚意义在哪里？**********************
-  for (int i = 0; i < traj_.size(); i++) // TODO
+  for (int i = 0; i < traj_.size(); i++)
   {
-    if (traj_[i][4] < 0.2 && traj_[i][4] > vmin) {
-      if (i != traj_.size() - 1) {
-        traj_[i][4] = vmin;
-      }
-    }
+    if (traj_[i][4] < vmin) 
+      traj_[i][4] = vmin;
   }
 
   RS_curve_gen_flag = 1;
@@ -1022,11 +1015,8 @@ void ChannelPathSubCallback(const util::MapPath &msg) {
     }
   }
   for (int i = 0; i < traj_.size(); i++) {
-    if (traj_[i][4] <= 0.2 && traj_[i][4] > vmin) {
-      if (i != traj_.size() - 1) {
-        traj_[i][4] = vmin;
-      }
-    }
+    if (traj_[i][4] < vmin)
+      traj_[i][4] = vmin;
   }
 
   channel_path_gen_flag = 1;
@@ -1122,9 +1112,8 @@ void vehPoseFisrtSubCallback(const util::Position &Loc_msg) {
       traj_guide_ = velocityAssign(step_size, amax, vmax, traj_guide_);
 
       for (int i = 0; i < traj_guide_.size(); i++) {
-        if (traj_guide_[i][4] <= 0.2) {
+        if (traj_guide_[i][4] <= vmin)
           traj_guide_[i][4] = vmin;
-        }
       }
     }
     /********************************************/
@@ -1152,8 +1141,8 @@ void vehPoseFisrtSubCallback(const util::Position &Loc_msg) {
         //   traj_global_[curr_idx][3] = 1; // 把前一个变档点设为普通点
         //   continue; // 跳过当前变档点的速度调整
         // }
-        // 把变档点前5个点速度调整为0.25
-        for (int j = max(1, curr_idx - 5); j < curr_idx; j++) {
+        // 把变档点前3个点速度调整为0.25
+        for (int j = max(1, curr_idx - 3); j < curr_idx; j++) {
           if (traj_global_[j][3] == 1) // 只调整普通点的速度，变档点的速度保持不变
             traj_global_[j][4] = 0.25;
         }
@@ -1288,8 +1277,8 @@ void reset()
   // 重置起始点相关
   // last_start_point_ = geometry_msgs::Point();
   // 重置所有标志位到初始状态
-  vmax = 1.0;
-  vmin = 0.1;
+  vmax = 0.8;
+  vmin = 0.25;
   amax = 0.1;
   step_size = 0.25;
   RS_curve_gen_flag = 0;

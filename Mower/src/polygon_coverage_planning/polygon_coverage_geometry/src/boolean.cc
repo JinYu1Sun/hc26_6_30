@@ -43,8 +43,11 @@ std::list<PolygonWithHoles> computeDifference(
 
   Polygon_set_2 gps(hull);
   for (auto h = holes_begin; h != holes_end; ++h) {
+    if (!h->is_simple())
+      std::cout << "不是简单多边形，存在自交点" << std::endl;
     gps.difference(*h);
   }
+
 
   std::list<PolygonWithHoles> res;
   gps.polygons_with_holes(std::back_inserter(res));

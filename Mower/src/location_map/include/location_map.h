@@ -162,13 +162,13 @@ public:
     void processNextMapInSequence();
 
     enum BitFields {
-    signal_brd = 0,
-    signal_hole = 1,
-    signal_path = 2,
+    signal_brd = 0,     // 录制割草区域
+    signal_hole = 1,    // 录制割草区域洞洞点(障碍物)
+    signal_path = 2,    // 录制割草区域之间的连接路径点
     signal_point = 3,
-    signal_work = 4,
+    signal_work = 4,    // 发布工作所需的地图
     signal_delete = 5,
-    signal_save = 6
+    signal_save = 6     // 保存录制的地图
 };
 // extern std::bitset<7> signal;
 static std::bitset<7> signal; 

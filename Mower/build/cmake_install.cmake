@@ -131,7 +131,7 @@ endif()
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
   include("/home/nvidia/Mower/build/gtest/cmake_install.cmake")
-  include("/home/nvidia/Mower/build/obstacle_avoidance/cmake_install.cmake")
+  include("/home/nvidia/Mower/build/location_map/cmake_install.cmake")
 
 endif()
 

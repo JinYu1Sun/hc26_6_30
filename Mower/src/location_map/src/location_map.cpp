@@ -113,7 +113,7 @@ LocationMap::LocationMap()
     localization_sub = nh->subscribe<util::Position>(localization_topic, 1, &LocationMap::StatusCallback, this);
     planning_ready_sub = nh->subscribe<std_msgs::String>(planning_ready_topic, 1, &LocationMap::PlanningReadyCallback, this); // 新增：订阅planning准备就绪信号
 
-    map_hull_pub = nh->advertise<geometry_msgs::Polygon>(map_hull_topic, 1, true);  // 发布边界多边形，由避障节点订阅来设置避障规划用的栅格地图，UI节点订阅显示
+    map_hull_pub = nh->advertise<geometry_msgs::Polygon>(map_hull_topic, 10, true);  // 发布边界多边形，由避障节点订阅来设置避障规划用的栅格地图，UI节点订阅显示
     map_hole_pub = nh->advertise<geometry_msgs::Polygon>(map_hole_topic, 1, true);  // 发布录制的洞多边形，是Android端需要用到
     map_path_pub = nh->advertise<util::MapPath>(map_path_topic, 1, true);           // 发布录制的路线，是Android端需要用到
     map_point_pub = nh->advertise<geometry_msgs::Point32>(map_point_topic, 1, true);// 发布录制的停车点数据，是Android端需要用到
@@ -127,8 +127,8 @@ LocationMap::LocationMap()
     tmp_path.name = 0;
     // target_name = 0;
     hulls.clear(); // 清空之前的内容
-    single_map = 0;
-    multi_map = 0;
+    single_map = false;
+    multi_map = false;
     // use_map = 0;
     delete_name = 0;
     std::string base_file;
@@ -145,6 +145,7 @@ void LocationMap::reset()
 {
     geometry_msgs::Polygon empty_hull;
     map_hull_pub.publish(empty_hull);
+    map_hole_pub.publish(empty_hull);
     planning_status = false;
     single_map = false;
     multi_map = false;
@@ -550,24 +551,11 @@ void LocationMap::GetSignalCallback(const std_msgs::StringConstPtr &string)
             ROS_ERROR("loaded Map error: %s", base_file.c_str());
         }
     }
-    /* if (string->data == "test_map")
+    if (string->data == "test_map")
     {
         ROS_INFO("test_map!");
-        // use_map = 1;
-        // base_file = (string->data).substr((string->data).find('/')+1)+std::string(".yaml");
-        // base_file = "test.yaml";
-        // if (loadMap(base_file))
-        // {
-        //     ROS_INFO("load Map success: %s", base_file.c_str());
-        // }
-        // else
-        // {
-        //     ROS_ERROR("loaded Map error: %s", base_file.c_str());
-        // }
-
-        // single_map = 1;
-        signal.set(4, 1);
-    } */
+        signal.set(signal_work, 1);
+    }
     if ((string->data).substr(0, (string->data).find('/')) == "delete_name")
     {
         ROS_INFO("delete_name!");
@@ -602,54 +590,51 @@ void LocationMap::GetSignalCallback(const std_msgs::StringConstPtr &string)
     {
 
         ROS_INFO("single_map!");
-        single_map = 1;
-        multi_map = 0;
+        single_map = true;
+        multi_map = false;
     }
     if (string->data == "multi_map")
     {
         ROS_INFO("multi_map!");
-        multi_map = 1;
-        single_map = 0;
+        multi_map = true;
+        single_map = false;
     }
     else if (string->data == "start_work")
     {
         ROS_INFO("Start work!");
-        signal.set(4, 1);
+        signal.set(signal_work, 1);
     }
     else if ((string->data).substr(0, (string->data).find('/')) == "save_map")
     {
         ROS_INFO("Start_save!");
-        signal.set(6, 1);
+        signal.set(signal_save, 1);
         base_file = (string->data).substr((string->data).find('/') + 1) + std::string(".yaml");
     }
     // 开始录制地图
     else if (string->data == "start_brd")
     {
         ROS_INFO("%s开始录制割草区域!", getLogTime().c_str());
-        signal.set(0, 1);
+        signal.set(signal_brd, 1);
         lastPoint.x = 0, lastPoint.y = 0;
         hull_tag++;
-        geometry_msgs::Polygon empty_hull;
-        map_hull_pub.publish(empty_hull);   // 发布一个空的多边形消息，清除之前的边界显示
-        ROS_INFO("%s已清空当前界面!", getLogTime().c_str());
     }
     // 开始录制障碍物
     else if (string->data == "start_obs")
     {
         ROS_INFO("%s开始录制障碍物区域!", getLogTime().c_str());
-        signal.set(1, 1);
+        signal.set(signal_hole, 1);
         lastPoint.x = 0, lastPoint.y = 0;
     }
     // 开始录制停车位
     else if (string->data == "start_point")
     {
         ROS_INFO("Start transcribe stop point!");
-        signal.set(3, 1);
+        signal.set(signal_point, 1);
     }
     else if (string->data == "start_path")
     {
         ROS_INFO("%s开始录制割草区域之间的路线!", getLogTime().c_str());
-        signal.set(2, 1);
+        signal.set(signal_path, 1);
         lastPoint.x = 0, lastPoint.y = 0;
     }
 
@@ -762,13 +747,6 @@ void LocationMap::handlePathPoint(const geometry_msgs::Point32 &point)
         tmp_path.link_path.path_points.push_back(point);
 }
 
-void LocationMap::handleDeleteSignal()
-{
-    std::cout << "signal_delete" << std::endl;
-    publishMapList();
-    signal.set(signal_delete, 0);
-}
-
 void LocationMap::handleSaveSignal()
 {
     std::cout << getLogTime() << "开始保存地图!" << std::endl;
@@ -840,7 +818,6 @@ void LocationMap::handleSaveSignal()
         if (!fout_brd.is_open())
         {
             ROS_ERROR("%s无法打开文件: %s, 退出保存!", getLogTime().c_str(), full_path.c_str());
-            signal.set(6, 0);
             return;
         }
 
@@ -898,7 +875,6 @@ void LocationMap::handleSaveSignal()
     {
         ROS_ERROR("%sERROR WHEN SAVE MAP: %s", getLogTime().c_str(), e.what());
     }
-    signal.set(6, 0);
 }
 
 /* 
@@ -934,6 +910,12 @@ void LocationMap::handleWorkSignal(const geometry_msgs::Point32 &point)
                         // std::cout<<"The BRD of the map is  "<<map_hull.polygon_with_holes.hull<<std::endl;
                         map_hull.iscomplete = true;
                         map_hull_pub.publish(poylgon.polygon.hull);
+                        for (auto &hole : poylgon.polygon.holes)
+                        {
+                            map_hole_pub.publish(hole);
+                            hole.points[0].z = 999.0; // 设置z为999，表示障碍物
+                            map_hull_pub.publish(hole);
+                        }
                         std::cout << getLogTime() << "发布割草区域给UI显示, 地图编号: " << map_hull.name << std::endl;
                         hulls.push_back(map_hull);
                         break;
@@ -944,7 +926,7 @@ void LocationMap::handleWorkSignal(const geometry_msgs::Point32 &point)
                         return;
                     }
                 }
-                single_map = 0;
+                single_map = false;
             }
             if (multi_map)
             {
@@ -1020,7 +1002,7 @@ void LocationMap::handleWorkSignal(const geometry_msgs::Point32 &point)
                 // 4. 推送第一个地图
                 processNextMapInSequence();
                 ROS_INFO("First map sent, waiting for global_planning feedback to continue...");
-                multi_map = 0;
+                multi_map = false;
             }
             if (!poylgon.polygon.hull.points.empty())
             {
@@ -1030,6 +1012,7 @@ void LocationMap::handleWorkSignal(const geometry_msgs::Point32 &point)
                 planning_point_pub.publish(plan_point); // 当前位置作为规划起点
                 planning_point_pub.publish(plan_point); // 当前位置作为规划终点
             }
+            signal.set(signal_work, 0);
         }
         catch (const std::exception &e)
         {
@@ -1074,14 +1057,19 @@ void LocationMap::StatusCallback(const util::PositionConstPtr &position_msg)
     if (signal[signal_path])
         handlePathPoint(point);
 
-    if (signal[signal_delete])
-        handleDeleteSignal();
+    // if (signal[signal_delete])
+    //     handleDeleteSignal();
 
     if (signal[signal_save])
+    {
         handleSaveSignal();
+        signal.set(signal_save, 0);
+    }
 
     if (signal[signal_work])
+    {
         handleWorkSignal(point);
+    }
 }
 
 // 添加处理下一个地图的方法
@@ -1109,6 +1097,12 @@ void LocationMap::processNextMapInSequence()
 
     // 发布地图边界（与single_map模式保持一致）给UI显示正在工作的地图
     map_hull_pub.publish(yaml_hulls[current_map_index_].polygon_with_holes.hull);
+    for (auto &hole : yaml_hulls[current_map_index_].polygon_with_holes.holes)
+    {
+        map_hole_pub.publish(hole);
+        hole.points[0].z = 999.0; // 设置z为999，表示障碍物
+        map_hull_pub.publish(hole);
+    }
     std::cout << getLogTime() << "发布地图" << yaml_hulls[current_map_index_].name << "给UI显示"<< std::endl;
 
     // 发布规划起点

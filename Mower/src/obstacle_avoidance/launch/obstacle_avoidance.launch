@@ -14,7 +14,7 @@
     <param name="avoidance_completion_ang_threshold" value="0.2" />
     <param name="boundary_check_enabled" value="true" />
     <param name="boundary_shrink_distance" value="0.0" />
-    <param name="required_emergency_frames" value="5" />
+    <param name="required_emergency_frames" value="10" />
     <!-- 若需使用地图文件，请取消以下一行注释并指定路径 -->
     <!-- <param name="map_file" value="$(find obstacle_avoidance)/data/complex_map_boundary.txt" /> -->
   </node>

@@ -288,7 +288,7 @@ private:
         data[14] = static_cast<uint8_t>(ad_control_enable);
         return data;
     }
-    
+ 
     void sendStopCommand() {
         ROS_INFO("Sending stop command...");
         std::vector<uint8_t> stop_data = createUdpPacket(0, 0, 0, 0,0);

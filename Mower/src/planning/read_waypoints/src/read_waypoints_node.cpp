@@ -109,7 +109,8 @@ private:
   ros::ServiceClient turn_completed_cli_;
 
   // 发布器
-  ros::Publisher pub_path_;
+  ros::Publisher control_path_pub_;
+  ros::Publisher avoid_detection_path_pub_;
   ros::Publisher mower_num_pub_;
   ros::Publisher test_waypoint_pub_;
   ros::Publisher pub_signal_;
@@ -170,7 +171,8 @@ public:
     turn_completed_cli_ = nh_.serviceClient<read_waypoints::TurnCompleted>("/turn_completed");
 
     // 初始化发布器
-    pub_path_ = nh_.advertise<util::LocalPath>("/lawn_mower/global_path", 1); // 发布局部路径
+    control_path_pub_ = nh_.advertise<util::LocalPath>("/lawn_mower/global_path", 1); // 发布控制需要的局部路径
+    avoid_detection_path_pub_ = nh_.advertise<util::LocalPath>("/lawn_mower/avoid_detection_path", 1); // 发布避障检测路径
     mower_num_pub_ = nh_.advertise<std_msgs::String>("/lawn_mower/machineNo", 1);
     // 读取并发布最终的全局轨迹(包括拼接路径)，由UI点阅显示
     test_waypoint_pub_ = nh_.advertise<geometry_msgs::PoseArray>("/newwaypoints_list", 1, true);
@@ -407,7 +409,6 @@ public:
     first_loop_ = true;
     global_path_copy_ = global_path_;
     ROS_INFO("Read csv global size: %zu", global_path_.x.size());
-    // pub_path_.publish(global_path_);
   }
   // 计算当前点与路径点的关系，判断是否应该丢弃该点，如果当前点与路径点过近且无需转向，则丢弃该点
   bool shouldDropWaypoint(double path_x, double path_y, double path_heading, int gear, const geometry_msgs::PointStamped &current_position) {
@@ -438,7 +439,7 @@ public:
       std::cout << getLogTime() << "已偏离原来割草路线" << std::endl;
       return false;
     }
-    if (local_x <= 0.03 && gear == 1 && std::fabs(error_heading) < 1.6) 
+    if (local_x <= 0.05 && gear == 1 && std::fabs(error_heading) < M_PI) 
     {
       ROS_INFO("gear=1 points is droped, %.4f, %.4f", path_x, path_y);
       return true;
@@ -446,17 +447,24 @@ public:
     // 转弯点处理，如果是个转向点，应该会先通过pathRecoveryCallback()通知转向是否完成
     if (gear == 2)
     {
-      read_waypoints::TurnCompleted turn_completed_req;
-      turn_completed_req.request.x = path_x;
-      turn_completed_req.request.y = path_y;
-      if (turn_completed_cli_.call(turn_completed_req))
+      read_waypoints::TurnCompleted turn_completed_cli;
+      turn_completed_cli.request.x = path_x;
+      turn_completed_cli.request.y = path_y;
+      if (turn_completed_cli_.call(turn_completed_cli))
       {
-        ROS_INFO("gear=2 points is droped, %.4f, %.4f", path_x, path_y);
-        if (min_pos_ == 0) {
-          ROS_WARN("First gear=2 point is dropped");
+        if (turn_completed_cli.response.turn_finish)
+        {
+          ROS_INFO("gear=2 points is droped, %.4f, %.4f", path_x, path_y);
+          if (min_pos_ == 0) {
+            ROS_WARN("First gear=2 point is dropped");
+          }
+          std::cout << getLogTime() << "转向完成!" << std::endl;
+          return true;
         }
-        std::cout << getLogTime() << "转向完成!" << std::endl;
-        return true;
+        else
+        {
+          std::cout << getLogTime() << "还未完成转向!" << std::endl;
+        }
       }
       else
       {
@@ -479,44 +487,6 @@ public:
     path.header.stamp = ros::Time(0);
     path.header.frame_id = "";
   }
-
-  // 生成当前位置到目标点的恢复路径
-  /* void generateRecoveryPath(double target_x, double target_y) {
-    double start_x = current_position_.point.x;
-    double start_y = current_position_.point.y;
-
-    double dx = target_x - start_x;
-    double dy = target_y - start_y;
-    double distance = std::hypot(dx, dy);
-
-    if (distance < 0.25) {
-      ROS_WARN("Goal is too close, no recovery path generated.");
-      return;
-    }
-
-    // int num_points = static_cast<int>(distance / 0.25);// cnk
-    int num_points = std::ceil(distance / 0.25); // cnk 0508
-    double unit_dx = dx / distance * 0.25;
-    double unit_dy = dy / distance * 0.25;
-    double heading = std::atan2(dy, dx);
-
-    clearLocalPath(recovery_path_);
-    recovery_path_.header.stamp = ros::Time::now();
-    recovery_path_.header.frame_id = "map";
-    recovery_path_.point_num = num_points;
-    recovery_path_.pathtype = 2; // 2 表示恢复路径
-
-    for (int i = 1; i <= num_points; ++i) {
-      double x = start_x + i * unit_dx;
-      double y = start_y + i * unit_dy;
-      recovery_path_.x.push_back(x);
-      recovery_path_.y.push_back(y);
-      recovery_path_.heading.push_back(heading);
-      recovery_path_.gear.push_back(i == 1 ? 2
-                                           : 1); // 第一个点 gear = 2，其余 1
-      recovery_path_.speed.push_back(i == 1 ? 0 : 0.25);
-    }
-  } */
 
   // 查找最近路径点
   int findNearestWaypoint(const util::LocalPath &path, const geometry_msgs::PointStamped &current_position) {
@@ -569,41 +539,65 @@ public:
     return nearest_index;
   }
 
-  // 提取路径段
-  void extractPathSegment(const util::LocalPath &source,
-                          util::LocalPath &target, int start_index,
-                          bool flag = false) {
-    // TODO: Yeager.comment it
-    clearLocalPath(target); // 清空目标路径cnk
-
+  // 提取控制所需的局部路径段、全局路径和避障检测的局部路径段
+  void extractPathSegment(const util::LocalPath &source, util::LocalPath &target1, util::LocalPath &target2,
+                          int start_index, bool flag = false)
+  {
+    
     int waypoint_size = source.x.size();
-    if (waypoint_size < 1 || start_index < 0 ||
-        start_index >= waypoint_size) //      <2 to <1
-    {
+    if (waypoint_size < 1 || start_index < 0 || start_index >= waypoint_size) {
       ROS_ERROR("Invalid start index or empty source path: start_index=%d, path_size=%d",
-                start_index, waypoint_size);
+      start_index, waypoint_size);
       return;
     }
+      
+    clearLocalPath(target1); // 清空目标路径
+    target1.header.stamp = ros::Time::now();
+    target1.header.frame_id = "map";
+    target1.pathtype = source.pathtype;
+    target2 = target1; // 复制头信息和路径类型
 
-    target.header.stamp = ros::Time::now();
-    target.header.frame_id = "map";
-    target.pathtype = source.pathtype;
-
-    int end_index = -1;
-    if (!flag)  // 正常工作时每50个点提取一段
-      end_index = std::min(start_index + 50, waypoint_size);
-    else  // 避障或路径恢复时提取从起点到路径末尾的所有点
-      end_index = waypoint_size;
-
-    target.point_num = end_index - start_index;
-
-    for (int i = start_index; i < end_index; i++) {
-      target.x.emplace_back(source.x[i]);
-      target.y.emplace_back(source.y[i]);
-      target.heading.emplace_back(source.heading[i]);
-      target.gear.emplace_back(source.gear[i]);
-      target.speed.emplace_back(source.speed[i]);
+    if (!flag)
+    {
+      // target1用于控制，提取到第一个转向点，target2用于避障检测，提取50个点
+      target1.point_num = 0;
+      for (int i = start_index; i < source.x.size(); i++)
+      {
+        target1.x.emplace_back(source.x[i]);
+        target1.y.emplace_back(source.y[i]);
+        target1.heading.emplace_back(source.heading[i]);
+        target1.gear.emplace_back(source.gear[i]);
+        target1.speed.emplace_back(source.speed[i]);
+        target1.point_num++;
+        if (source.gear[i] == 2)
+          break; // 遇到转向点就停止提取
+      }
+      for (int i = start_index; i < std::min(start_index + 50, (int)source.x.size()); i++)
+      {
+        target2.x.emplace_back(source.x[i]);
+        target2.y.emplace_back(source.y[i]);
+        target2.heading.emplace_back(source.heading[i]);
+        target2.gear.emplace_back(source.gear[i]);
+        target2.speed.emplace_back(source.speed[i]);
+        target2.point_num++;
+      }
     }
+    else
+    {
+      // 提取全部
+      target1.point_num = 0;
+      for (int i = start_index; i < source.x.size(); i++)
+      {
+        target1.x.emplace_back(source.x[i]);
+        target1.y.emplace_back(source.y[i]);
+        target1.heading.emplace_back(source.heading[i]);
+        target1.gear.emplace_back(source.gear[i]);
+        target1.speed.emplace_back(source.speed[i]);
+        target1.point_num++;
+      }
+    }
+    std::cout << getLogTime() << "控制路径段: 起点索引=" << start_index << ", 提取点数=" << (int)target1.point_num << std::endl;
+    std::cout << getLogTime() << "避障检测路径段: 起点索引=" << start_index << ", 提取点数=" << (int)target2.point_num << std::endl;
   }
 
   void processGlobalPath(const geometry_msgs::PointStamped &current_position)
@@ -613,20 +607,20 @@ public:
     
     if (avoid_status_changed_ || need_recovery_path_)
     {
-      util::LocalPath tmp_path; // 新的全局路径起点
+      util::LocalPath tmp_path, null_path; // 新的全局路径，空路径在这里仅用于占位
       int min_pos = 0;
       if (need_recovery_path_)
       {
         need_recovery_path_ = false;
-        min_pos = findNearestWaypoint(global_path_copy_, current_position);  // 查找与当前车位置最近的路径点索引
-        extractPathSegment(global_path_copy_, tmp_path, min_pos, true);
+        min_pos = findNearestWaypoint(global_path_copy_, current_position);  // 在全局路径中查找与当前车位置最近的路径点索引
+        extractPathSegment(global_path_copy_, tmp_path, null_path, min_pos, true);
         std::cout << getLogTime() << "恢复到最近的割草点上，最近割草路径点索引: " << min_pos << std::endl;
       }
       else if (avoid_status_changed_)
       {
         avoid_status_changed_ = false;
-        min_pos = findNearestWaypoint2(global_path_); // 查找与避障终点最近的路径点索引
-        extractPathSegment(global_path_, tmp_path, min_pos, true);
+        min_pos = findNearestWaypoint2(global_path_); // 在全局路径中查找与该点最近的路径点索引，这里的全局路径是避障前的全局路径，不是原始的
+        extractPathSegment(global_path_, tmp_path, null_path, min_pos, true);
         std::cout << getLogTime() << "避障结束，继续割草轨迹，最近割草路径点索引: " << min_pos << std::endl;
       }
 
@@ -661,7 +655,7 @@ public:
       saveDroppedWaypoint(global_path_.x[min_pos_], global_path_.y[min_pos_]);
       if (min_pos_ < static_cast<int>(global_path_.x.size()) - 1) {
         min_pos_++;
-        std::cout << getLogTime() << "新的最近点索引: " << min_pos_ << std::endl;
+        // std::cout << getLogTime() << "新的最近点索引: " << min_pos_ << std::endl;
       }
       else {
         reset();
@@ -675,19 +669,20 @@ public:
 
     if (!need_recovery_path_)
     {
-      util::LocalPath current_path_segment_path;
-      extractPathSegment(global_path_, current_path_segment_path, min_pos_);
-      pub_path_.publish(current_path_segment_path);
+      util::LocalPath control_path_segment, avoid_detection_path_segment;
+      extractPathSegment(global_path_, control_path_segment, avoid_detection_path_segment, min_pos_);
+      control_path_pub_.publish(control_path_segment);
+      avoid_detection_path_pub_.publish(avoid_detection_path_segment);
     #ifdef DEBUG_LOGGING
       // 发布当前路径段用于调试
       nav_msgs::Path debug_path;
-      debug_path.header = current_path_segment_path.header;
-      for (size_t i = 0; i < current_path_segment_path.x.size(); ++i) {
+      debug_path.header = control_path_segment.header;
+      for (size_t i = 0; i < control_path_segment.x.size(); ++i) {
         geometry_msgs::PoseStamped pose;
-        pose.header = current_path_segment_path.header;
-        pose.pose.position.x = current_path_segment_path.x[i];
-        pose.pose.position.y = current_path_segment_path.y[i];
-        double yaw = current_path_segment_path.heading[i];
+        pose.header = control_path_segment.header;
+        pose.pose.position.x = control_path_segment.x[i];
+        pose.pose.position.y = control_path_segment.y[i];
+        double yaw = control_path_segment.heading[i];
         pose.pose.orientation.z = sin(yaw / 2.0);
         pose.pose.orientation.w = cos(yaw / 2.0);
         debug_path.poses.push_back(pose);
@@ -724,11 +719,11 @@ public:
     }
 
     // 提取并发布路径段
-    // TODO: Yeager.
-    util::LocalPath current_path_segment_path;
-    extractPathSegment(avoid_path_, current_path_segment_path, avoid_min_pos_);
-    std::cout << getLogTime() << "当前避障路径段长度为：" << current_path_segment_path.x.size() << std::endl;
-    pub_path_.publish(current_path_segment_path);
+    util::LocalPath control_path_segment, avoid_detection_path_segment;
+    extractPathSegment(avoid_path_, control_path_segment, avoid_detection_path_segment, avoid_min_pos_);
+    std::cout << getLogTime() << "当前避障路径段长度为：" << avoid_detection_path_segment.x.size() << std::endl;
+    control_path_pub_.publish(control_path_segment);
+    avoid_detection_path_pub_.publish(avoid_detection_path_segment);
   }
 
   // 回调函数：订阅全局轨迹
@@ -819,9 +814,9 @@ public:
       std::lock_guard<std::mutex> lock(avoid_status_mutex_);
       avoid_status_copy = avoid_status_;
     }
-    std::cout << getLogTime() << "当前点: " << current_position.point.x << " "
-             << current_position.point.y << " " << current_position.point.z
-             << std::endl;
+    // std::cout << getLogTime() << "当前点: " << current_position.point.x << " "
+    //          << current_position.point.y << " " << current_position.point.z
+    //          << std::endl;
     // 根据当前模式处理不同路径
     if (avoid_status_copy.data == 1) {
       processAvoidPath(current_position);

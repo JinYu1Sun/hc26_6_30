@@ -1,2 +1,2 @@
 location_map:obstacle_avoidance:planning/global_planning:planning/read_waypoints:polygon_coverage_planning/polygon_coverage_benchmark:polygon_coverage_planning/polygon_coverage_geometry:polygon_coverage_planning/polygon_coverage_msgs:polygon_coverage_planning/polygon_coverage_planners:polygon_coverage_planning/polygon_coverage_ros:polygon_coverage_planning/polygon_coverage_solvers:polygon_coverage_planning/rviz_polygon_tool:util
--DCATKIN_WHITELIST_PACKAGES=obstacle_avoidance -DCATKIN_DEVEL_PREFIX=/home/nvidia/Mower/devel -DCMAKE_INSTALL_PREFIX=/home/nvidia/Mower/install -G Unix Makefiles
+-DCATKIN_WHITELIST_PACKAGES=location_map -DCATKIN_DEVEL_PREFIX=/home/nvidia/Mower/devel -DCMAKE_INSTALL_PREFIX=/home/nvidia/Mower/install -G Unix Makefiles

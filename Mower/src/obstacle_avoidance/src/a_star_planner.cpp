@@ -73,7 +73,8 @@ AStarPlanner::AStarPlanner() : private_nh_("~")
 
     local_path_pub_ = nh_.advertise<util::LocalPath>("/lawn_mower/avoid_traj", 1, true);
     avoidstate_pub = nh_.advertise<std_msgs::UInt8>("/lawn_mower/avoid_state", 1);
-    pub_stopflag = nh_.advertise<std_msgs::Bool>("/mower/stop_car1", 1);   // 超出边界发布停车指令，由task_node节点订阅处理
+    pub_stopflag1 = nh_.advertise<std_msgs::Bool>("/mower/stop_car1", 1);   // 超出边界发布停车指令，由task_node节点订阅处理
+    pub_stopflag2 = nh_.advertise<std_msgs::Bool>("/mower/stop_car2", 1);   // 避障过程中紧急停车信号发布器
     goal_point_pub_ = nh_.advertise<geometry_msgs::Point>("/lawn_mower/target_point", 1);
     
 #ifdef DEBUG_LOGGING
@@ -84,12 +85,12 @@ AStarPlanner::AStarPlanner() : private_nh_("~")
     avoidstate_pub.publish(is_avoiding_);
 
     // 订阅话题 - 只使用自定义路径点
-    path_points_sub_ = nh_.subscribe("/lawn_mower/global_path", 1, &AStarPlanner::pathPointsCallback, this);
+    path_points_sub_ = nh_.subscribe("/lawn_mower/avoid_detection_path", 1, &AStarPlanner::pathPointsCallback, this);
     obstacles_sub_ = nh_.subscribe("/mower_perception/obstacles", 1, &AStarPlanner::obstaclesCallback, this);
     pose_sub_ = nh_.subscribe("/Mower/position", 1, &AStarPlanner::poseCallback, this);
 
     // 添加订阅边界多边形的话题
-    boundary_sub_ = nh_.subscribe("/send_hull_info", 1, &AStarPlanner::boundaryCallback, this);
+    boundary_sub_ = nh_.subscribe("/send_hull_info", 10, &AStarPlanner::boundaryCallback, this);
 
     // cnk0811: 添加signal话题订阅
     signal_sub_ = nh_.subscribe("/signal", 1, &AStarPlanner::signalCallback, this);
@@ -202,7 +203,25 @@ void AStarPlanner::generateGridMap()
         cv::Mat dist;
         // 将OpenCV图像转换回栅格地图,对边界/障碍进行膨胀，暂时不膨胀
         int inflation_cells = 0;
-        boundaryOpenCVImg(map_img, dist, map_boundary);
+        if (map_boundary.front().z == 999.0) // 如果z为999，表示障碍物
+        {
+            boundaryOpenCVImg(map_img, dist, map_boundary, true);
+            for (int y = 0; y < map_height_; y++)
+            {
+                for (int x = 0; x < map_width_; x++)
+                {
+                    if (map_img.at<uchar>(y, x) == 0)
+                    {
+                        grid_map_[y][x] = true; // 障碍
+                    }
+                }
+            }
+            continue;
+        }
+        else
+        {
+            boundaryOpenCVImg(map_img, dist, map_boundary, false);
+        }
         for (int y = 0; y < map_height_; y++)
         {
             for (int x = 0; x < map_width_; x++)
@@ -252,7 +271,7 @@ void AStarPlanner::generateGridMap()
 }
 
 // 创建边界opencv图像
-void AStarPlanner::boundaryOpenCVImg(cv::Mat &map_img, cv::Mat &dist, const std::vector<geometry_msgs::Point> &map_boundary)
+void AStarPlanner::boundaryOpenCVImg(cv::Mat &map_img, cv::Mat &dist, const std::vector<geometry_msgs::Point> &map_boundary, const bool &is_obstacle)
 {
     // 将边界点转换为OpenCV点
     std::vector<cv::Point> boundary_points;
@@ -262,28 +281,33 @@ void AStarPlanner::boundaryOpenCVImg(cv::Mat &map_img, cv::Mat &dist, const std:
         int grid_y = std::floor((point.y - map_min_y_) / resolution_);
         boundary_points.emplace_back(grid_x, grid_y);
     }
-
-    // 创建OpenCV图像
-    map_img = cv::Mat::zeros(map_height_, map_width_, CV_8UC1);
-
+    
     // 绘制边界多边形，填充内部
     if (boundary_points.size() > 2)
     {
         std::vector<std::vector<cv::Point>> contours = {boundary_points};
         // 先填充多边形内部（边界也会一起变成255）
-        cv::fillPoly(map_img, contours, cv::Scalar(255));
-
-        // 再把边界重新画成0
-        cv::polylines(map_img, contours,
-            true,                // 闭合
-            cv::Scalar(0),       // 障碍
-            2                    // 边界线宽
-        );
+        if (!is_obstacle)
+        {
+            // 创建OpenCV图像
+            map_img = cv::Mat::zeros(map_height_, map_width_, CV_8UC1);
+            cv::fillPoly(map_img, contours, cv::Scalar(255));
+            // 再把边界重新画成0
+            cv::polylines(map_img, contours,
+                true,                // 闭合
+                cv::Scalar(0),       // 障碍
+                2                    // 边界线宽
+            );
+            // 使用距离变换：对每个像素计算到最近障碍(像素值==0)的像素距离
+            // distanceTransform 要求非零像素为前景（这里前景=自由空间=255），零像素为障碍
+            cv::distanceTransform(map_img, dist, cv::DIST_L2, 3);
+        }
+        else
+        {
+            map_img = cv::Mat::ones(map_height_, map_width_, CV_8UC1);
+            cv::fillPoly(map_img, contours, cv::Scalar(0)); // 障碍物区域填充为0
+        }
     }
-
-    // 使用距离变换：对每个像素计算到最近障碍(像素值==0)的像素距离
-    // distanceTransform 要求非零像素为前景（这里前景=自由空间=255），零像素为障碍
-    cv::distanceTransform(map_img, dist, cv::DIST_L2, 3);
 }
 
 void AStarPlanner::pathPointsCallback(const util::LocalPath::ConstPtr &msg)
@@ -363,7 +387,14 @@ void AStarPlanner::obstaclesCallback(const util::ObstacleList::ConstPtr &msg) {
     for (const auto &obstacle : msg->obstacles) {
         if (obstacle.is_dynamic)
         {
-            emergency_detection_frames_ = 0; // 这里不对动态障碍物进行膨胀
+            if (obstacle.local_x < planning_distance_threshold_)
+            {
+                std_msgs::Bool stop_msg;
+                stop_msg.data = true;
+                pub_stopflag2.publish(stop_msg);
+                std::cout << getLogTime() << "检测到紧急动态障碍物，触发停车信号" << std::endl;
+                return;
+            }
             continue;
         }
         marker_id++;
@@ -489,8 +520,6 @@ void AStarPlanner::obstaclesCallback(const util::ObstacleList::ConstPtr &msg) {
         // 保持中心点不变
         inflated_obstacle.global_x = obstacle.global_x;
         inflated_obstacle.global_y = obstacle.global_y;
-        // inflated_obstacle.local_x = obstacle.local_x;
-        // inflated_obstacle.local_y = obstacle.local_y;
 
         // 将膨胀后的障碍物添加到列表中
         obstacles_.push_back(inflated_obstacle);
@@ -546,14 +575,19 @@ void AStarPlanner::obstaclesCallback(const util::ObstacleList::ConstPtr &msg) {
             }
         }
     }
-    // if (obstacles_.empty())
-    // {
-    //     is_avoiding_.data = 0;
-    //     avoidstate_pub.publish(is_avoiding_);
-    //     is_fisrt_avoid_ = true;
-    //     emergency_detection_frames_ = 0;
-    //     emergency_confirmed_.store(false);
-    // }
+    if (obstacles_.empty())
+    {
+        std_msgs::Bool stop_msg;
+        stop_msg.data = false;
+        pub_stopflag2.publish(stop_msg);
+        emergency_detection_frames_ = 0;
+        if (is_avoiding_.data == 2 || is_avoiding_.data == 3 || is_avoiding_.data == 4)
+        {
+            ROS_INFO("状态切换: %d -> 0(正常状态) - 障碍物消失，切换为正常状态", is_avoiding_.data);
+            is_avoiding_.data = 0; // 切换到正常状态
+            avoidstate_pub.publish(is_avoiding_);
+        }
+    }
 }
 bool AStarPlanner::isPositionStable(double threshold, double threshold_yaw) // TODO
 {
@@ -787,7 +821,7 @@ void AStarPlanner::poseCallback(const util::Position::ConstPtr &msg)
             // 当前帧在边界外，立即发送停车信号并重置计数器
             std_msgs::Bool stop_msg;
             stop_msg.data = true;
-            pub_stopflag.publish(stop_msg);
+            pub_stopflag1.publish(stop_msg);
             boundary_false_frame_count = 0; // 重置false帧计数
             last_boundary_stop_state = true;
             ROS_WARN("------------------------------Position out of boundary (%.2f, %.2f) - sending stop signal", 
@@ -803,7 +837,7 @@ void AStarPlanner::poseCallback(const util::Position::ConstPtr &msg)
                     // 连续5帧都在边界内，发送停止停车信号
                     std_msgs::Bool stop_msg;
                     stop_msg.data = false;
-                    pub_stopflag.publish(stop_msg);
+                    pub_stopflag1.publish(stop_msg);
                     last_boundary_stop_state = false;
                     boundary_false_frame_count = 0; // 重置计数器
                     ROS_INFO("Sending resume signal - position in boundary for 5 consecutive frames");
@@ -821,17 +855,10 @@ bool AStarPlanner::checkPathCollision()
     {
         return false;
     }
-    
-    // 如果当前在避障执行中（状态1），不进行二次避障检测
-    if (is_avoiding_.data == 1)
-    {
-        return false;
-    }
-    
+
     // 紧急障碍物检测阈值、减速阈值
     int emergency_threshold = ceil(planning_distance_threshold_ / step_size_);  // 6个路径点以内视为紧急障碍物，触发避障规划*******************
     int slowdown_threshold = ceil((slowdown_threshold_) / step_size_);
-
 
     // 记录最近的碰撞点索引
     int earliest_collision_idx = -1;
@@ -846,17 +873,29 @@ bool AStarPlanner::checkPathCollision()
             if (intersectsWithObstacle(path_point.x, path_point.y, obstacle))
             {
                 // 记录第一个碰撞点的索引
-                if (earliest_collision_idx == -1 || i < earliest_collision_idx)
-                {
-                    earliest_collision_idx = i;
-                }
+                earliest_collision_idx = i;
                 break; // 已找到该点的碰撞，无需检查其他障碍物
             }
         }
+        if (earliest_collision_idx != -1)
+        {
+            break; // 已找到碰撞点，退出循环
+        }
     }
 
-    if (is_avoiding_.data && earliest_collision_idx == -1) // 没有检测到碰撞
+    if (earliest_collision_idx == -1)
     {
+        std_msgs::Bool stop_msg;
+        stop_msg.data = false;
+        pub_stopflag2.publish(stop_msg);
+    }
+
+    if (is_avoiding_.data != 0 && earliest_collision_idx == -1) // 没有检测到碰撞
+    {
+        if (is_avoiding_.data == 1) // 如果当前在避障执行中（状态1），不切换状态，继续执行避障
+        {
+            return false;
+        }
         // 重置为正常状态
         ROS_INFO("状态切换: %d -> 0(正常状态) - 路径无碰撞，恢复正常行驶", is_avoiding_.data);
         is_avoiding_.data = 0;
@@ -869,6 +908,15 @@ bool AStarPlanner::checkPathCollision()
     {
         if (earliest_collision_idx <= emergency_threshold)
         {
+            // 如果当前在避障执行中（状态1），只停车,不进行二次避障
+            if (is_avoiding_.data == 1 && earliest_collision_idx <= emergency_threshold - 2)
+            {
+                std_msgs::Bool stop_msg;
+                stop_msg.data = true;
+                pub_stopflag2.publish(stop_msg);
+                std::cout << getLogTime() << "在避障执行中检测到紧急障碍物，触发停车信号" << std::endl;
+                return false;
+            }
             // 如果碰撞在10个点以内，进行多帧检测确认
             emergency_detection_frames_++;
             ROS_WARN("Emergency obstacle detected, frame count: %d/%d", 
@@ -903,6 +951,15 @@ bool AStarPlanner::checkPathCollision()
         }
         else if (earliest_collision_idx <= slowdown_threshold)
         {
+            std_msgs::Bool stop_msg;
+            stop_msg.data = false;
+            pub_stopflag2.publish(stop_msg);
+            // 如果当前在避障执行中（状态1），
+            if (is_avoiding_.data == 1)
+            {
+                std::cout << getLogTime() << "在避障执行中检测到较远障碍物，不会停车" << std::endl;
+                return false;
+            }
             // 如果碰撞在11-14个点之间，发出普通预警
             ROS_WARN("Slow down, obstacle ahead");
             ROS_INFO("状态切换: %d -> 2(普通预警) - 检测到较远障碍物，需要减速", is_avoiding_.data);
@@ -915,6 +972,15 @@ bool AStarPlanner::checkPathCollision()
         }
         else
         {
+            std_msgs::Bool stop_msg;
+            stop_msg.data = false;
+            pub_stopflag2.publish(stop_msg);
+            // 如果当前在避障执行中（状态1），
+            if (is_avoiding_.data == 1)
+            {
+                std::cout << getLogTime() << "在避障执行中检测到很远障碍物，不会停车" << std::endl;
+                return false;
+            }
             // 碰撞点距离较远，重置紧急检测计数器
             emergency_detection_frames_ = 0;
             emergency_confirmed_.store(false);
