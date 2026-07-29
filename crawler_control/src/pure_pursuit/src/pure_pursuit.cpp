@@ -9,7 +9,6 @@ PurePursuit::PurePursuit(const ros::NodeHandle &nh) : nh_(nh)
 	avoid_state_ = 0;
 	last_local_path_.point_num = 0;
 	turn_count_ = 0;
-
 	mover_bool_cfg_ = 0;
 	mower_height_cfg_ = 0;
 
@@ -436,14 +435,15 @@ void PurePursuit::state_machine_run()
 			running_state_.store(RunStateValue::Follow);
 			break;
 		case RunStateValue::Follow:
+			lookahead_distance_=hypot(lookahead_waypoint_.local_x, lookahead_waypoint_.local_y);
 			// 如果小车位置与预瞄点距离小于0.05或小车已经超过预瞄点，则小车已到达预瞄点，切换为转向状态
-			if (hypot(lookahead_waypoint_.local_x, lookahead_waypoint_.local_y) < 0.05 || lookahead_waypoint_.local_x < 0.03)
+			if (lookahead_distance_ < 0.05 || lookahead_waypoint_.local_x < 0.03)
 			{
 				twist_cmd.linear = 0.0;
 				twist_cmd.angular = 0.0;
 				ROS_INFO("到达预瞄点, x = %f, y = %f, yaw = %f, gear = %d", 
 					lookahead_waypoint_.global_x, lookahead_waypoint_.global_y, lookahead_waypoint_.global_yaw, lookahead_waypoint_.gear);
-					
+				
 				if (lookahead_waypoint_.gear == 2)
 				{
 					publishCommand(twist_cmd);
@@ -451,12 +451,28 @@ void PurePursuit::state_machine_run()
 					break;
 				}
 			}
+
 			// pp算法计算和速度
 			twist_cmd = calculate_PurePursuit(v_expect, lookahead_waypoint_);
+			if (lookahead_waypoint_.global_x== last_lookahead_waypoint_.global_x &&lookahead_waypoint_.global_y== last_lookahead_waypoint_.global_y&&last_lookahead_distance_<=lookahead_distance_)
+			{
+				uint forward_count = 20;
+				while (forward_count--)
+				{
+					twist_cmd.linear = 1.0;
+					twist_cmd.angular = 0.0;
+					publishCommand(twist_cmd);
+					loop_rate.sleep();
+				}
+				break;
+			}
+				last_lookahead_waypoint_ = lookahead_waypoint_;
+				last_lookahead_distance_= lookahead_distance_;
 			publishCommand(twist_cmd);
 			break;
 		case RunStateValue::Turn:
 			turn_count_++;
+			ROSINFO("turn_count_ = %d", turn_count_);
 			// 如果小车与预瞄点角度差小于5度，则小车转弯完成，切换为跟线状态
 			if (fabs(lookahead_waypoint_.local_yaw) < M_PI_4 / 9)
 			{
@@ -485,20 +501,11 @@ void PurePursuit::state_machine_run()
 				uint back_count = 20;
 				while (back_count--)
 				{
-					twist_cmd.linear = -1.0;
+					twist_cmd.linear = -0.5;
 					twist_cmd.angular = 0.0;
 					publishCommand(twist_cmd);
 					loop_rate.sleep();
 				}
-				// 前进脱困
-				// uint forward_count = 30;
-				// while (forward_count--)
-				// {
-				// 	twist_cmd.linear = 1.0;
-				// 	twist_cmd.angular = 0.0;
-				// 	publishCommand(twist_cmd);
-				// 	loop_rate.sleep();
-				// }
 			}
 			// 旋转
 			twist_cmd.linear = 0.0;

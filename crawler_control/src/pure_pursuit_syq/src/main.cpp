@@ -1,11 +1,15 @@
+
+// ROS Includes
 #include <ros/ros.h>
+
+// User defined includes
 #include <pure_pursuit/pure_pursuit.h>
 
 int main(int argc, char** argv)
 {
-    setlocale(LC_ALL,"");
     ros::init(argc, argv, "pure_pursuit");
-    ros::NodeHandle nh;
-    PurePursuit pp(nh);
+    PurePursuit pp;
+    pp.run();
+
     return 0;
 }

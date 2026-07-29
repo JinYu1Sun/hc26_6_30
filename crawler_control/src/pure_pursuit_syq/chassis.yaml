@@ -1,0 +1,15 @@
+chassis_type: 0  #底盘类型 ～ 0 tank/履带 ，1 car_wheel/阿克曼轮 ，2  omnl/全向 ，
+control_params:
+  wheel_track: 1.35      #轮距  Track width
+  wheel_base : 1.26      #轴距  绿皮轮式割草机
+  
+  #tank    
+  limitspeed_range : 5    #km/h
+
+  #car_wheel    (now dir_sign is right +)
+  limitangle_right : 50   #限制角度 弧度 0.87
+  limitangle_left  : -50
+  #basic config
+  mover_bool       : 0  # 0, 1  ; 2、3、4、5， 1500+cmd*50(需修改接口协议实现)
+  mower_height     : 0  # 0:20cm  、1：15cm 、2：10cm ; >=10，自适应高度，值 = 高度cm
+

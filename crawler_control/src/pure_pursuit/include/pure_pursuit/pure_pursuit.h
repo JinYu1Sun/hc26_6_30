@@ -71,7 +71,9 @@ private:
 	
 	float min_lookahead_distance_;
 	waypoint lookahead_waypoint_;	// 预瞄点
-	
+	waypoint last_lookahead_waypoint_;	//
+	float lookahead_distance_;	// 预瞄距离
+	float last_lookahead_distance_;   // 期望速度
 	ros::Subscriber sub_position_;
 	ros::Subscriber sub_local_path_;
 	ros::Subscriber sub_stop_signal_;

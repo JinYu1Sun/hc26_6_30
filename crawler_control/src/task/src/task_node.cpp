@@ -176,8 +176,8 @@ void controlFigure8_turnleft()
     // if (!init_mode || !init_confirmed)
     //     return;
     mower_msgs::VehicleCmd cmd_msg;
-    cmd_msg.drive_value = 100;
-    cmd_msg.turn_value = -20; // 向左转，持续走圆
+    cmd_msg.drive_value = 10000;
+    cmd_msg.turn_value = -2000; // 向左转，持续走圆
     cmd_msg.ad_control_enable = 1;           // 自动驾驶控制开启
     cmd_msg.gear_model = 3;                  // 前进档
     cmd_msg.mover_bool = 0;                  // 不割草
@@ -193,8 +193,8 @@ void controlFigure8_turnright()
     // if (!init_mode || !init_confirmed)
     //     return;
     mower_msgs::VehicleCmd cmd_msg;
-    cmd_msg.drive_value = 100;
-    cmd_msg.turn_value = 20; // 向右转，持续走圆
+    cmd_msg.drive_value = 10000;
+    cmd_msg.turn_value = 2000; // 向右转，持续走圆
     cmd_msg.ad_control_enable = 1;           // 自动驾驶控制开启
     cmd_msg.gear_model = 3;                  // 前进档
     cmd_msg.mover_bool = 0;                  // 不割草
