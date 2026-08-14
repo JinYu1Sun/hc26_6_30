@@ -7,6 +7,8 @@ PurePursuit::PurePursuit(const ros::NodeHandle &nh) : nh_(nh)
 	low_speed_flag_.store(false);
 	stop_car_.store(false);
 	avoid_state_ = 0;
+	follow_count_ =0;
+	outboundary_flag_=0;
 	last_local_path_.point_num = 0;
 	turn_count_ = 0;
 	mover_bool_cfg_ = 0;
@@ -23,8 +25,9 @@ PurePursuit::PurePursuit(const ros::NodeHandle &nh) : nh_(nh)
 	sub_local_path_ = nh_.subscribe("/lawn_mower/global_path", 1, &PurePursuit::localPathCallback, this);
 	sub_stop_signal_ = nh_.subscribe("/mower/stop_car", 1, &PurePursuit::stopSignalCallback, this);
 	sub_avoid_state_ = nh_.subscribe("/lawn_mower/avoid_state", 1, &PurePursuit::avoidstateCallback, this);
+	sub_outboundary_ = nh_.subscribe("/lawn_mower/out_of_bounds", 1, &PurePursuit::OutBoundaryCallBack, this);
 	sub_signal_ = nh_.subscribe("/signal", 1, &PurePursuit::signalCallback, this);
-
+	
 	pub_command_ = nh_.advertise<mower_msgs::VehicleCmd>("/vehicle/cmd", 1);
 
 	turn_completed_srv_ = nh_.advertiseService("/turn_completed", &PurePursuit::turnCompletedCallback, this);
@@ -105,17 +108,24 @@ void PurePursuit::avoidstateCallback(const std_msgs::UInt8ConstPtr &avoid_msg)
 	avoid_state_ = avoid_msg->data;
 }
 
+void PurePursuit::OutBoundaryCallBack(const std_msgs::BoolConstPtr &outboundary_msg)
+{
+	std::lock_guard<std::mutex> lock(outboundary_mutex_);
+	outboundary_flag_ = outboundary_msg->data;
+}
 void PurePursuit::signalCallback(const std_msgs::StringConstPtr &msg_signal)
 {
 	std::lock_guard<std::mutex> lock(mover_mutex_);
-	if (msg_signal->data == "rise") {
-		mower_height_cfg_ = 1;
-		ROS_INFO("mower_height = 1");
+	try {
+		int height = std::stoi(msg_signal->data);
+		if (height >= 2 && height <= 11) {
+			mower_height_cfg_ = height;
+			ROS_INFO("mower_height = %d",mower_height_cfg_);
+		}
+	} catch (const std::exception &) {
+		// 非数字指令（open/close/stop 等），跳过高度设置
 	}
-	if (msg_signal->data == "falling") {
-		mower_height_cfg_ = 2;
-		ROS_INFO("mower_height = 2");
-	}
+
 	if (msg_signal->data == "open") {
 		mover_bool_cfg_ = 1;
 		ROS_INFO("mover_bool_cfg = 1");
@@ -127,14 +137,17 @@ void PurePursuit::signalCallback(const std_msgs::StringConstPtr &msg_signal)
 	if (msg_signal->data == "stop" || msg_signal->data == "mowing_finished" || msg_signal->data == "reset")
 	{
 		std::lock_guard<std::mutex> lock1(avoid_state_mutex_);
+		std::lock_guard<std::mutex> lock5(outboundary_mutex_);
 		std::lock_guard<std::mutex> lock2(local_path_mutex_);
 		std::lock_guard<std::mutex> lock3(mover_mutex_);
 		std::lock_guard<std::mutex> lock4(turn_completed_mutex_);
 		low_speed_flag_.store(false);
 		stop_car_.store(false);
 		avoid_state_ = 0;
+		outboundary_flag_=0;
 		last_local_path_.point_num = 0;
 		turn_count_ = 0;
+		follow_count_ = 0;
 		mover_bool_cfg_ = 0;
 		mower_height_cfg_ = 0;
 		turn_completed_points_.clear();
@@ -325,7 +338,8 @@ void PurePursuit::state_machine_run()
 			goto STATEMACHINE;
 		}
 		{
-			std::lock_guard<std::mutex> lock(avoid_state_mutex_);
+			std::lock_guard<std::mutex> lock1(avoid_state_mutex_);
+			std::lock_guard<std::mutex> lock2(outboundary_mutex_);
 			if (avoid_state_ == 4)
 			{
 				ROS_WARN("紧急预警，需倒车");
@@ -338,7 +352,7 @@ void PurePursuit::state_machine_run()
 				running_state_.store(RunStateValue::Stop);
 				goto STATEMACHINE;
 			}
-			if (avoid_state_ == 2)
+			if (avoid_state_ == 2||outboundary_flag_==1)
 			{
 				ROS_WARN("有较远障碍物，普通预警，需低速");
 				low_speed_flag_.store(true);
@@ -454,17 +468,27 @@ void PurePursuit::state_machine_run()
 
 			// pp算法计算和速度
 			twist_cmd = calculate_PurePursuit(v_expect, lookahead_waypoint_);
-			if (lookahead_waypoint_.global_x== last_lookahead_waypoint_.global_x &&lookahead_waypoint_.global_y== last_lookahead_waypoint_.global_y&&last_lookahead_distance_<=lookahead_distance_)
-			{
-				uint forward_count = 20;
-				while (forward_count--)
+			if (lookahead_waypoint_.global_x== last_lookahead_waypoint_.global_x &&lookahead_waypoint_.global_y== last_lookahead_waypoint_.global_y&&(last_lookahead_distance_-lookahead_distance_)<0.05)
+			{	
+				follow_count_++;
+				ROS_WARN("小车可能卡住了, follow_count_ = %d", follow_count_);
+				if(follow_count_>300)
 				{
-					twist_cmd.linear = 1.0;
-					twist_cmd.angular = 0.0;
-					publishCommand(twist_cmd);
-					loop_rate.sleep();
+					uint forward_count = 20;
+					while (forward_count--)
+					{
+						ROS_WARN("小车卡住了，尝试前进,forward_count = %d", forward_count);
+						twist_cmd.linear = 1.0;
+						twist_cmd.angular = 0.0;
+						publishCommand(twist_cmd);
+						loop_rate.sleep();
+					}
+					break;
 				}
-				break;
+					
+			}else
+			{
+				follow_count_=0;
 			}
 				last_lookahead_waypoint_ = lookahead_waypoint_;
 				last_lookahead_distance_= lookahead_distance_;
@@ -472,7 +496,7 @@ void PurePursuit::state_machine_run()
 			break;
 		case RunStateValue::Turn:
 			turn_count_++;
-			ROSINFO("turn_count_ = %d", turn_count_);
+			ROS_INFO("turn_count_ = %d", turn_count_);
 			// 如果小车与预瞄点角度差小于5度，则小车转弯完成，切换为跟线状态
 			if (fabs(lookahead_waypoint_.local_yaw) < M_PI_4 / 9)
 			{

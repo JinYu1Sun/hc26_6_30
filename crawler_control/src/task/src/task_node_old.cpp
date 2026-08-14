@@ -6,67 +6,164 @@
 #include <string.h>
 #include <algorithm>
 // android msg
+#include "mower_msgs/TaskStatus.h"
+#include "mower_msgs/CheckResult.h"
+#include "mower_msgs/Manual_Set.h"
 #include "mower_msgs/Manual_Driving_Cmd.h"
+#include "mower_msgs/Fault_Code.h"
 #include "mower_msgs/Direct_Control.h"
 #include "mower_msgs/VehicleCmd.h"
-#include "mower_msgs/Fault_Code.h"
-// check msg
 
+// check msg
+#include "mower_msgs/LidarSelfDtect.h"
+#include "mower_msgs/PerceptionSelfDetect.h"
+#include "mower_msgs/MultiMapSelfDetect.h"
+#include "mower_msgs/PlaningOK.h"
+#include "mower_msgs/PlanType.h"
+#include "mower_msgs/CamerargbState.h"
+#include "mower_msgs/SegState.h"
+#include "mower_msgs/ControlOk.h"
+#include "mower_msgs/ControlState.h"
+#include "mower_msgs/GnssOK.h"
+#include "mower_msgs/VslamState.h"
+#include "mower_msgs/CameraState.h"
 //@ xhj： add
 #include "mower_msgs/Position.h"
+#include "mower_msgs/Monitor.h"
 #include "util/LocalPose.h"
-
+#include "mower_msgs/LocalPath.h"
+#include "nav_msgs/Path.h"
+#include <tf/transform_datatypes.h>
+// #include "util/VehicleControl.h"  // 添加VehicleControl消息头文件
 
 #include <unistd.h>
 #include <signal.h>
 #include <sys/wait.h>
 #include <cmath> // 添加数学函数库
 
-
+mower_msgs::TaskStatus status;
+mower_msgs::Fault_Code fault;
+mower_msgs::Monitor monitor;
 
 using namespace std;
+// check sub
+ros::Subscriber sub_camera; //
+ros::Subscriber sub_vslam;  //
+ros::Subscriber sub_camerargb;
+ros::Subscriber sub_seg;
+ros::Subscriber sub_lidar;      //
+ros::Subscriber sub_perception; //
+ros::Subscriber sub_gnss;
+ros::Subscriber sub_planche;
+ros::Subscriber sub_ctrlche;
+ros::Subscriber sub_multimap; //
+ros::Subscriber sub_vehistatus;
+
 // pub android
+ros::Publisher pub_status;
+ros::Publisher pub_result;
+ros::Publisher pub_fault;
+ros::Publisher pub_monitor;
 ros::Publisher pub_direct_control;
 ros::Publisher pub_vehicle_cmd;
-ros::Publisher pub_stopflag;
-ros::Publisher pub_init_request; // 发布初始化请求
+
 // sub android
+ros::Subscriber sub_manual;
 ros::Subscriber sub_manual_driving;
 ros::Subscriber sub_singal;
-ros::Subscriber sub_fusionmap;
-ros::Subscriber sub_speedinfo;
-ros::Subscriber sub_yolofront;
-ros::Subscriber sub_imu;
-ros::Time init_start_time;    // 初始化开始时间
 
-ros::Time straight_start_time;
-ros::Time turn_left_time;
-ros::Time turn_right_time;
+ros::Subscriber sub_warn;
+ros::Publisher pub_stopflag;
 
+bool check_flag = false; // 自检标志
 bool manual_better = false;
 std_msgs::Bool stop_car;
 
 // 初始化程序相关变量
 bool init_mode = false;       // 初始化模式标志
 bool has_position = false;    // 是否有定位数据
+ros::Time init_start_time;    // 初始化开始时间
+double figure8_radius = 1.5;  // "8"字形半径（米）
+double figure8_period = 20.0; // "8"字形周期（秒）
 
 // 初始化确认相关变量
 bool init_requested = false;     // 是否请求初始化
 bool init_confirmed = false;     // 是否确认初始化
+ros::Publisher pub_init_request; // 发布初始化请求
 
 // init check status
+bool check_gnss = false;
 bool check_fusion = false;
+bool check_cam = false;
+bool check_vslam = false;
+bool check_lidar = false;
+bool check_perception = false;
+bool check_multimap = false;
+bool check_battery = false;
+bool check_warn = false;
+bool check_camerargb = true;
+bool check_planok = false;
+bool check_controlok = false;
+bool check_seg = false;
 
 // safe warning  *stop car
 int rangewarn_flag = 0; // 范围停车预警
-int figure8_count = 0; // 8字形初始化动作序号（原名 count，与 std::count 冲突故改名）
-double figure8_period = 20.0; // "8"字形周期（秒）
-pid_t pid_controller_pid = -1; // 全局变量，记录进程 PID
+bool front_flag = false;
+bool rear_flag = false;
 bool yolofront_flag = false;
 bool rollover_flag = false; // 侧翻状态
+
 bool lowpower_flag = false; // 低电量 现定义-30%
 bool appsignal_flag = false; // 默认  /signal == pause | stop  1; continue  0;
 bool init_finish = false;
+
+// bool current_has_position = false; // 当前是否有定位数据
+ros::Time straight_start_time;
+ros::Time turn_left_time;
+ros::Time turn_right_time;
+
+int figure8_count = 0; // 8字形初始化动作序号（原名 count，与 std::count 冲突故改名）
+
+
+
+
+// 定义标志位对应的字符串表
+const std::string node_names[13] = {
+    "Battery_soc",     // 无，去除
+    "Chassis_warning", // 无
+    "FusionMap",
+    "Vslam",
+    "Camerargb",
+    "Seg",
+    "Lidar",
+    "Perception",
+    "Gnss",
+    "Planning",
+    "Control",
+    "Multimap",
+    "Camera"};
+    
+enum tasks
+{
+    Holding,
+    Working,                 // 工作状态
+    Local_path_error,        // 绕障路径异常
+    Vehicle_rollover,        // 侧翻状态
+    Returning,               // 返回
+    Pausing,                 // 暂停工作
+    Self_checking,           // 自检状态
+    Self_check_fault,        // 自检失败
+    Obstacle_parking,        // 遇障停车
+    Passing_connecting_space // 通过连通区
+} taskstatus;
+
+enum eight_figure_
+{
+    gostraight,                 // 前进状态机
+    turnright,                 // 右转状态机
+    turnleft,        // 左转状态机
+} eight_figure;
+
 void goStraight()
 {
     mower_msgs::VehicleCmd cmd_msg;
@@ -81,6 +178,8 @@ void goStraight()
 }
 void controlFigure8_turnleft()
 {
+    // if (!init_mode || !init_confirmed)
+    //     return;
     mower_msgs::VehicleCmd cmd_msg;
     cmd_msg.drive_value = 10000;
     cmd_msg.turn_value = -12566; // 向左转，持续走圆
@@ -96,6 +195,8 @@ void controlFigure8_turnleft()
 
 void controlFigure8_turnright()
 {
+    // if (!init_mode || !init_confirmed)
+    //     return;
     mower_msgs::VehicleCmd cmd_msg;
     cmd_msg.drive_value = 10000;
     cmd_msg.turn_value = 12566; // 向右转，持续走圆
@@ -110,17 +211,82 @@ void controlFigure8_turnright()
 }
 void parking()
 {
-    cout << "~~~stop~~~ yolofront_flag " << yolofront_flag << " ,rollover_flag " << rollover_flag << " ,appsignal_flag " << appsignal_flag  << endl;
+    cout << "~~~stop~~~ flag front " << yolofront_flag << " ,rear " << rear_flag << " ,appsignal_flag " << appsignal_flag  << endl;
     if (!rollover_flag && !yolofront_flag && !appsignal_flag )
     {
         stop_car.data = false; // all false
-    }else
+    }
+    else
     {
-        cout << "~~~stop~~~ yolofront_flag " << yolofront_flag << " ,rollover_flag " << rollover_flag << " ,appsignal_flag " << appsignal_flag << endl;
+        cout << "~~~stop~~~ flag front " << yolofront_flag << " ,rear " << rear_flag << " ,appsignal_flag " << appsignal_flag << endl;
         stop_car.data = true;
     }
     pub_stopflag.publish(stop_car);
 }
+
+
+// 检查所有标志位是否为true，并处理不符合的标志位
+bool checkAndResetNodes(const mower_msgs::Monitor &msgs)
+{
+    bool all_true = true;
+    monitor = msgs;
+    pub_monitor.publish(monitor);
+
+    all_true = std::find(monitor.node_normal.begin(),
+                          monitor.node_normal.end(), false) == monitor.node_normal.end();
+    // 将所有标志位 置为false
+    monitor.node_normal.fill(false);
+
+    // 如果所有节点都为true，执行相应操作
+    if (1)
+    { //  all_true
+        return true;
+    }else
+    {
+        return false;
+    }
+}
+
+void task_run()
+{
+    switch (taskstatus)
+    {
+        case Holding:
+            status.task_status = "Holding";
+            break;
+        case Working:
+            status.task_status = "Working";
+            break;
+        case Local_path_error:
+            break;
+        case Vehicle_rollover:
+            break;
+        case Returning:
+            status.task_status = "Returning";
+            break;
+        case Pausing:
+            status.task_status = "Pausing";
+            break;
+        case Self_checking:
+            status.task_status = "Self_checking";
+            break;
+        case Self_check_fault:
+            status.task_status = "Self_check_fault";
+            break;
+        case Obstacle_parking:
+            status.task_status = "Obstacle_parking";
+            break;
+        case Passing_connecting_space:
+            status.task_status = "Passing_connecting_space";
+            break;
+        default:
+            break;
+    }
+    pub_status.publish(status);
+}
+
+pid_t pid_controller_pid = -1; // 全局变量，记录进程 PID
+
 void ManualDriveCallBack(const mower_msgs::Manual_Driving_Cmd &manual_drive_msgs)
 {
     mower_msgs::VehicleCmd vehicle_cmd;
@@ -253,21 +419,26 @@ void SingalCallBack(const std_msgs::String &singal_msgs)
     // 原有的逻辑（保留）
     if (signal == "start_work")
     {
+        taskstatus = Working;
         manual_better = false;
+
         appsignal_flag = false;
     }
     if (singal_msgs.data == "pause")
     {
+        taskstatus = Pausing;
         manual_better = true;
         appsignal_flag = true; //@xhj：add in 250317
     }
     if (singal_msgs.data == "continue")
     {
+        taskstatus = Working;
         manual_better = false;
         appsignal_flag = false;
     }
     if (singal_msgs.data == "return")
     {
+        taskstatus = Returning;
         manual_better = false;
     }
     //@xhj：add in 250317
@@ -276,9 +447,12 @@ void SingalCallBack(const std_msgs::String &singal_msgs)
         appsignal_flag = true;
     }
 }
+
 void FusionMapCallBack(const mower_msgs::Position &msgs)
 {
     check_fusion = (msgs.position_state == 1 || msgs.position_state == 2 || msgs.position_state == 5) ? 1 : 0;
+    fault.fault_code[2] = check_fusion ? "0" : "1";
+    monitor.node_normal[2] = check_fusion ? 1 : 0;
 
     // 检测定位状态
     has_position = check_fusion; //(msgs.position_state == -1);//??????
@@ -298,6 +472,67 @@ void FusionMapCallBack(const mower_msgs::Position &msgs)
         init_finish = true;
     }
 }
+void VslamCallBack(const mower_msgs::VslamState &vslam_msgs)
+{
+    check_vslam = vslam_msgs.is_vslam_ok;
+    fault.fault_code[3] = check_vslam ? "0" : "1";
+}
+
+void CameraRGBCallBack(const mower_msgs::CamerargbState &camerargb_msgs)
+{
+    check_camerargb = camerargb_msgs.is_camerargb_ok;
+    fault.fault_code[4] = check_camerargb ? "0" : "1";
+}
+
+void SegCallBack(const mower_msgs::SegState &seglok_msgs)
+{
+    check_seg = seglok_msgs.is_seg_ok;
+    fault.fault_code[5] = check_seg ? "0" : "1";
+}
+
+void LidarCallBack(const mower_msgs::LidarSelfDtect &lidar_msgs)
+{
+    check_lidar = lidar_msgs.is_lidar_ok;
+    fault.fault_code[6] = check_lidar ? "0" : "1";
+}
+
+void PerceptionCallBack(const mower_msgs::PerceptionSelfDetect &perception_msgs)
+{
+    check_perception = perception_msgs.is_perception_ok;
+    fault.fault_code[7] = check_perception ? "0" : "1";
+}
+
+void GnssCallBack(const mower_msgs::GnssOK &gnssok_msgs)
+{
+    check_gnss = gnssok_msgs.is_gnss_ok;
+    fault.fault_code[8] = check_gnss ? "0" : "1";
+}
+
+void PlanCheckCallBack(const mower_msgs::PlaningOK &planok_msgs)
+{
+    check_planok = planok_msgs.is_planing_ok;
+    fault.fault_code[9] = check_planok ? "0" : "1";
+}
+
+void CtrlCheckCallBack(const mower_msgs::ControlOk &controlok_msgs)
+{
+    check_controlok = controlok_msgs.is_control_ok;
+    fault.fault_code[10] = check_controlok ? "0" : "1";
+    monitor.node_normal[10] = check_controlok ? 1 : 0;
+}
+
+void MultiMapCallBack(const mower_msgs::MultiMapSelfDetect &multimap_msgs)
+{
+    check_multimap = multimap_msgs.is_multi_map_ok;
+    fault.fault_code[11] = check_multimap ? "0" : "1";
+}
+
+void CamCallBack(const mower_msgs::CameraState &cam_msgs)
+{
+    check_cam = cam_msgs.is_camera_ok;
+    fault.fault_code[12] = check_cam ? "0" : "1";
+}
+
 void ImuCallBack(const std_msgs::Bool &imu_msgs)
 {
     if (!imu_msgs.data)
@@ -308,6 +543,19 @@ void ImuCallBack(const std_msgs::Bool &imu_msgs)
         rollover_flag = false;
     }
 }
+
+// void OutBoundaryCallBack(const std_msgs::Bool &msgs)
+// {
+//     if (msgs.data)
+//     {
+//         outboundary_flag = true;
+//     }else
+//     {
+//         outboundary_flag = false;
+//     }
+// }
+
+//** @xhj: add range warning **//
 void SpeedInfoCallBack(const util::LocalPose &v_pose)
 {
     if (v_pose.vehicle_speed > 0)
@@ -321,6 +569,7 @@ void SpeedInfoCallBack(const util::LocalPose &v_pose)
         rangewarn_flag = 0;
     }
 }
+//@xhj 2503  yolov8
 void YoloflagfrontCallBack(const std_msgs::Bool &range_msgs)
 {
     if (range_msgs.data && rangewarn_flag != 1)
@@ -332,25 +581,51 @@ void YoloflagfrontCallBack(const std_msgs::Bool &range_msgs)
         yolofront_flag = false;
     }
 }
+
 int main(int argc, char **argv)
 {
     ros::init(argc, argv, "task_node");
     ros::NodeHandle nh;
+    ROS_INFO_STREAM("task start");
 
     sub_manual_driving = nh.subscribe("/mower/manual_driving_cmd", 1, ManualDriveCallBack);
     sub_singal = nh.subscribe("/signal", 1, SingalCallBack); //@app 信号 单次下发
-    sub_fusionmap = nh.subscribe("/Mower/position", 1, FusionMapCallBack);
-    sub_speedinfo = nh.subscribe("/nanobot/localpose", 1, SpeedInfoCallBack);                 //@ 履带车接 定位速度反馈
-    sub_yolofront = nh.subscribe("/YoloSeg/yolocontrol_publisher", 1, YoloflagfrontCallBack); //@xhj 2503
-    sub_imu = nh.subscribe("/Mower/car_state", 1, ImuCallBack);
+    // check sub
+    ros::Subscriber sub_fusionmap = nh.subscribe("/Mower/position", 1, FusionMapCallBack);
+    sub_camera = nh.subscribe("/mower/camera/state", 1, CamCallBack);
+    sub_vslam = nh.subscribe("/mower/vslam_state", 1, VslamCallBack);
+    sub_lidar = nh.subscribe("/mower/lidar_ok", 1, LidarCallBack);
+    sub_perception = nh.subscribe("/mower/perception_ok", 1, PerceptionCallBack);
+    sub_multimap = nh.subscribe("/mower/multimap_ok", 1, MultiMapCallBack);
+    sub_camerargb = nh.subscribe("/mower/camerargb_ok", 1, CameraRGBCallBack);
+    sub_seg = nh.subscribe("/mower/seg_ok", 1, SegCallBack);
+    sub_gnss = nh.subscribe("/mower/gnss_ok", 1, GnssCallBack);
+    sub_planche = nh.subscribe("/mower/planing_ok", 1, PlanCheckCallBack);
+    sub_ctrlche = nh.subscribe("/mower/control_ok", 1, CtrlCheckCallBack);
 
+    // sub safe
+    ros::Subscriber sub_speedinfo = nh.subscribe("/nanobot/localpose", 1, SpeedInfoCallBack);                 //@ 履带车接 定位速度反馈
+    ros::Subscriber sub_yolofront = nh.subscribe("/YoloSeg/yolocontrol_publisher", 1, YoloflagfrontCallBack); //@xhj 2503
+    ros::Subscriber sub_imu = nh.subscribe("/Mower/car_state", 1, ImuCallBack);
+    // ros::Subscriber sub_outboundary = nh.subscribe("/mower/stop_car1", 1, OutBoundaryCallBack);
 
+    // android->control
     pub_direct_control = nh.advertise<mower_msgs::Direct_Control>("/mower/direct_control", 1);
     pub_vehicle_cmd = nh.advertise<mower_msgs::VehicleCmd>("/vehicle/cmd", 1); //@xhj 2406
     pub_init_request = nh.advertise<std_msgs::Bool>("/init_request", 1); // 添加初始化请求发布器
+    // task <-> Android
+    pub_status = nh.advertise<mower_msgs::TaskStatus>("/mower/task_status", 1);
+    pub_result = nh.advertise<mower_msgs::CheckResult>("/mower/check_result", 1);
+    pub_monitor = nh.advertise<mower_msgs::Monitor>("/mower/monitor", 1); //@xhj
     pub_stopflag = nh.advertise<std_msgs::Bool>("/mower/stop_car", 1);
 
     int eight_figure[] = {0, 1, 0, 2};
+    figure8_count = 0;
+    // 初始化所有监控节点为false(异常状态)，节点正常为true
+    for (int i = 0; i < 13; ++i)
+    {
+        monitor.node_normal[i] = false;
+    }
 
     stop_car.data = false;
     double time = ros::Time::now().toSec();
@@ -387,7 +662,7 @@ int main(int argc, char **argv)
             {
                 straight_start_time = ros::Time::now();
                 ROS_INFO("Starting straight driving...");
-                while (ros::ok() && (ros::Time::now() - straight_start_time).toSec() < figure8_period / 10.0)
+                while (ros::ok() && (ros::Time::now() - straight_start_time).toSec() < figure8_period / 2.0)
                 {
                     goStraight();
                 }
@@ -418,7 +693,42 @@ int main(int argc, char **argv)
         {
             figure8_count = 0;
         }
+
+        mower_msgs::CheckResult result;
+        static auto t0 = ros::Time::now();
+        ros::Time t1 = ros::Time::now();
+        double check_time = (t1 - t0).toSec();
+        static bool check_once = 0;
+        if (check_time < 5.0)
+        { 
+            if (std::fmod(check_time, 2.0) < 0.1)
+            {
+                ROS_INFO("~check~ time : %.2f ===> %d ", check_time, check_flag);
+            }
+            taskstatus = Self_checking;
+        }else if (!check_once)
+        {
+            if (!check_flag)
+            {
+                ROS_INFO("~mointor~ check ==>Fail");
+                taskstatus = Self_check_fault;
+                result.is_checkresult_ok = false;
+            }
+            else
+            {
+                ROS_INFO("~mointor~ check ok");
+                taskstatus = Holding;
+                result.is_checkresult_ok = true;
+            }
+            check_once = 1;
+            task_run();
+            pub_status.publish(status);
+            pub_result.publish(result);
+        }
+
+        task_run();
         parking(); //@xhj：2406
+        check_flag = checkAndResetNodes(monitor);
         loop_rate.sleep();
     }
 

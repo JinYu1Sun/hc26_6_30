@@ -68,17 +68,20 @@ private:
 	std::mutex turn_completed_mutex_;
 	std::deque<waypoint> turn_completed_points_;  // 小车完成转弯的点
 	uint turn_count_; // 转弯的次数
-	
+	uint follow_count_;
 	float min_lookahead_distance_;
 	waypoint lookahead_waypoint_;	// 预瞄点
 	waypoint last_lookahead_waypoint_;	//
 	float lookahead_distance_;	// 预瞄距离
+	
 	float last_lookahead_distance_;   // 期望速度
 	ros::Subscriber sub_position_;
 	ros::Subscriber sub_local_path_;
 	ros::Subscriber sub_stop_signal_;
 	ros::Subscriber sub_avoid_state_;
+	ros::Subscriber sub_outboundary_;
 	ros::Subscriber sub_signal_;
+	
 
 	ros::Publisher pub_command_;    // 发送控制指令
 
@@ -95,6 +98,8 @@ private:
 
 	std::atomic<bool> stop_car_; // 是否订阅到停车信号
 
+	std::mutex outboundary_mutex_;
+	bool outboundary_flag_; // 是否超出边界
 
 	std::mutex mover_mutex_;
 	int mover_bool_cfg_; // 割盘开关控制
@@ -104,6 +109,7 @@ private:
 	void localPathCallback(const util::LocalPathConstPtr &msg_planning_result);
 	void stopSignalCallback(const std_msgs::BoolConstPtr &msg_stop_signal);
 	void avoidstateCallback(const std_msgs::UInt8ConstPtr &avoid_msg);
+	void OutBoundaryCallBack(const std_msgs::BoolConstPtr &outboundary_msg);
 	void signalCallback(const std_msgs::StringConstPtr &signal_msg);
 
 	bool turnCompletedCallback(pure_pursuit::TurnCompleted::Request &req, pure_pursuit::TurnCompleted::Response &res);
