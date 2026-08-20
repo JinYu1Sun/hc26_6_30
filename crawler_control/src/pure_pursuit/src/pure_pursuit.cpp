@@ -24,6 +24,7 @@ PurePursuit::PurePursuit(const ros::NodeHandle &nh) : nh_(nh)
 	sub_position_ = nh_.subscribe("/Mower/position", 1, &PurePursuit::positionCallback, this);
 	sub_local_path_ = nh_.subscribe("/lawn_mower/global_path", 1, &PurePursuit::localPathCallback, this);
 	sub_stop_signal_ = nh_.subscribe("/mower/stop_car", 1, &PurePursuit::stopSignalCallback, this);
+	
 	sub_avoid_state_ = nh_.subscribe("/lawn_mower/avoid_state", 1, &PurePursuit::avoidstateCallback, this);
 	sub_outboundary_ = nh_.subscribe("/lawn_mower/out_of_bounds", 1, &PurePursuit::OutBoundaryCallBack, this);
 	sub_signal_ = nh_.subscribe("/signal", 1, &PurePursuit::signalCallback, this);
@@ -383,8 +384,14 @@ void PurePursuit::state_machine_run()
 				}
 			}
 			if (!renew_lookahead_yaw)
+			{
 				ROS_WARN("预瞄点角度未更新，可能预瞄点已转弯完成被删除");
-			goto STATEMACHINE;
+				running_state_.store(RunStateValue::Follow);			
+			}
+			else{
+				goto STATEMACHINE;
+			}
+			
 		}
 
 		// 寻找离车辆最近的点
@@ -443,6 +450,8 @@ void PurePursuit::state_machine_run()
 		switch (running_state_.load())
 		{
 		case RunStateValue::Stop:
+		    follow_count_=0;
+			turn_count_=0;
 			twist_cmd.linear = 0.0;
 			twist_cmd.angular = 0.0;
 			publishCommand(twist_cmd);
@@ -537,6 +546,8 @@ void PurePursuit::state_machine_run()
 			publishCommand(twist_cmd);
 			break;
 		case RunStateValue::Reverse:
+			follow_count_=0;
+			turn_count_=0;
 			twist_cmd.linear = -0.15;
 			twist_cmd.angular = 0.0;
 			publishCommand(twist_cmd);
@@ -545,6 +556,8 @@ void PurePursuit::state_machine_run()
 			ROS_ERROR("当前状态异常");
 			twist_cmd.linear = 0.0;
 			twist_cmd.angular = 0.0;
+			follow_count_=0;
+			turn_count_=0;
 			publishCommand(twist_cmd);
 			break;
 		}

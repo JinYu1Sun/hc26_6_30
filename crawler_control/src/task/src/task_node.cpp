@@ -37,11 +37,11 @@ ros::Subscriber sub_fusionmap;
 ros::Subscriber sub_speedinfo;
 ros::Subscriber sub_yolofront;
 ros::Subscriber sub_imu;
+ros::Subscriber sub_mower_dynamicflag_;
 ros::Time init_start_time;    // 初始化开始时间
 
-ros::Time straight_start_time;
-ros::Time turn_left_time;
-ros::Time turn_right_time;
+ros::Time figure8_phase_start; // 当前8字形阶段的开始时间
+int figure8_last_count = -1;   // 上一次处理的阶段序号，用于检测阶段切换
 
 bool manual_better = false;
 std_msgs::Bool stop_car;
@@ -62,6 +62,7 @@ int rangewarn_flag = 0; // 范围停车预警
 int figure8_count = 0; // 8字形初始化动作序号（原名 count，与 std::count 冲突故改名）
 double figure8_period = 20.0; // "8"字形周期（秒）
 pid_t pid_controller_pid = -1; // 全局变量，记录进程 PID
+bool mower_dynamic_flag=false;
 bool yolofront_flag = false;
 bool rollover_flag = false; // 侧翻状态
 bool lowpower_flag = false; // 低电量 现定义-30%
@@ -71,11 +72,11 @@ void goStraight()
 {
     mower_msgs::VehicleCmd cmd_msg;
     cmd_msg.turn_value = 0;
-    cmd_msg.drive_value = 100;
+    cmd_msg.drive_value = 10000;
     cmd_msg.ad_control_enable = 1;
     cmd_msg.gear_model = 3;
     cmd_msg.mover_bool = 0;
-    cmd_msg.mower_height = 1;
+    cmd_msg.mower_height = 11;
     cmd_msg.header.stamp = ros::Time::now(); // 设置时间戳
     pub_vehicle_cmd.publish(cmd_msg);
 }
@@ -87,7 +88,7 @@ void controlFigure8_turnleft()
     cmd_msg.ad_control_enable = 1;           // 自动驾驶控制开启
     cmd_msg.gear_model = 3;                  // 前进档
     cmd_msg.mover_bool = 0;                  // 不割草
-    cmd_msg.mower_height = 1;                // 割草高度（随便设一个）
+    cmd_msg.mower_height = 11;                // 割草高度（随便设一个）
     cmd_msg.header.stamp = ros::Time::now(); // 时间戳
     pub_vehicle_cmd.publish(cmd_msg);
     ROS_INFO("Driving in circle: drive_value=%d, turn_value=%d",
@@ -102,7 +103,7 @@ void controlFigure8_turnright()
     cmd_msg.ad_control_enable = 1;           // 自动驾驶控制开启
     cmd_msg.gear_model = 3;                  // 前进档
     cmd_msg.mover_bool = 0;                  // 不割草
-    cmd_msg.mower_height = 1;                // 割草高度（随便设一个）
+    cmd_msg.mower_height = 11;                // 割草高度（随便设一个）
     cmd_msg.header.stamp = ros::Time::now(); // 时间戳
     pub_vehicle_cmd.publish(cmd_msg);
     ROS_INFO("Driving in circle: drive_value=%d, turn_value=%d",
@@ -110,13 +111,13 @@ void controlFigure8_turnright()
 }
 void parking()
 {
-    cout << "~~~stop~~~ yolofront_flag " << yolofront_flag << " ,rollover_flag " << rollover_flag << " ,appsignal_flag " << appsignal_flag  << endl;
-    if (!rollover_flag && !yolofront_flag && !appsignal_flag )
+    cout << "~~~stop~~~ yolofront_flag " << yolofront_flag << " ,rollover_flag " << rollover_flag << " ,appsignal_flag " << appsignal_flag << " ,mower_dynamic_flag " << mower_dynamic_flag << endl;
+    if (!rollover_flag && !yolofront_flag && !appsignal_flag && !mower_dynamic_flag)
     {
         stop_car.data = false; // all false
     }else
     {
-        cout << "~~~stop~~~ yolofront_flag " << yolofront_flag << " ,rollover_flag " << rollover_flag << " ,appsignal_flag " << appsignal_flag << endl;
+        cout << "~~~stop~~~ yolofront_flag " << yolofront_flag << " ,rollover_flag " << rollover_flag << " ,appsignal_flag " << appsignal_flag << " ,mower_dynamic_flag " << mower_dynamic_flag << endl;
         stop_car.data = true;
     }
     pub_stopflag.publish(stop_car);
@@ -332,6 +333,18 @@ void YoloflagfrontCallBack(const std_msgs::Bool &range_msgs)
         yolofront_flag = false;
     }
 }
+
+void MowerDynamicFlagCallBack(const std_msgs::Bool &mower_dynamicflag_msgs)
+{
+    if (mower_dynamicflag_msgs.data)
+    {
+        mower_dynamic_flag = true;
+        ROS_WARN("!!! i see you people !!!");
+    }else
+    {
+        mower_dynamic_flag = false;
+    }
+}
 int main(int argc, char **argv)
 {
     ros::init(argc, argv, "task_node");
@@ -343,13 +356,13 @@ int main(int argc, char **argv)
     sub_speedinfo = nh.subscribe("/nanobot/localpose", 1, SpeedInfoCallBack);                 //@ 履带车接 定位速度反馈
     sub_yolofront = nh.subscribe("/YoloSeg/yolocontrol_publisher", 1, YoloflagfrontCallBack); //@xhj 2503
     sub_imu = nh.subscribe("/Mower/car_state", 1, ImuCallBack);
-
+    sub_mower_dynamicflag_ = nh.subscribe("/mower/stop_car2", 1, MowerDynamicFlagCallBack);
 
     pub_direct_control = nh.advertise<mower_msgs::Direct_Control>("/mower/direct_control", 1);
     pub_vehicle_cmd = nh.advertise<mower_msgs::VehicleCmd>("/vehicle/cmd", 1); //@xhj 2406
     pub_init_request = nh.advertise<std_msgs::Bool>("/init_request", 1); // 添加初始化请求发布器
     pub_stopflag = nh.advertise<std_msgs::Bool>("/mower/stop_car", 1);
-
+    
     int eight_figure[] = {0, 1, 0, 2};
 
     stop_car.data = false;
@@ -376,47 +389,41 @@ int main(int argc, char **argv)
         // 如果在初始化模式，执行"8"字形控制
         if (init_mode&&!has_position)
         {
-             // 先sleep 3秒
-             if(figure8_count==0)
-             {
-                ROS_INFO("Waiting 3 seconds before starting straight driving...");
-                ros::Duration(3.0).sleep(); // 等待RTK重启
-             }
+            // 进入新阶段时记录阶段起始时间（只记录一次，不能每次循环都重置）
+            if (figure8_count != figure8_last_count)
+            {
+                figure8_last_count = figure8_count;
+                if (figure8_count == 0)
+                {
+                    ROS_INFO("Waiting 3 seconds before starting straight driving...");
+                    ros::Duration(3.0).sleep(); // 等待RTK重启
+                }
+                figure8_phase_start = ros::Time::now();
+                int phase = eight_figure[figure8_count % 4];
+                if (phase == 0)      ROS_INFO("Starting straight driving...");
+                else if (phase == 1) ROS_INFO("Starting right turn...");
+                else                 ROS_INFO("Starting left turn...");
+            }
 
-            if (eight_figure[figure8_count] == 0)
+            int phase = eight_figure[figure8_count % 4];
+            double phase_duration = (phase == 0) ? figure8_period / 10.0 : figure8_period / 4.0;
+
+            if (ros::ok() && (ros::Time::now() - figure8_phase_start).toSec() < phase_duration)
             {
-                straight_start_time = ros::Time::now();
-                ROS_INFO("Starting straight driving...");
-                while (ros::ok() && (ros::Time::now() - straight_start_time).toSec() < figure8_period / 10.0)
-                {
-                    goStraight();
-                }
-                ROS_INFO("Finished straight driving.");
+                if (phase == 0)      goStraight();
+                else if (phase == 1) controlFigure8_turnright();
+                else                 controlFigure8_turnleft();
             }
-            else if (eight_figure[figure8_count] == 1)
+            else
             {
-                turn_right_time = ros::Time::now();
-                ROS_INFO("Starting right turn...");
-                while (ros::ok() && (ros::Time::now() - turn_right_time).toSec() < figure8_period / 4.0)
-                {
-                    controlFigure8_turnright();
-                }
-                ROS_INFO("Finished right turn.");
+                figure8_count++;
+                ROS_INFO("Finished phase, figure8_count=%d", figure8_count);
             }
-            else if (eight_figure[figure8_count] == 2)
-            {
-                turn_left_time = ros::Time::now();
-                ROS_INFO("Starting left turn...");
-                while (ros::ok() && (ros::Time::now() - turn_left_time).toSec() < figure8_period / 4.0)
-                {
-                    controlFigure8_turnleft();
-                }
-                ROS_INFO("Finished left turn.");
-            }
-            figure8_count++;
+            
         }else
         {
             figure8_count = 0;
+            figure8_last_count = -1;
         }
         parking(); //@xhj：2406
         loop_rate.sleep();
