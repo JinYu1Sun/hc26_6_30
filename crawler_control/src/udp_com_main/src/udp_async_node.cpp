@@ -35,7 +35,7 @@
 #include <thread>
 #include <atomic>
 
-#define DATA_SIZE 15
+#define DATA_SIZE 18
 
 struct UdpPacket {
     std::vector<uint8_t> data;
@@ -69,9 +69,12 @@ private:
     std::atomic<bool> running_;
     std::deque<UdpPacket> rx_queue_;
     std::mutex rx_mutex_;
-    
+
+    // 发送计数器,每创建一个包 +1,0-65535 循环
+    std::atomic<uint16_t> tx_counter_;
+
 public:
-    UdpAsyncNode() : udp_socket_(-1), private_nh_("~"), running_(false), max_queue_size_(100) {
+    UdpAsyncNode() : udp_socket_(-1), private_nh_("~"), running_(false), max_queue_size_(100), tx_counter_(0) {
         loadParameters();
         
         if (!initializeUdpSocket()) {
@@ -421,6 +424,12 @@ private:
         data[12] = static_cast<uint8_t>(mover_bool);
         data[13] = static_cast<uint8_t>(mower_height);
         data[14] = static_cast<uint8_t>(ad_control_enable);
+        data[15] = static_cast<uint8_t>(ad_control_enable);
+
+        // 16位发送计数器,大端,每发一包 +1,溢出后自动回绕
+        uint16_t cnt = tx_counter_.fetch_add(1);
+        data[16] = (cnt >> 8) & 0xFF;
+        data[17] = cnt & 0xFF;
         return data;
     }
  
