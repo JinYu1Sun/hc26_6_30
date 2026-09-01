@@ -35,7 +35,7 @@
 #include <thread>
 #include <atomic>
 
-#define DATA_SIZE 18
+#define DATA_SIZE 17
 
 struct UdpPacket {
     std::vector<uint8_t> data;
@@ -70,7 +70,7 @@ private:
     std::deque<UdpPacket> rx_queue_;
     std::mutex rx_mutex_;
 
-    // 发送计数器,每创建一个包 +1,0-65535 循环
+    // 发送计数器,vehicleCmdCallback 每发一次 +1,0-65535 循环
     std::atomic<uint16_t> tx_counter_;
 
 public:
@@ -338,6 +338,8 @@ private:
     void vehicleCmdCallback(const mower_msgs::VehicleCmd::ConstPtr &msg) {
         std::vector<uint8_t> data = createUdpPacket(
             msg->mover_bool, msg->drive_value, msg->turn_value, msg->mower_height,msg->ad_control_enable);
+        // 每次通过本回调发送数据,计数器 +1
+        tx_counter_.fetch_add(1);
         
         ssize_t sent = sendto(udp_socket_, data.data(), data.size(), 0,
                               (struct sockaddr*)&remote_addr_, sizeof(remote_addr_));
@@ -424,12 +426,12 @@ private:
         data[12] = static_cast<uint8_t>(mover_bool);
         data[13] = static_cast<uint8_t>(mower_height);
         data[14] = static_cast<uint8_t>(ad_control_enable);
-        data[15] = static_cast<uint8_t>(ad_control_enable);
+ 
 
-        // 16位发送计数器,大端,每发一包 +1,溢出后自动回绕
-        uint16_t cnt = tx_counter_.fetch_add(1);
-        data[16] = (cnt >> 8) & 0xFF;
-        data[17] = cnt & 0xFF;
+        // 16位发送计数器,大端,由 vehicleCmdCallback 每次发送后 +1,溢出自动回绕
+        uint16_t cnt = tx_counter_.load();
+        data[15] = (cnt >> 8) & 0xFF;
+        data[16] = cnt & 0xFF;
         return data;
     }
  
