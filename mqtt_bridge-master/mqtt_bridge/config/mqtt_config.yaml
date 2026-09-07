@@ -1,0 +1,32 @@
+mqtt:
+  host: "222.249.116.234"
+  port: 1883
+  client_id: "LBV5S1000MS688888"
+  username: "tianrunjia"
+  password: "tianrunjia"
+  qos: 1
+  keep_alive_interval: 30
+  connect_timeout: 5
+
+  # TLS/mTLS 配置（可选，取消注释以启用）
+  # 启用后 broker endpoint 需使用 8883 端口
+  # enable_tls: true
+  # ca_file: "/etc/mqtt/ca.crt"          # CA 证书
+  # cert_file: "/etc/mqtt/client.crt"    # 客户端证书（mTLS 时需要）
+  # key_file: "/etc/mqtt/client.key"     # 客户端私钥（mTLS 时需要）
+
+  # 以上配置可通过环境变量覆盖：
+  # MQTT_HOST, MQTT_PORT, MQTT_USERNAME, MQTT_PASSWORD
+
+# 仅用于当前车云联调测试。生产环境必须关闭此处并改用安全密钥存储。
+sm2:
+  enabled: true
+  key_file: "sm2_test_keys.yaml"
+  mode: "c1c2c3"
+  encoding: "binary"
+
+# 车辆位置信息（用于自动生成MQTT话题）
+vehicle:
+  province: "hunan"
+  city: "changsha"
+  zone: "lugu"

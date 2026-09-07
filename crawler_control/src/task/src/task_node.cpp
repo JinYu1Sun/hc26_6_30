@@ -41,6 +41,7 @@ ros::Subscriber sub_mower_dynamicflag_;
 ros::Time init_start_time;    // 初始化开始时间
 
 ros::Time figure8_phase_start; // 当前8字形阶段的开始时间
+ros::Time figure8_phase_end; // 当前8字形阶段的开始时间
 int figure8_last_count = -1;   // 上一次处理的阶段序号，用于检测阶段切换
 
 bool manual_better = false;
@@ -49,7 +50,7 @@ std_msgs::Bool stop_car;
 // 初始化程序相关变量
 bool init_mode = false;       // 初始化模式标志
 bool has_position = false;    // 是否有定位数据
-
+bool last_has_position = false;    // 是否有定位数据
 // 初始化确认相关变量
 bool init_requested = false;     // 是否请求初始化
 bool init_confirmed = false;     // 是否确认初始化
@@ -294,10 +295,13 @@ void FusionMapCallBack(const mower_msgs::Position &msgs)
         ROS_INFO("Stopping vehicle after acquiring position");
     }
 
-    if (has_position && !init_finish)
+    if (has_position && !init_finish && !last_has_position)
     {
+        figure8_phase_end=ros::Time::now();
+        if(ros::Time::now()-figure8_phase_end<3.0)  goStraight();
         init_finish = true;
     }
+    last_has_position=has_position;
 }
 void ImuCallBack(const std_msgs::Bool &imu_msgs)
 {
@@ -406,7 +410,7 @@ int main(int argc, char **argv)
             }
 
             int phase = eight_figure[figure8_count % 4];
-            double phase_duration = (phase == 0) ? figure8_period / 10.0 : figure8_period / 4.0;
+            double phase_duration = (phase == 0) ? figure8_period / 10.0 : figure8_period / 5.0;
 
             if (ros::ok() && (ros::Time::now() - figure8_phase_start).toSec() < phase_duration)
             {

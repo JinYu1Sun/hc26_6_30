@@ -1,0 +1,5 @@
+# 仅用于车云通信联调测试，禁止用于生产环境。
+# 测试完成后应删除本文件并更换密钥。
+sm2:
+  private_key: "de10ca542e1274a428e067555f3adbd48dac3d8e5676f09302a8342a199bec90"
+  public_key: "04ce469c5b352ee654a27ddb82bf7c02592508c7752b56c3eaf1cfd0221c6b743ae93286b3c97e114c1177720b17ed9754216086ee1e8ab691bbfe29d82f4de203"

@@ -1,0 +1,6 @@
+scripts/*
+!scripts/mock_bridge_services.py
+!scripts/start_integration_nodes.sh
+!scripts/mqtt_test_scripts.sh
+!scripts/publish_car_events.py
+!scripts/publish_takeover_request.py

@@ -1,0 +1,18 @@
+# MQTT Bridge 测试配置文件
+# 用于本地测试，连接到本地 MQTT broker
+
+mqtt:
+  host: "localhost"  # 本地测试broker
+  port: 1883
+  client_id: "nanocargo_test_001"
+  username: ""  # 本地测试可以为空
+  password: ""
+  qos: 1
+  keep_alive_interval: 30
+  connect_timeout: 5
+
+# 车辆信息配置
+vehicle:
+  province: "hunan"      # 省份
+  city: "changsha"       # 城市
+  zone: "lugu"         # 区域

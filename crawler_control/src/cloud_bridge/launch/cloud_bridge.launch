@@ -1,0 +1,45 @@
+<launch>
+  <node pkg="cloud_bridge" type="cloud_bridge_node" name="cloud_bridge" output="screen">
+
+    <!-- ===== MQTT broker（明文 TCP，无加密无认证）===== -->
+    <param name="broker_host" value="127.0.0.1"/>   <!-- 云平台 MQTT broker 地址 -->
+    <param name="broker_port" value="1883"/>
+    <param name="client_id" value="cloud_bridge_mower_001"/>
+    <param name="username" value=""/>               <!-- 留空 = 不使用用户名密码 -->
+    <param name="password" value=""/>
+    <param name="keep_alive_interval" value="30"/>
+    <param name="connect_timeout" value="5"/>
+
+    <!-- ===== 设备与主题：mower/{device_id}/... ===== -->
+    <param name="device_id" value="mower_001"/>
+    <param name="topic_prefix" value="mower"/>
+
+    <!-- ===== 上行频率 ===== -->
+    <param name="location_hz" value="2.0"/>         <!-- 定位上报频率（开机即上报） -->
+    <param name="status_hz" value="1.0"/>           <!-- 车辆状态上报频率 -->
+
+    <!-- ===== 视频源与默认参数（运行时可用 cmd/video 动态修改）===== -->
+    <param name="image_topic" value="/camera/image_rect"/>
+    <!-- SRT 推流目标：云平台 SRT 接收地址，车端以 caller 模式主动推；
+         云端用 listener 模式监听，例：srt://云平台IP:9000?mode=caller -->
+    <param name="srt_target" value=""/>
+    <param name="video_enable" value="false"/>      <!-- 默认关闭，云端下发 enable 后才开始推流 -->
+    <param name="video_fps" value="5.0"/>
+    <param name="video_width" value="640"/>
+    <param name="video_height" value="480"/>
+    <param name="video_bitrate" value="800"/>       <!-- H.264 码率 kbps -->
+
+    <!-- ===== 遥控 ===== -->
+    <param name="cmd_timeout" value="0.5"/>         <!-- 移动指令看门狗超时（秒），超时自动停车 -->
+    <param name="drive_max" value="10000"/>         <!-- linear=1.0 对应的 drive_value -->
+    <param name="turn_max" value="12566"/>          <!-- angular=1.0 对应的 turn_value 绝对值 -->
+    <param name="auto_pause_on_manual" value="true"/> <!-- 自动任务中收到遥控指令时先 pause -->
+
+    <!-- ===== 自动任务 ===== -->
+    <param name="task_step_delay" value="0.5"/>     <!-- start 流程中各 /signal 的间隔（秒） -->
+    <param name="task_stop_delay" value="2.0"/>     <!-- stop 后延时发 stop_execution（秒） -->
+
+    <!-- ===== 刀盘 ===== -->
+    <param name="mow_height" value="6"/>            <!-- 默认割草高度档位 2~11 -->
+  </node>
+</launch>
