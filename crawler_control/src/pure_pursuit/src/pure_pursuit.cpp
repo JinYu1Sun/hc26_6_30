@@ -287,8 +287,6 @@ void PurePursuit::publishCommand(const Twist &cmd)
 	}
 	if (stop_car_.load())
 	{
-		cmd_msg.drive_value = 0;
-		cmd_msg.turn_value = 0;
 		cmd_msg.gear_model = cmd_msg.p_Gear;
 	}
 	pub_command_.publish(cmd_msg);
@@ -335,6 +333,11 @@ void PurePursuit::state_machine_run()
 		if (ros::Time::now() - last_local_path_time_ > ros::Duration(3.0))
 		{
 			ROS_WARN("五维路径信息丢失");
+			running_state_.store(RunStateValue::Stop);
+			goto STATEMACHINE;
+		}
+		if (stop_car_.load())
+		{
 			running_state_.store(RunStateValue::Stop);
 			goto STATEMACHINE;
 		}
@@ -460,7 +463,7 @@ void PurePursuit::state_machine_run()
 		case RunStateValue::Follow:
 			lookahead_distance_=hypot(lookahead_waypoint_.local_x, lookahead_waypoint_.local_y);
 			// 如果小车位置与预瞄点距离小于0.05或小车已经超过预瞄点，则小车已到达预瞄点，切换为转向状态
-			if (lookahead_distance_ < 0.05 || lookahead_waypoint_.local_x < 0.03)
+			if (lookahead_distance_ < 0.1)
 			{
 				twist_cmd.linear = 0.0;
 				twist_cmd.angular = 0.0;
