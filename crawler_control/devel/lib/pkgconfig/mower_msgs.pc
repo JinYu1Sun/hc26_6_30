@@ -1,0 +1,8 @@
+prefix=/home/huilian/hc26_6_30/crawler_control/devel
+
+Name: mower_msgs
+Description: Description of mower_msgs
+Version: 0.0.0
+Cflags: -I/home/huilian/hc26_6_30/crawler_control/devel/include
+Libs: -L${prefix}/lib 
+Requires: 

@@ -1,0 +1,6 @@
+devel_space: /home/huilian/hc26_6_30/crawler_control/devel
+install: false
+install_space: /home/huilian/hc26_6_30/crawler_control/install
+profile: default
+source_space: /home/huilian/hc26_6_30/crawler_control/src
+workspace: /home/huilian/hc26_6_30/crawler_control

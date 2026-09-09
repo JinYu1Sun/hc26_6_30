@@ -3,7 +3,7 @@
 
 # Relative path conversion top directories.
 set(CMAKE_RELATIVE_PATH_TOP_SOURCE "/usr/src/googletest")
-set(CMAKE_RELATIVE_PATH_TOP_BINARY "/home/nvidia/crawler_control/build/udp_com_main")
+set(CMAKE_RELATIVE_PATH_TOP_BINARY "/home/huilian/hc26_6_30/crawler_control/build/udp_com_main")
 
 # Force unix paths in dependencies.
 set(CMAKE_FORCE_UNIX_PATHS 1)

@@ -43,10 +43,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/nvidia/crawler_control/src/pure_pursuit
+CMAKE_SOURCE_DIR = /home/huilian/hc26_6_30/crawler_control/src/pure_pursuit
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/nvidia/crawler_control/build/pure_pursuit
+CMAKE_BINARY_DIR = /home/huilian/hc26_6_30/crawler_control/build/pure_pursuit
 
 # Utility rule file for mower_msgs_generate_messages_cpp.
 
@@ -67,6 +67,6 @@ CMakeFiles/mower_msgs_generate_messages_cpp.dir/clean:
 .PHONY : CMakeFiles/mower_msgs_generate_messages_cpp.dir/clean
 
 CMakeFiles/mower_msgs_generate_messages_cpp.dir/depend:
-	cd /home/nvidia/crawler_control/build/pure_pursuit && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/nvidia/crawler_control/src/pure_pursuit /home/nvidia/crawler_control/src/pure_pursuit /home/nvidia/crawler_control/build/pure_pursuit /home/nvidia/crawler_control/build/pure_pursuit /home/nvidia/crawler_control/build/pure_pursuit/CMakeFiles/mower_msgs_generate_messages_cpp.dir/DependInfo.cmake --color=$(COLOR)
+	cd /home/huilian/hc26_6_30/crawler_control/build/pure_pursuit && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/huilian/hc26_6_30/crawler_control/src/pure_pursuit /home/huilian/hc26_6_30/crawler_control/src/pure_pursuit /home/huilian/hc26_6_30/crawler_control/build/pure_pursuit /home/huilian/hc26_6_30/crawler_control/build/pure_pursuit /home/huilian/hc26_6_30/crawler_control/build/pure_pursuit/CMakeFiles/mower_msgs_generate_messages_cpp.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/mower_msgs_generate_messages_cpp.dir/depend
 

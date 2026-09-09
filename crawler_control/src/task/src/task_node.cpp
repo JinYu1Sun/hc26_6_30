@@ -298,7 +298,7 @@ void FusionMapCallBack(const mower_msgs::Position &msgs)
     if (has_position && !init_finish && !last_has_position)
     {
         figure8_phase_end=ros::Time::now();
-        if(ros::Time::now()-figure8_phase_end<3.0)  goStraight();
+        if((ros::Time::now()-figure8_phase_end).toSec() < 3.0)  goStraight();
         init_finish = true;
     }
     last_has_position=has_position;

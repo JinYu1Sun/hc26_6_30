@@ -1,0 +1,4 @@
+[31m[1mCMake Error[0m at /home/huilian/hc26_6_30/crawler_control/src/cloud_bridge/CMakeLists.txt:23 (message):
+  nlohmann/json.hpp not found.  Install: sudo apt install nlohmann-json3-dev
+
+

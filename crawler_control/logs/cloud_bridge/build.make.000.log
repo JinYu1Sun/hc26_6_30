@@ -1,0 +1,793 @@
+[35m[1mScanning dependencies of target util_generate_messages_cpp[0m
+[35m[1mScanning dependencies of target rosgraph_msgs_generate_messages_eus[0m
+[35m[1mScanning dependencies of target mower_msgs_generate_messages_lisp[0m
+[35m[1mScanning dependencies of target util_generate_messages_lisp[0m
+[35m[1mScanning dependencies of target rosgraph_msgs_generate_messages_cpp[0m
+[35m[1mScanning dependencies of target mower_msgs_generate_messages_eus[0m
+[35m[1mScanning dependencies of target geometry_msgs_generate_messages_eus[0m
+[35m[1mScanning dependencies of target roscpp_generate_messages_nodejs[0m
+[  0%] Built target util_generate_messages_lisp
+[  0%] Built target util_generate_messages_cpp
+[  0%] Built target rosgraph_msgs_generate_messages_eus
+[  0%] Built target mower_msgs_generate_messages_lisp
+[  0%] Built target geometry_msgs_generate_messages_eus
+[  0%] Built target mower_msgs_generate_messages_eus
+[  0%] Built target rosgraph_msgs_generate_messages_cpp
+[  0%] Built target roscpp_generate_messages_nodejs
+[35m[1mScanning dependencies of target std_msgs_generate_messages_eus[0m
+[35m[1mScanning dependencies of target geometry_msgs_generate_messages_cpp[0m
+[35m[1mScanning dependencies of target mower_msgs_generate_messages_py[0m
+[35m[1mScanning dependencies of target geometry_msgs_generate_messages_lisp[0m
+[35m[1mScanning dependencies of target sensor_msgs_generate_messages_py[0m
+[35m[1mScanning dependencies of target geometry_msgs_generate_messages_py[0m
+[  0%] Built target geometry_msgs_generate_messages_cpp
+[  0%] Built target mower_msgs_generate_messages_py
+[35m[1mScanning dependencies of target geometry_msgs_generate_messages_nodejs[0m
+[  0%] Built target std_msgs_generate_messages_eus
+[  0%] Built target geometry_msgs_generate_messages_lisp
+[35m[1mScanning dependencies of target roscpp_generate_messages_eus[0m
+[  0%] Built target sensor_msgs_generate_messages_py
+[  0%] Built target geometry_msgs_generate_messages_py
+[35m[1mScanning dependencies of target sensor_msgs_generate_messages_lisp[0m
+[35m[1mScanning dependencies of target roscpp_generate_messages_cpp[0m
+[35m[1mScanning dependencies of target roscpp_generate_messages_py[0m
+[35m[1mScanning dependencies of target sensor_msgs_generate_messages_nodejs[0m
+[  0%] Built target geometry_msgs_generate_messages_nodejs
+[  0%] Built target roscpp_generate_messages_eus
+[35m[1mScanning dependencies of target sensor_msgs_generate_messages_eus[0m
+[35m[1mScanning dependencies of target util_generate_messages_py[0m
+[  0%] Built target roscpp_generate_messages_cpp
+[  0%] Built target sensor_msgs_generate_messages_lisp
+[  0%] Built target sensor_msgs_generate_messages_nodejs
+[  0%] Built target roscpp_generate_messages_py
+[35m[1mScanning dependencies of target rosgraph_msgs_generate_messages_lisp[0m
+[  0%] Built target sensor_msgs_generate_messages_eus
+[35m[1mScanning dependencies of target rosgraph_msgs_generate_messages_py[0m
+[  0%] Built target util_generate_messages_py
+[35m[1mScanning dependencies of target std_msgs_generate_messages_lisp[0m
+[35m[1mScanning dependencies of target roscpp_generate_messages_lisp[0m
+[35m[1mScanning dependencies of target rosgraph_msgs_generate_messages_nodejs[0m
+[35m[1mScanning dependencies of target mower_msgs_generate_messages_cpp[0m
+[  0%] Built target rosgraph_msgs_generate_messages_lisp
+[  0%] Built target rosgraph_msgs_generate_messages_py
+[35m[1mScanning dependencies of target util_generate_messages_eus[0m
+[35m[1mScanning dependencies of target mower_msgs_generate_messages_nodejs[0m
+[  0%] Built target std_msgs_generate_messages_lisp
+[  0%] Built target roscpp_generate_messages_lisp
+[  0%] Built target mower_msgs_generate_messages_cpp
+[  0%] Built target rosgraph_msgs_generate_messages_nodejs
+[35m[1mScanning dependencies of target std_msgs_generate_messages_cpp[0m
+[35m[1mScanning dependencies of target std_msgs_generate_messages_py[0m
+[  0%] Built target util_generate_messages_eus
+[35m[1mScanning dependencies of target sensor_msgs_generate_messages_cpp[0m
+[  0%] Built target std_msgs_generate_messages_py
+[  0%] Built target mower_msgs_generate_messages_nodejs
+[35m[1mScanning dependencies of target util_generate_messages_nodejs[0m
+[  0%] Built target std_msgs_generate_messages_cpp
+[35m[1mScanning dependencies of target std_msgs_generate_messages_nodejs[0m
+[  0%] Built target sensor_msgs_generate_messages_cpp
+[  0%] Built target util_generate_messages_nodejs
+[  0%] Built target std_msgs_generate_messages_nodejs
+[35m[1mScanning dependencies of target cloud_bridge_node[0m
+[ 33%] [32mBuilding CXX object CMakeFiles/cloud_bridge_node.dir/src/cloud_bridge_node.cpp.o[0m
+[ 66%] [32mBuilding CXX object CMakeFiles/cloud_bridge_node.dir/src/mqtt_client.cpp.o[0m
+In file included from [01m[K/usr/local/include/mqtt/message.h:34[m[K,
+                 from [01m[K/usr/local/include/mqtt/delivery_token.h:30[m[K,
+                 from [01m[K/usr/local/include/mqtt/callback.h:31[m[K,
+                 from [01m[K/usr/local/include/mqtt/async_client.h:45[m[K,
+                 from [01m[K/home/huilian/hc26_6_30/crawler_control/src/cloud_bridge/include/cloud_bridge/mqtt_client.h:4[m[K,
+                 from [01m[K/home/huilian/hc26_6_30/crawler_control/src/cloud_bridge/src/mqtt_client.cpp:1[m[K:
+[01m[K/usr/local/include/mqtt/properties.h:101:57:[m[K [01;31m[Kerror: [m[K‘[01m[Kstring_view[m[K’ is not a member of ‘[01m[Kstd[m[K’
+  101 |     PAHO_MQTTPP_EXPORT static const std::map<code, std::[01;31m[Kstring_view[m[K> TYPE_NAME;
+      |                                                         [01;31m[K^~~~~~~~~~~[m[K
+[01m[K/usr/local/include/mqtt/properties.h:101:57:[m[K [01;36m[Knote: [m[K‘[01m[Kstd::string_view[m[K’ is only available from C++17 onwards
+[01m[K/usr/local/include/mqtt/properties.h:101:57:[m[K [01;31m[Kerror: [m[K‘[01m[Kstring_view[m[K’ is not a member of ‘[01m[Kstd[m[K’
+[01m[K/usr/local/include/mqtt/properties.h:101:57:[m[K [01;36m[Knote: [m[K‘[01m[Kstd::string_view[m[K’ is only available from C++17 onwards
+[01m[K/usr/local/include/mqtt/properties.h:101:68:[m[K [01;31m[Kerror: [m[Ktemplate argument 2 is invalid
+  101 |     PAHO_MQTTPP_EXPORT static const std::map<code, std::string_view[01;31m[K>[m[K TYPE_NAME;
+      |                                                                    [01;31m[K^[m[K
+[01m[K/usr/local/include/mqtt/properties.h:101:68:[m[K [01;31m[Kerror: [m[Ktemplate argument 4 is invalid
+[01m[K/usr/local/include/mqtt/properties.h:184:10:[m[K [01;31m[Kerror: [m[K‘[01m[Kstring_view[m[K’ in namespace ‘[01m[Kstd[m[K’ does not name a type
+  184 |     std::[01;31m[Kstring_view[m[K type_name() const;
+      |          [01;31m[K^~~~~~~~~~~[m[K
+[01m[K/usr/local/include/mqtt/properties.h:184:5:[m[K [01;36m[Knote: [m[K‘[01m[Kstd::string_view[m[K’ is only available from C++17 onwards
+  184 |     [01;36m[Kstd[m[K::string_view type_name() const;
+      |     [01;36m[K^~~[m[K
+In file included from [01m[K/usr/local/include/mqtt/async_client.h:46[m[K,
+                 from [01m[K/home/huilian/hc26_6_30/crawler_control/src/cloud_bridge/include/cloud_bridge/mqtt_client.h:4[m[K,
+                 from [01m[K/home/huilian/hc26_6_30/crawler_control/src/cloud_bridge/src/mqtt_client.cpp:1[m[K:
+[01m[K/usr/local/include/mqtt/create_options.h:53:31:[m[K [01;31m[Kerror: [m[K‘[01m[Kvariant[m[K’ in namespace ‘[01m[Kstd[m[K’ does not name a template type
+   53 | using persistence_type = std::[01;31m[Kvariant[m[K<no_persistence, string, iclient_persistence*>;
+      |                               [01;31m[K^~~~~~~[m[K
+[01m[K/usr/local/include/mqtt/create_options.h:53:26:[m[K [01;36m[Knote: [m[K‘[01m[Kstd::variant[m[K’ is only available from C++17 onwards
+   53 | using persistence_type = [01;36m[Kstd[m[K::variant<no_persistence, string, iclient_persistence*>;
+      |                          [01;36m[K^~~[m[K
+[01m[K/usr/local/include/mqtt/create_options.h:88:5:[m[K [01;31m[Kerror: [m[K‘[01m[Kpersistence_type[m[K’ does not name a type; did you mean ‘[01m[Kpersistence_free[m[K’?
+   88 |     [01;31m[Kpersistence_type[m[K persistence_{};
+      |     [01;31m[K^~~~~~~~~~~~~~~~[m[K
+      |     [32m[Kpersistence_free[m[K
+[01m[K/usr/local/include/mqtt/create_options.h:132:15:[m[K [01;31m[Kerror: [m[K‘[01m[Kpersistence_type[m[K’ does not name a type; did you mean ‘[01m[Kpersistence_free[m[K’?
+  132 |         const [01;31m[Kpersistence_type[m[K& persistence = NO_PERSISTENCE
+      |               [01;31m[K^~~~~~~~~~~~~~~~[m[K
+      |               [32m[Kpersistence_free[m[K
+[01m[K/usr/local/include/mqtt/create_options.h:150:15:[m[K [01;31m[Kerror: [m[K‘[01m[Kpersistence_type[m[K’ does not name a type; did you mean ‘[01m[Kpersistence_free[m[K’?
+  150 |         const [01;31m[Kpersistence_type[m[K& persistence = NO_PERSISTENCE
+      |               [01;31m[K^~~~~~~~~~~~~~~~[m[K
+      |               [32m[Kpersistence_free[m[K
+[01m[K/usr/local/include/mqtt/create_options.h:169:15:[m[K [01;31m[Kerror: [m[K‘[01m[Kpersistence_type[m[K’ does not name a type; did you mean ‘[01m[Kpersistence_free[m[K’?
+  169 |         const [01;31m[Kpersistence_type[m[K& persistence
+      |               [01;31m[K^~~~~~~~~~~~~~~~[m[K
+      |               [32m[Kpersistence_free[m[K
+[01m[K/usr/local/include/mqtt/create_options.h:220:32:[m[K [01;31m[Kerror: [m[K‘[01m[Kpersistence_type[m[K’ does not name a type; did you mean ‘[01m[Kpersistence_free[m[K’?
+  220 |     void set_persistence(const [01;31m[Kpersistence_type[m[K& persistence) { persistence_ = persistence; }
+      |                                [01;31m[K^~~~~~~~~~~~~~~~[m[K
+      |                                [32m[Kpersistence_free[m[K
+[01m[K/usr/local/include/mqtt/create_options.h:225:11:[m[K [01;31m[Kerror: [m[K‘[01m[Kpersistence_type[m[K’ does not name a type; did you mean ‘[01m[Kpersistence_free[m[K’?
+  225 |     const [01;31m[Kpersistence_type[m[K& get_persistence() const noexcept { return persistence_; }
+      |           [01;31m[K^~~~~~~~~~~~~~~~[m[K
+      |           [32m[Kpersistence_free[m[K
+[01m[K/usr/local/include/mqtt/create_options.h:132:47:[m[K [01;31m[Kerror: [m[Kcould not convert ‘[01m[Kmqtt::NO_PERSISTENCE[m[K’ from ‘[01m[Kconst mqtt::no_persistence[m[K’ to ‘[01m[Kconst int&[m[K’
+  132 |         const persistence_type& persistence = [01;31m[KNO_PERSISTENCE[m[K
+      |                                               [01;31m[K^~~~~~~~~~~~~~[m[K
+      |                                               [01;31m[K|[m[K
+      |                                               [01;31m[Kconst mqtt::no_persistence[m[K
+[01m[K/usr/local/include/mqtt/create_options.h:150:47:[m[K [01;31m[Kerror: [m[Kcould not convert ‘[01m[Kmqtt::NO_PERSISTENCE[m[K’ from ‘[01m[Kconst mqtt::no_persistence[m[K’ to ‘[01m[Kconst int&[m[K’
+  150 |         const persistence_type& persistence = [01;31m[KNO_PERSISTENCE[m[K
+      |                                               [01;31m[K^~~~~~~~~~~~~~[m[K
+      |                                               [01;31m[K|[m[K
+      |                                               [01;31m[Kconst mqtt::no_persistence[m[K
+[01m[K/usr/local/include/mqtt/create_options.h:[m[K In constructor ‘[01m[Kmqtt::create_options::create_options(const string&, const string&, const int&)[m[K’:
+[01m[K/usr/local/include/mqtt/create_options.h:134:55:[m[K [01;31m[Kerror: [m[Kclass ‘[01m[Kmqtt::create_options[m[K’ does not have any field named ‘[01m[Kpersistence_[m[K’
+  134 |         : serverURI_{serverURI}, clientId_{clientId}, [01;31m[Kpersistence_[m[K{persistence} {}
+      |                                                       [01;31m[K^~~~~~~~~~~~[m[K
+[01m[K/usr/local/include/mqtt/create_options.h:[m[K In constructor ‘[01m[Kmqtt::create_options::create_options(const string&, const string&, int, const int&)[m[K’:
+[01m[K/usr/local/include/mqtt/create_options.h:152:55:[m[K [01;31m[Kerror: [m[Kclass ‘[01m[Kmqtt::create_options[m[K’ does not have any field named ‘[01m[Kpersistence_[m[K’
+  152 |         : serverURI_{serverURI}, clientId_{clientId}, [01;31m[Kpersistence_[m[K{persistence} {
+      |                                                       [01;31m[K^~~~~~~~~~~~[m[K
+[01m[K/usr/local/include/mqtt/create_options.h:[m[K In constructor ‘[01m[Kmqtt::create_options::create_options(const string&, const string&, const mqtt::create_options&, const int&)[m[K’:
+[01m[K/usr/local/include/mqtt/create_options.h:174:11:[m[K [01;31m[Kerror: [m[Kclass ‘[01m[Kmqtt::create_options[m[K’ does not have any field named ‘[01m[Kpersistence_[m[K’
+  174 |           [01;31m[Kpersistence_[m[K{persistence} {}
+      |           [01;31m[K^~~~~~~~~~~~[m[K
+[01m[K/usr/local/include/mqtt/create_options.h:[m[K In copy constructor ‘[01m[Kmqtt::create_options::create_options(const mqtt::create_options&)[m[K’:
+[01m[K/usr/local/include/mqtt/create_options.h:183:11:[m[K [01;31m[Kerror: [m[Kclass ‘[01m[Kmqtt::create_options[m[K’ does not have any field named ‘[01m[Kpersistence_[m[K’
+  183 |           [01;31m[Kpersistence_[m[K{opts.persistence_} {}
+      |           [01;31m[K^~~~~~~~~~~~[m[K
+[01m[K/usr/local/include/mqtt/create_options.h:183:29:[m[K [01;31m[Kerror: [m[K‘[01m[Kconst class mqtt::create_options[m[K’ has no member named ‘[01m[Kpersistence_[m[K’; did you mean ‘[01m[Kset_persistence[m[K’?
+  183 |           persistence_{opts.[01;31m[Kpersistence_[m[K} {}
+      |                             [01;31m[K^~~~~~~~~~~~[m[K
+      |                             [32m[Kset_persistence[m[K
+[01m[K/usr/local/include/mqtt/create_options.h:[m[K In constructor ‘[01m[Kmqtt::create_options::create_options(mqtt::create_options&&)[m[K’:
+[01m[K/usr/local/include/mqtt/create_options.h:192:11:[m[K [01;31m[Kerror: [m[Kclass ‘[01m[Kmqtt::create_options[m[K’ does not have any field named ‘[01m[Kpersistence_[m[K’
+  192 |           [01;31m[Kpersistence_[m[K{std::move(opts.persistence_)} {}
+      |           [01;31m[K^~~~~~~~~~~~[m[K
+[01m[K/usr/local/include/mqtt/create_options.h:192:39:[m[K [01;31m[Kerror: [m[K‘[01m[Kclass mqtt::create_options[m[K’ has no member named ‘[01m[Kpersistence_[m[K’; did you mean ‘[01m[Kset_persistence[m[K’?
+  192 |           persistence_{std::move(opts.[01;31m[Kpersistence_[m[K)} {}
+      |                                       [01;31m[K^~~~~~~~~~~~[m[K
+      |                                       [32m[Kset_persistence[m[K
+[01m[K/usr/local/include/mqtt/create_options.h:[m[K In member function ‘[01m[Kvoid mqtt::create_options::set_persistence(const int&)[m[K’:
+[01m[K/usr/local/include/mqtt/create_options.h:220:65:[m[K [01;31m[Kerror: [m[K‘[01m[Kpersistence_[m[K’ was not declared in this scope; did you mean ‘[01m[Kpersistence[m[K’?
+  220 |     void set_persistence(const persistence_type& persistence) { [01;31m[Kpersistence_[m[K = persistence; }
+      |                                                                 [01;31m[K^~~~~~~~~~~~[m[K
+      |                                                                 [32m[Kpersistence[m[K
+[01m[K/usr/local/include/mqtt/create_options.h:[m[K At global scope:
+[01m[K/usr/local/include/mqtt/create_options.h:350:28:[m[K [01;31m[Kerror: [m[K‘[01m[Kpersistence_type[m[K’ does not name a type; did you mean ‘[01m[Kpersistence_free[m[K’?
+  350 |     auto persistence(const [01;31m[Kpersistence_type[m[K& persistence) -> self& {
+      |                            [01;31m[K^~~~~~~~~~~~~~~~[m[K
+      |                            [32m[Kpersistence_free[m[K
+In file included from [01m[K/usr/local/include/mqtt/async_client.h:48[m[K,
+                 from [01m[K/home/huilian/hc26_6_30/crawler_control/src/cloud_bridge/include/cloud_bridge/mqtt_client.h:4[m[K,
+                 from [01m[K/home/huilian/hc26_6_30/crawler_control/src/cloud_bridge/src/mqtt_client.cpp:1[m[K:
+[01m[K/usr/local/include/mqtt/event.h:90:29:[m[K [01;31m[Kerror: [m[K‘[01m[Kvariant[m[K’ in namespace ‘[01m[Kstd[m[K’ does not name a template type
+   90 |     using event_type = std::[01;31m[Kvariant[m[K<
+      |                             [01;31m[K^~~~~~~[m[K
+[01m[K/usr/local/include/mqtt/event.h:90:24:[m[K [01;36m[Knote: [m[K‘[01m[Kstd::variant[m[K’ is only available from C++17 onwards
+   90 |     using event_type = [01;36m[Kstd[m[K::variant<
+      |                        [01;36m[K^~~[m[K
+[01m[K/usr/local/include/mqtt/event.h:95:5:[m[K [01;31m[Kerror: [m[K‘[01m[Kevent_type[m[K’ does not name a type
+   95 |     [01;31m[Kevent_type[m[K evt_{};
+      |     [01;31m[K^~~~~~~~~~[m[K
+[01m[K/usr/local/include/mqtt/event.h:107:21:[m[K [01;31m[Kerror: [m[Kexpected ‘[01m[K)[m[K’ before ‘[01m[Kevt[m[K’
+  107 |     event[34m[K([m[Kevent_type[01;31m[K [m[K[32m[Kevt[m[K) : evt_{std::move(evt)} {}
+      |          [34m[K~[m[K          [01;31m[K^[m[K[32m[K~~~[m[K
+      |                     [32m[K)[m[K
+[01m[K/usr/local/include/mqtt/event.h:107:50:[m[K [01;31m[Kerror: [m[Kexpected unqualified-id before ‘[01m[K{[m[K’ token
+  107 |     event(event_type evt) : evt_{std::move(evt)} [01;31m[K{[m[K}
+      |                                                  [01;31m[K^[m[K
+[01m[K/usr/local/include/mqtt/event.h:153:22:[m[K [01;31m[Kerror: [m[Kdeclaration of ‘[01m[Koperator=[m[K’ as non-function
+  153 |     event& operator=([01;31m[Kevent_type[m[K evt) {
+      |                      [01;31m[K^~~~~~~~~~[m[K
+[01m[K/usr/local/include/mqtt/event.h:153:20:[m[K [01;31m[Kerror: [m[Kexpected ‘[01m[K;[m[K’ at end of member declaration
+  153 |     event& operator[01;31m[K=[m[K(event_type evt) {
+      |                    [01;31m[K^[m[K
+      |                     [32m[K;[m[K
+[01m[K/usr/local/include/mqtt/event.h:153:32:[m[K [01;31m[Kerror: [m[Kexpected ‘[01m[K)[m[K’ before ‘[01m[Kevt[m[K’
+  153 |     event& operator=[34m[K([m[Kevent_type[01;31m[K [m[K[32m[Kevt[m[K) {
+      |                     [34m[K~[m[K          [01;31m[K^[m[K[32m[K~~~[m[K
+      |                                [32m[K)[m[K
+[01m[K/usr/local/include/mqtt/event.h:[m[K In constructor ‘[01m[Kmqtt::event::event(mqtt::message_ptr)[m[K’:
+[01m[K/usr/local/include/mqtt/event.h:112:30:[m[K [01;31m[Kerror: [m[Kclass ‘[01m[Kmqtt::event[m[K’ does not have any field named ‘[01m[Kevt_[m[K’
+  112 |     event(message_ptr msg) : [01;31m[Kevt_[m[K{std::move(msg)} {}
+      |                              [01;31m[K^~~~[m[K
+[01m[K/usr/local/include/mqtt/event.h:[m[K In constructor ‘[01m[Kmqtt::event::event(mqtt::const_message_ptr)[m[K’:
+[01m[K/usr/local/include/mqtt/event.h:117:36:[m[K [01;31m[Kerror: [m[Kclass ‘[01m[Kmqtt::event[m[K’ does not have any field named ‘[01m[Kevt_[m[K’
+  117 |     event(const_message_ptr msg) : [01;31m[Kevt_[m[K{std::move(msg)} {}
+      |                                    [01;31m[K^~~~[m[K
+[01m[K/usr/local/include/mqtt/event.h:[m[K In constructor ‘[01m[Kmqtt::event::event(mqtt::connected_event)[m[K’:
+[01m[K/usr/local/include/mqtt/event.h:122:34:[m[K [01;31m[Kerror: [m[Kclass ‘[01m[Kmqtt::event[m[K’ does not have any field named ‘[01m[Kevt_[m[K’
+  122 |     event(connected_event evt) : [01;31m[Kevt_[m[K{std::move(evt)} {}
+      |                                  [01;31m[K^~~~[m[K
+[01m[K/usr/local/include/mqtt/event.h:[m[K In constructor ‘[01m[Kmqtt::event::event(mqtt::connection_lost_event)[m[K’:
+[01m[K/usr/local/include/mqtt/event.h:127:40:[m[K [01;31m[Kerror: [m[Kclass ‘[01m[Kmqtt::event[m[K’ does not have any field named ‘[01m[Kevt_[m[K’
+  127 |     event(connection_lost_event evt) : [01;31m[Kevt_[m[K{std::move(evt)} {}
+      |                                        [01;31m[K^~~~[m[K
+[01m[K/usr/local/include/mqtt/event.h:[m[K In constructor ‘[01m[Kmqtt::event::event(mqtt::disconnected_event)[m[K’:
+[01m[K/usr/local/include/mqtt/event.h:132:37:[m[K [01;31m[Kerror: [m[Kclass ‘[01m[Kmqtt::event[m[K’ does not have any field named ‘[01m[Kevt_[m[K’
+  132 |     event(disconnected_event evt) : [01;31m[Kevt_[m[K{std::move(evt)} {}
+      |                                     [01;31m[K^~~~[m[K
+[01m[K/usr/local/include/mqtt/event.h:[m[K In constructor ‘[01m[Kmqtt::event::event(mqtt::shutdown_event)[m[K’:
+[01m[K/usr/local/include/mqtt/event.h:137:33:[m[K [01;31m[Kerror: [m[Kclass ‘[01m[Kmqtt::event[m[K’ does not have any field named ‘[01m[Kevt_[m[K’
+  137 |     event(shutdown_event evt) : [01;31m[Kevt_[m[K{std::move(evt)} {}
+      |                                 [01;31m[K^~~~[m[K
+[01m[K/usr/local/include/mqtt/event.h:[m[K In copy constructor ‘[01m[Kmqtt::event::event(const mqtt::event&)[m[K’:
+[01m[K/usr/local/include/mqtt/event.h:142:31:[m[K [01;31m[Kerror: [m[Kclass ‘[01m[Kmqtt::event[m[K’ does not have any field named ‘[01m[Kevt_[m[K’
+  142 |     event(const event& evt) : [01;31m[Kevt_[m[K{evt.evt_} {}
+      |                               [01;31m[K^~~~[m[K
+[01m[K/usr/local/include/mqtt/event.h:142:40:[m[K [01;31m[Kerror: [m[K‘[01m[Kconst class mqtt::event[m[K’ has no member named ‘[01m[Kevt_[m[K’
+  142 |     event(const event& evt) : evt_{evt.[01;31m[Kevt_[m[K} {}
+      |                                        [01;31m[K^~~~[m[K
+[01m[K/usr/local/include/mqtt/event.h:[m[K In constructor ‘[01m[Kmqtt::event::event(mqtt::event&&)[m[K’:
+[01m[K/usr/local/include/mqtt/event.h:147:26:[m[K [01;31m[Kerror: [m[Kclass ‘[01m[Kmqtt::event[m[K’ does not have any field named ‘[01m[Kevt_[m[K’
+  147 |     event(event&& evt) : [01;31m[Kevt_[m[K{std::move(evt.evt_)} {}
+      |                          [01;31m[K^~~~[m[K
+[01m[K/usr/local/include/mqtt/event.h:147:45:[m[K [01;31m[Kerror: [m[K‘[01m[Kclass mqtt::event[m[K’ has no member named ‘[01m[Kevt_[m[K’
+  147 |     event(event&& evt) : evt_{std::move(evt.[01;31m[Kevt_[m[K)} {}
+      |                                             [01;31m[K^~~~[m[K
+[01m[K/usr/local/include/mqtt/event.h:[m[K In member function ‘[01m[Kmqtt::event& mqtt::event::operator=(const mqtt::event&)[m[K’:
+[01m[K/usr/local/include/mqtt/event.h:164:13:[m[K [01;31m[Kerror: [m[K‘[01m[Kevt_[m[K’ was not declared in this scope; did you mean ‘[01m[Kecvt_r[m[K’?
+  164 |             [01;31m[Kevt_[m[K = rhs.evt_;
+      |             [01;31m[K^~~~[m[K
+      |             [32m[Kecvt_r[m[K
+[01m[K/usr/local/include/mqtt/event.h:164:24:[m[K [01;31m[Kerror: [m[K‘[01m[Kconst class mqtt::event[m[K’ has no member named ‘[01m[Kevt_[m[K’
+  164 |             evt_ = rhs.[01;31m[Kevt_[m[K;
+      |                        [01;31m[K^~~~[m[K
+[01m[K/usr/local/include/mqtt/event.h:[m[K In member function ‘[01m[Kmqtt::event& mqtt::event::operator=(mqtt::event&&)[m[K’:
+[01m[K/usr/local/include/mqtt/event.h:174:13:[m[K [01;31m[Kerror: [m[K‘[01m[Kevt_[m[K’ was not declared in this scope; did you mean ‘[01m[Kecvt_r[m[K’?
+  174 |             [01;31m[Kevt_[m[K = std::move(rhs.evt_);
+      |             [01;31m[K^~~~[m[K
+      |             [32m[Kecvt_r[m[K
+[01m[K/usr/local/include/mqtt/event.h:174:34:[m[K [01;31m[Kerror: [m[K‘[01m[Kclass mqtt::event[m[K’ has no member named ‘[01m[Kevt_[m[K’
+  174 |             evt_ = std::move(rhs.[01;31m[Kevt_[m[K);
+      |                                  [01;31m[K^~~~[m[K
+[01m[K/usr/local/include/mqtt/event.h:[m[K In member function ‘[01m[Kbool mqtt::event::is_message() const[m[K’:
+[01m[K/usr/local/include/mqtt/event.h:182:43:[m[K [01;31m[Kerror: [m[K‘[01m[Kholds_alternative[m[K’ is not a member of ‘[01m[Kstd[m[K’
+  182 |     bool is_message() const { return std::[01;31m[Kholds_alternative[m[K<const_message_ptr>(evt_); }
+      |                                           [01;31m[K^~~~~~~~~~~~~~~~~[m[K
+[01m[K/usr/local/include/mqtt/event.h:182:78:[m[K [01;31m[Kerror: [m[Kexpected primary-expression before ‘[01m[K>[m[K’ token
+  182 |     bool is_message() const { return std::holds_alternative<const_message_ptr[01;31m[K>[m[K(evt_); }
+      |                                                                              [01;31m[K^[m[K
+[01m[K/usr/local/include/mqtt/event.h:182:80:[m[K [01;31m[Kerror: [m[K‘[01m[Kevt_[m[K’ was not declared in this scope; did you mean ‘[01m[Kecvt_r[m[K’?
+  182 |     bool is_message() const { return std::holds_alternative<const_message_ptr>([01;31m[Kevt_[m[K); }
+      |                                                                                [01;31m[K^~~~[m[K
+      |                                                                                [32m[Kecvt_r[m[K
+[01m[K/usr/local/include/mqtt/event.h:[m[K In member function ‘[01m[Kbool mqtt::event::is_connected() const[m[K’:
+[01m[K/usr/local/include/mqtt/event.h:188:45:[m[K [01;31m[Kerror: [m[K‘[01m[Kholds_alternative[m[K’ is not a member of ‘[01m[Kstd[m[K’
+  188 |     bool is_connected() const { return std::[01;31m[Kholds_alternative[m[K<connected_event>(evt_); }
+      |                                             [01;31m[K^~~~~~~~~~~~~~~~~[m[K
+[01m[K/usr/local/include/mqtt/event.h:188:78:[m[K [01;31m[Kerror: [m[Kexpected primary-expression before ‘[01m[K>[m[K’ token
+  188 |     bool is_connected() const { return std::holds_alternative<connected_event[01;31m[K>[m[K(evt_); }
+      |                                                                              [01;31m[K^[m[K
+[01m[K/usr/local/include/mqtt/event.h:188:80:[m[K [01;31m[Kerror: [m[K‘[01m[Kevt_[m[K’ was not declared in this scope; did you mean ‘[01m[Kecvt_r[m[K’?
+  188 |     bool is_connected() const { return std::holds_alternative<connected_event>([01;31m[Kevt_[m[K); }
+      |                                                                                [01;31m[K^~~~[m[K
+      |                                                                                [32m[Kecvt_r[m[K
+[01m[K/usr/local/include/mqtt/event.h:[m[K In member function ‘[01m[Kbool mqtt::event::is_connection_lost() const[m[K’:
+[01m[K/usr/local/include/mqtt/event.h:195:21:[m[K [01;31m[Kerror: [m[K‘[01m[Kholds_alternative[m[K’ is not a member of ‘[01m[Kstd[m[K’
+  195 |         return std::[01;31m[Kholds_alternative[m[K<connection_lost_event>(evt_);
+      |                     [01;31m[K^~~~~~~~~~~~~~~~~[m[K
+[01m[K/usr/local/include/mqtt/event.h:195:60:[m[K [01;31m[Kerror: [m[Kexpected primary-expression before ‘[01m[K>[m[K’ token
+  195 |         return std::holds_alternative<connection_lost_event[01;31m[K>[m[K(evt_);
+      |                                                            [01;31m[K^[m[K
+[01m[K/usr/local/include/mqtt/event.h:195:62:[m[K [01;31m[Kerror: [m[K‘[01m[Kevt_[m[K’ was not declared in this scope; did you mean ‘[01m[Kecvt_r[m[K’?
+  195 |         return std::holds_alternative<connection_lost_event>([01;31m[Kevt_[m[K);
+      |                                                              [01;31m[K^~~~[m[K
+      |                                                              [32m[Kecvt_r[m[K
+[01m[K/usr/local/include/mqtt/event.h:[m[K In member function ‘[01m[Kbool mqtt::event::is_disconnected() const[m[K’:
+[01m[K/usr/local/include/mqtt/event.h:202:48:[m[K [01;31m[Kerror: [m[K‘[01m[Kholds_alternative[m[K’ is not a member of ‘[01m[Kstd[m[K’
+  202 |     bool is_disconnected() const { return std::[01;31m[Kholds_alternative[m[K<disconnected_event>(evt_); }
+      |                                                [01;31m[K^~~~~~~~~~~~~~~~~[m[K
+[01m[K/usr/local/include/mqtt/event.h:202:84:[m[K [01;31m[Kerror: [m[Kexpected primary-expression before ‘[01m[K>[m[K’ token
+  202 |     bool is_disconnected() const { return std::holds_alternative<disconnected_event[01;31m[K>[m[K(evt_); }
+      |                                                                                    [01;31m[K^[m[K
+[01m[K/usr/local/include/mqtt/event.h:202:86:[m[K [01;31m[Kerror: [m[K‘[01m[Kevt_[m[K’ was not declared in this scope; did you mean ‘[01m[Kecvt_r[m[K’?
+  202 |     bool is_disconnected() const { return std::holds_alternative<disconnected_event>([01;31m[Kevt_[m[K); }
+      |                                                                                      [01;31m[K^~~~[m[K
+      |                                                                                      [32m[Kecvt_r[m[K
+[01m[K/usr/local/include/mqtt/event.h:[m[K In member function ‘[01m[Kbool mqtt::event::is_shutdown() const[m[K’:
+[01m[K/usr/local/include/mqtt/event.h:208:44:[m[K [01;31m[Kerror: [m[K‘[01m[Kholds_alternative[m[K’ is not a member of ‘[01m[Kstd[m[K’
+  208 |     bool is_shutdown() const { return std::[01;31m[Kholds_alternative[m[K<disconnected_event>(evt_); }
+      |                                            [01;31m[K^~~~~~~~~~~~~~~~~[m[K
+[01m[K/usr/local/include/mqtt/event.h:208:80:[m[K [01;31m[Kerror: [m[Kexpected primary-expression before ‘[01m[K>[m[K’ token
+  208 |     bool is_shutdown() const { return std::holds_alternative<disconnected_event[01;31m[K>[m[K(evt_); }
+      |                                                                                [01;31m[K^[m[K
+[01m[K/usr/local/include/mqtt/event.h:208:82:[m[K [01;31m[Kerror: [m[K‘[01m[Kevt_[m[K’ was not declared in this scope; did you mean ‘[01m[Kecvt_r[m[K’?
+  208 |     bool is_shutdown() const { return std::holds_alternative<disconnected_event>([01;31m[Kevt_[m[K); }
+      |                                                                                  [01;31m[K^~~~[m[K
+      |                                                                                  [32m[Kecvt_r[m[K
+[01m[K/usr/local/include/mqtt/event.h:[m[K In member function ‘[01m[Kbool mqtt::event::is_any_disconnect() const[m[K’:
+[01m[K/usr/local/include/mqtt/event.h:215:21:[m[K [01;31m[Kerror: [m[K‘[01m[Kholds_alternative[m[K’ is not a member of ‘[01m[Kstd[m[K’
+  215 |         return std::[01;31m[Kholds_alternative[m[K<connection_lost_event>(evt_) ||
+      |                     [01;31m[K^~~~~~~~~~~~~~~~~[m[K
+[01m[K/usr/local/include/mqtt/event.h:215:60:[m[K [01;31m[Kerror: [m[Kexpected primary-expression before ‘[01m[K>[m[K’ token
+  215 |         return std::holds_alternative<connection_lost_event[01;31m[K>[m[K(evt_) ||
+      |                                                            [01;31m[K^[m[K
+[01m[K/usr/local/include/mqtt/event.h:215:62:[m[K [01;31m[Kerror: [m[K‘[01m[Kevt_[m[K’ was not declared in this scope; did you mean ‘[01m[Kecvt_r[m[K’?
+  215 |         return std::holds_alternative<connection_lost_event>([01;31m[Kevt_[m[K) ||
+      |                                                              [01;31m[K^~~~[m[K
+      |                                                              [32m[Kecvt_r[m[K
+[01m[K/usr/local/include/mqtt/event.h:216:21:[m[K [01;31m[Kerror: [m[K‘[01m[Kholds_alternative[m[K’ is not a member of ‘[01m[Kstd[m[K’
+  216 |                std::[01;31m[Kholds_alternative[m[K<disconnected_event>(evt_) ||
+      |                     [01;31m[K^~~~~~~~~~~~~~~~~[m[K
+[01m[K/usr/local/include/mqtt/event.h:216:57:[m[K [01;31m[Kerror: [m[Kexpected primary-expression before ‘[01m[K>[m[K’ token
+  216 |                std::holds_alternative<disconnected_event[01;31m[K>[m[K(evt_) ||
+      |                                                         [01;31m[K^[m[K
+[01m[K/usr/local/include/mqtt/event.h:217:21:[m[K [01;31m[Kerror: [m[K‘[01m[Kholds_alternative[m[K’ is not a member of ‘[01m[Kstd[m[K’
+  217 |                std::[01;31m[Kholds_alternative[m[K<shutdown_event>(evt_);
+      |                     [01;31m[K^~~~~~~~~~~~~~~~~[m[K
+[01m[K/usr/local/include/mqtt/event.h:217:53:[m[K [01;31m[Kerror: [m[Kexpected primary-expression before ‘[01m[K>[m[K’ token
+  217 |                std::holds_alternative<shutdown_event[01;31m[K>[m[K(evt_);
+      |                                                     [01;31m[K^[m[K
+[01m[K/usr/local/include/mqtt/event.h:[m[K In member function ‘[01m[Kmqtt::const_message_ptr mqtt::event::get_message()[m[K’:
+[01m[K/usr/local/include/mqtt/event.h:224:74:[m[K [01;31m[Kerror: [m[K‘[01m[Kevt_[m[K’ was not declared in this scope; did you mean ‘[01m[Kecvt_r[m[K’?
+  224 |     const_message_ptr get_message() { return std::get<const_message_ptr>([01;31m[Kevt_[m[K); }
+      |                                                                          [01;31m[K^~~~[m[K
+      |                                                                          [32m[Kecvt_r[m[K
+[01m[K/usr/local/include/mqtt/event.h:[m[K In member function ‘[01m[Kmqtt::disconnected_event mqtt::event::get_disconnected()[m[K’:
+[01m[K/usr/local/include/mqtt/event.h:234:81:[m[K [01;31m[Kerror: [m[K‘[01m[Kevt_[m[K’ was not declared in this scope; did you mean ‘[01m[Kecvt_r[m[K’?
+  234 |     disconnected_event get_disconnected() { return std::get<disconnected_event>([01;31m[Kevt_[m[K); }
+      |                                                                                 [01;31m[K^~~~[m[K
+      |                                                                                 [32m[Kecvt_r[m[K
+[01m[K/usr/local/include/mqtt/event.h:[m[K In member function ‘[01m[Kconstexpr std::remove_reference<std::shared_ptr<const mqtt::message> >::type* mqtt::event::get_message_if()[m[K’:
+[01m[K/usr/local/include/mqtt/event.h:242:21:[m[K [01;31m[Kerror: [m[K‘[01m[Kget_if[m[K’ is not a member of ‘[01m[Kstd[m[K’
+  242 |         return std::[01;31m[Kget_if[m[K<const_message_ptr>(&evt_);
+      |                     [01;31m[K^~~~~~[m[K
+[01m[K/usr/local/include/mqtt/event.h:242:45:[m[K [01;31m[Kerror: [m[Kexpected primary-expression before ‘[01m[K>[m[K’ token
+  242 |         return std::get_if<const_message_ptr[01;31m[K>[m[K(&evt_);
+      |                                             [01;31m[K^[m[K
+[01m[K/usr/local/include/mqtt/event.h:242:48:[m[K [01;31m[Kerror: [m[K‘[01m[Kevt_[m[K’ was not declared in this scope; did you mean ‘[01m[Kecvt_r[m[K’?
+  242 |         return std::get_if<const_message_ptr>(&[01;31m[Kevt_[m[K);
+      |                                                [01;31m[K^~~~[m[K
+      |                                                [32m[Kecvt_r[m[K
+[01m[K/usr/local/include/mqtt/event.h:[m[K In member function ‘[01m[Kconstexpr std::remove_reference<mqtt::disconnected_event>::type* mqtt::event::get_disconnected_if()[m[K’:
+[01m[K/usr/local/include/mqtt/event.h:254:21:[m[K [01;31m[Kerror: [m[K‘[01m[Kget_if[m[K’ is not a member of ‘[01m[Kstd[m[K’
+  254 |         return std::[01;31m[Kget_if[m[K<disconnected_event>(&evt_);
+      |                     [01;31m[K^~~~~~[m[K
+[01m[K/usr/local/include/mqtt/event.h:254:46:[m[K [01;31m[Kerror: [m[Kexpected primary-expression before ‘[01m[K>[m[K’ token
+  254 |         return std::get_if<disconnected_event[01;31m[K>[m[K(&evt_);
+      |                                              [01;31m[K^[m[K
+[01m[K/usr/local/include/mqtt/event.h:254:49:[m[K [01;31m[Kerror: [m[K‘[01m[Kevt_[m[K’ was not declared in this scope; did you mean ‘[01m[Kecvt_r[m[K’?
+  254 |         return std::get_if<disconnected_event>(&[01;31m[Kevt_[m[K);
+      |                                                 [01;31m[K^~~~[m[K
+      |                                                 [32m[Kecvt_r[m[K
+In file included from [01m[K/usr/local/include/mqtt/ssl_options.h:36[m[K,
+                 from [01m[K/usr/local/include/mqtt/connect_options.h:34[m[K,
+                 from [01m[K/usr/local/include/mqtt/iasync_client.h:30[m[K,
+                 from [01m[K/usr/local/include/mqtt/async_client.h:51[m[K,
+                 from [01m[K/home/huilian/hc26_6_30/crawler_control/src/cloud_bridge/include/cloud_bridge/mqtt_client.h:4[m[K,
+                 from [01m[K/home/huilian/hc26_6_30/crawler_control/src/cloud_bridge/src/mqtt_client.cpp:1[m[K:
+[01m[K/usr/local/include/mqtt/topic.h:[m[K At global scope:
+[01m[K/usr/local/include/mqtt/topic.h:220:10:[m[K [01;31m[Kerror: [m[K‘[01m[Kvariant[m[K’ in namespace ‘[01m[Kstd[m[K’ does not name a template type
+  220 |     std::[01;31m[Kvariant[m[K<string, std::vector<string>> filter_;
+      |          [01;31m[K^~~~~~~[m[K
+[01m[K/usr/local/include/mqtt/topic.h:220:5:[m[K [01;36m[Knote: [m[K‘[01m[Kstd::variant[m[K’ is only available from C++17 onwards
+  220 |     [01;36m[Kstd[m[K::variant<string, std::vector<string>> filter_;
+      |     [01;36m[K^~~[m[K
+In file included from [01m[K/home/huilian/hc26_6_30/crawler_control/src/cloud_bridge/include/cloud_bridge/mqtt_client.h:4[m[K,
+                 from [01m[K/home/huilian/hc26_6_30/crawler_control/src/cloud_bridge/src/mqtt_client.cpp:1[m[K:
+[01m[K/usr/local/include/mqtt/async_client.h:245:15:[m[K [01;31m[Kerror: [m[K‘[01m[Kpersistence_type[m[K’ does not name a type; did you mean ‘[01m[Kpersistence_free[m[K’?
+  245 |         const [01;31m[Kpersistence_type[m[K& persistence = NO_PERSISTENCE
+      |               [01;31m[K^~~~~~~~~~~~~~~~[m[K
+      |               [32m[Kpersistence_free[m[K
+[01m[K/usr/local/include/mqtt/async_client.h:265:15:[m[K [01;31m[Kerror: [m[K‘[01m[Kpersistence_type[m[K’ does not name a type; did you mean ‘[01m[Kpersistence_free[m[K’?
+  265 |         const [01;31m[Kpersistence_type[m[K& persistence = NO_PERSISTENCE
+      |               [01;31m[K^~~~~~~~~~~~~~~~[m[K
+      |               [32m[Kpersistence_free[m[K
+[01m[K/usr/local/include/mqtt/async_client.h:284:15:[m[K [01;31m[Kerror: [m[K‘[01m[Kpersistence_type[m[K’ does not name a type; did you mean ‘[01m[Kpersistence_free[m[K’?
+  284 |         const [01;31m[Kpersistence_type[m[K& persistence = NO_PERSISTENCE
+      |               [01;31m[K^~~~~~~~~~~~~~~~[m[K
+      |               [32m[Kpersistence_free[m[K
+[01m[K/usr/local/include/mqtt/async_client.h:245:47:[m[K [01;31m[Kerror: [m[Kcould not convert ‘[01m[Kmqtt::NO_PERSISTENCE[m[K’ from ‘[01m[Kconst mqtt::no_persistence[m[K’ to ‘[01m[Kconst int&[m[K’
+  245 |         const persistence_type& persistence = [01;31m[KNO_PERSISTENCE[m[K
+      |                                               [01;31m[K^~~~~~~~~~~~~~[m[K
+      |                                               [01;31m[K|[m[K
+      |                                               [01;31m[Kconst mqtt::no_persistence[m[K
+[01m[K/usr/local/include/mqtt/async_client.h:265:47:[m[K [01;31m[Kerror: [m[Kcould not convert ‘[01m[Kmqtt::NO_PERSISTENCE[m[K’ from ‘[01m[Kconst mqtt::no_persistence[m[K’ to ‘[01m[Kconst int&[m[K’
+  265 |         const persistence_type& persistence = [01;31m[KNO_PERSISTENCE[m[K
+      |                                               [01;31m[K^~~~~~~~~~~~~~[m[K
+      |                                               [01;31m[K|[m[K
+      |                                               [01;31m[Kconst mqtt::no_persistence[m[K
+[01m[K/usr/local/include/mqtt/async_client.h:284:47:[m[K [01;31m[Kerror: [m[Kcould not convert ‘[01m[Kmqtt::NO_PERSISTENCE[m[K’ from ‘[01m[Kconst mqtt::no_persistence[m[K’ to ‘[01m[Kconst int&[m[K’
+  284 |         const persistence_type& persistence = [01;31m[KNO_PERSISTENCE[m[K
+      |                                               [01;31m[K^~~~~~~~~~~~~~[m[K
+      |                                               [01;31m[K|[m[K
+      |                                               [01;31m[Kconst mqtt::no_persistence[m[K
+[01m[K/usr/local/include/mqtt/async_client.h:[m[K In constructor ‘[01m[Kmqtt::async_client::async_client(const string&, const string&, const int&)[m[K’:
+[01m[K/usr/local/include/mqtt/async_client.h:247:55:[m[K [01;31m[Kerror: [m[Kcall of overloaded ‘[01m[Kcreate_options(<brace-enclosed initializer list>)[m[K’ is ambiguous
+  247 |         : createOpts_{serverURI, clientId, persistence[01;31m[K}[m[K {
+      |                                                       [01;31m[K^[m[K
+In file included from [01m[K/usr/local/include/mqtt/async_client.h:46[m[K,
+                 from [01m[K/home/huilian/hc26_6_30/crawler_control/src/cloud_bridge/include/cloud_bridge/mqtt_client.h:4[m[K,
+                 from [01m[K/home/huilian/hc26_6_30/crawler_control/src/cloud_bridge/src/mqtt_client.cpp:1[m[K:
+[01m[K/usr/local/include/mqtt/create_options.h:148:5:[m[K [01;36m[Knote: [m[Kcandidate: ‘[01m[Kmqtt::create_options::create_options(const string&, const string&, int, const int&)[m[K’
+  148 |     [01;36m[Kcreate_options[m[K(
+      |     [01;36m[K^~~~~~~~~~~~~~[m[K
+[01m[K/usr/local/include/mqtt/create_options.h:130:14:[m[K [01;36m[Knote: [m[Kcandidate: ‘[01m[Kmqtt::create_options::create_options(const string&, const string&, const int&)[m[K’
+  130 |     explicit [01;36m[Kcreate_options[m[K(
+      |              [01;36m[K^~~~~~~~~~~~~~[m[K
+In file included from [01m[K/home/huilian/hc26_6_30/crawler_control/src/cloud_bridge/include/cloud_bridge/mqtt_client.h:4[m[K,
+                 from [01m[K/home/huilian/hc26_6_30/crawler_control/src/cloud_bridge/src/mqtt_client.cpp:1[m[K:
+[01m[K/usr/local/include/mqtt/async_client.h:[m[K In constructor ‘[01m[Kcloud_bridge::MqttClient::MqttClient(const cloud_bridge::MqttConfig&)[m[K’:
+[01m[K/usr/local/include/mqtt/async_client.h:245:47:[m[K [01;31m[Kerror: [m[Kinvalid initialization of reference of type ‘[01m[Kconst int&[m[K’ from expression of type ‘[01m[Kconst mqtt::no_persistence[m[K’
+  245 |         const persistence_type& persistence = [01;31m[KNO_PERSISTENCE[m[K
+      |                                               [01;31m[K^~~~~~~~~~~~~~[m[K
+[01m[K/usr/local/include/mqtt/async_client.h:245:33:[m[K [01;36m[Knote: [m[Kin passing argument 3 of ‘[01m[Kmqtt::async_client::async_client(const string&, const string&, const int&)[m[K’
+  245 |         [01;36m[Kconst persistence_type& persistence = NO_PERSISTENCE[m[K
+      |         [01;36m[K~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~[m[K
+make[2]: *** [CMakeFiles/cloud_bridge_node.dir/build.make:76：CMakeFiles/cloud_bridge_node.dir/src/mqtt_client.cpp.o] 错误 1
+make[2]: *** 正在等待未完成的任务....
+In file included from [01m[K/usr/local/include/mqtt/message.h:34[m[K,
+                 from [01m[K/usr/local/include/mqtt/delivery_token.h:30[m[K,
+                 from [01m[K/usr/local/include/mqtt/callback.h:31[m[K,
+                 from [01m[K/usr/local/include/mqtt/async_client.h:45[m[K,
+                 from [01m[K/home/huilian/hc26_6_30/crawler_control/src/cloud_bridge/include/cloud_bridge/mqtt_client.h:4[m[K,
+                 from [01m[K/home/huilian/hc26_6_30/crawler_control/src/cloud_bridge/src/cloud_bridge_node.cpp:31[m[K:
+[01m[K/usr/local/include/mqtt/properties.h:101:57:[m[K [01;31m[Kerror: [m[K‘[01m[Kstring_view[m[K’ is not a member of ‘[01m[Kstd[m[K’
+  101 |     PAHO_MQTTPP_EXPORT static const std::map<code, std::[01;31m[Kstring_view[m[K> TYPE_NAME;
+      |                                                         [01;31m[K^~~~~~~~~~~[m[K
+[01m[K/usr/local/include/mqtt/properties.h:101:57:[m[K [01;36m[Knote: [m[K‘[01m[Kstd::string_view[m[K’ is only available from C++17 onwards
+[01m[K/usr/local/include/mqtt/properties.h:101:57:[m[K [01;31m[Kerror: [m[K‘[01m[Kstring_view[m[K’ is not a member of ‘[01m[Kstd[m[K’
+[01m[K/usr/local/include/mqtt/properties.h:101:57:[m[K [01;36m[Knote: [m[K‘[01m[Kstd::string_view[m[K’ is only available from C++17 onwards
+[01m[K/usr/local/include/mqtt/properties.h:101:68:[m[K [01;31m[Kerror: [m[Ktemplate argument 2 is invalid
+  101 |     PAHO_MQTTPP_EXPORT static const std::map<code, std::string_view[01;31m[K>[m[K TYPE_NAME;
+      |                                                                    [01;31m[K^[m[K
+[01m[K/usr/local/include/mqtt/properties.h:101:68:[m[K [01;31m[Kerror: [m[Ktemplate argument 4 is invalid
+[01m[K/usr/local/include/mqtt/properties.h:184:10:[m[K [01;31m[Kerror: [m[K‘[01m[Kstring_view[m[K’ in namespace ‘[01m[Kstd[m[K’ does not name a type
+  184 |     std::[01;31m[Kstring_view[m[K type_name() const;
+      |          [01;31m[K^~~~~~~~~~~[m[K
+[01m[K/usr/local/include/mqtt/properties.h:184:5:[m[K [01;36m[Knote: [m[K‘[01m[Kstd::string_view[m[K’ is only available from C++17 onwards
+  184 |     [01;36m[Kstd[m[K::string_view type_name() const;
+      |     [01;36m[K^~~[m[K
+In file included from [01m[K/usr/local/include/mqtt/async_client.h:46[m[K,
+                 from [01m[K/home/huilian/hc26_6_30/crawler_control/src/cloud_bridge/include/cloud_bridge/mqtt_client.h:4[m[K,
+                 from [01m[K/home/huilian/hc26_6_30/crawler_control/src/cloud_bridge/src/cloud_bridge_node.cpp:31[m[K:
+[01m[K/usr/local/include/mqtt/create_options.h:53:31:[m[K [01;31m[Kerror: [m[K‘[01m[Kvariant[m[K’ in namespace ‘[01m[Kstd[m[K’ does not name a template type
+   53 | using persistence_type = std::[01;31m[Kvariant[m[K<no_persistence, string, iclient_persistence*>;
+      |                               [01;31m[K^~~~~~~[m[K
+[01m[K/usr/local/include/mqtt/create_options.h:53:26:[m[K [01;36m[Knote: [m[K‘[01m[Kstd::variant[m[K’ is only available from C++17 onwards
+   53 | using persistence_type = [01;36m[Kstd[m[K::variant<no_persistence, string, iclient_persistence*>;
+      |                          [01;36m[K^~~[m[K
+[01m[K/usr/local/include/mqtt/create_options.h:88:5:[m[K [01;31m[Kerror: [m[K‘[01m[Kpersistence_type[m[K’ does not name a type; did you mean ‘[01m[Kpersistence_free[m[K’?
+   88 |     [01;31m[Kpersistence_type[m[K persistence_{};
+      |     [01;31m[K^~~~~~~~~~~~~~~~[m[K
+      |     [32m[Kpersistence_free[m[K
+[01m[K/usr/local/include/mqtt/create_options.h:132:15:[m[K [01;31m[Kerror: [m[K‘[01m[Kpersistence_type[m[K’ does not name a type; did you mean ‘[01m[Kpersistence_free[m[K’?
+  132 |         const [01;31m[Kpersistence_type[m[K& persistence = NO_PERSISTENCE
+      |               [01;31m[K^~~~~~~~~~~~~~~~[m[K
+      |               [32m[Kpersistence_free[m[K
+[01m[K/usr/local/include/mqtt/create_options.h:150:15:[m[K [01;31m[Kerror: [m[K‘[01m[Kpersistence_type[m[K’ does not name a type; did you mean ‘[01m[Kpersistence_free[m[K’?
+  150 |         const [01;31m[Kpersistence_type[m[K& persistence = NO_PERSISTENCE
+      |               [01;31m[K^~~~~~~~~~~~~~~~[m[K
+      |               [32m[Kpersistence_free[m[K
+[01m[K/usr/local/include/mqtt/create_options.h:169:15:[m[K [01;31m[Kerror: [m[K‘[01m[Kpersistence_type[m[K’ does not name a type; did you mean ‘[01m[Kpersistence_free[m[K’?
+  169 |         const [01;31m[Kpersistence_type[m[K& persistence
+      |               [01;31m[K^~~~~~~~~~~~~~~~[m[K
+      |               [32m[Kpersistence_free[m[K
+[01m[K/usr/local/include/mqtt/create_options.h:220:32:[m[K [01;31m[Kerror: [m[K‘[01m[Kpersistence_type[m[K’ does not name a type; did you mean ‘[01m[Kpersistence_free[m[K’?
+  220 |     void set_persistence(const [01;31m[Kpersistence_type[m[K& persistence) { persistence_ = persistence; }
+      |                                [01;31m[K^~~~~~~~~~~~~~~~[m[K
+      |                                [32m[Kpersistence_free[m[K
+[01m[K/usr/local/include/mqtt/create_options.h:225:11:[m[K [01;31m[Kerror: [m[K‘[01m[Kpersistence_type[m[K’ does not name a type; did you mean ‘[01m[Kpersistence_free[m[K’?
+  225 |     const [01;31m[Kpersistence_type[m[K& get_persistence() const noexcept { return persistence_; }
+      |           [01;31m[K^~~~~~~~~~~~~~~~[m[K
+      |           [32m[Kpersistence_free[m[K
+[01m[K/usr/local/include/mqtt/create_options.h:132:47:[m[K [01;31m[Kerror: [m[Kcould not convert ‘[01m[Kmqtt::NO_PERSISTENCE[m[K’ from ‘[01m[Kconst mqtt::no_persistence[m[K’ to ‘[01m[Kconst int&[m[K’
+  132 |         const persistence_type& persistence = [01;31m[KNO_PERSISTENCE[m[K
+      |                                               [01;31m[K^~~~~~~~~~~~~~[m[K
+      |                                               [01;31m[K|[m[K
+      |                                               [01;31m[Kconst mqtt::no_persistence[m[K
+[01m[K/usr/local/include/mqtt/create_options.h:150:47:[m[K [01;31m[Kerror: [m[Kcould not convert ‘[01m[Kmqtt::NO_PERSISTENCE[m[K’ from ‘[01m[Kconst mqtt::no_persistence[m[K’ to ‘[01m[Kconst int&[m[K’
+  150 |         const persistence_type& persistence = [01;31m[KNO_PERSISTENCE[m[K
+      |                                               [01;31m[K^~~~~~~~~~~~~~[m[K
+      |                                               [01;31m[K|[m[K
+      |                                               [01;31m[Kconst mqtt::no_persistence[m[K
+[01m[K/usr/local/include/mqtt/create_options.h:[m[K In constructor ‘[01m[Kmqtt::create_options::create_options(const string&, const string&, const int&)[m[K’:
+[01m[K/usr/local/include/mqtt/create_options.h:134:55:[m[K [01;31m[Kerror: [m[Kclass ‘[01m[Kmqtt::create_options[m[K’ does not have any field named ‘[01m[Kpersistence_[m[K’
+  134 |         : serverURI_{serverURI}, clientId_{clientId}, [01;31m[Kpersistence_[m[K{persistence} {}
+      |                                                       [01;31m[K^~~~~~~~~~~~[m[K
+[01m[K/usr/local/include/mqtt/create_options.h:[m[K In constructor ‘[01m[Kmqtt::create_options::create_options(const string&, const string&, int, const int&)[m[K’:
+[01m[K/usr/local/include/mqtt/create_options.h:152:55:[m[K [01;31m[Kerror: [m[Kclass ‘[01m[Kmqtt::create_options[m[K’ does not have any field named ‘[01m[Kpersistence_[m[K’
+  152 |         : serverURI_{serverURI}, clientId_{clientId}, [01;31m[Kpersistence_[m[K{persistence} {
+      |                                                       [01;31m[K^~~~~~~~~~~~[m[K
+[01m[K/usr/local/include/mqtt/create_options.h:[m[K In constructor ‘[01m[Kmqtt::create_options::create_options(const string&, const string&, const mqtt::create_options&, const int&)[m[K’:
+[01m[K/usr/local/include/mqtt/create_options.h:174:11:[m[K [01;31m[Kerror: [m[Kclass ‘[01m[Kmqtt::create_options[m[K’ does not have any field named ‘[01m[Kpersistence_[m[K’
+  174 |           [01;31m[Kpersistence_[m[K{persistence} {}
+      |           [01;31m[K^~~~~~~~~~~~[m[K
+[01m[K/usr/local/include/mqtt/create_options.h:[m[K In copy constructor ‘[01m[Kmqtt::create_options::create_options(const mqtt::create_options&)[m[K’:
+[01m[K/usr/local/include/mqtt/create_options.h:183:11:[m[K [01;31m[Kerror: [m[Kclass ‘[01m[Kmqtt::create_options[m[K’ does not have any field named ‘[01m[Kpersistence_[m[K’
+  183 |           [01;31m[Kpersistence_[m[K{opts.persistence_} {}
+      |           [01;31m[K^~~~~~~~~~~~[m[K
+[01m[K/usr/local/include/mqtt/create_options.h:183:29:[m[K [01;31m[Kerror: [m[K‘[01m[Kconst class mqtt::create_options[m[K’ has no member named ‘[01m[Kpersistence_[m[K’; did you mean ‘[01m[Kset_persistence[m[K’?
+  183 |           persistence_{opts.[01;31m[Kpersistence_[m[K} {}
+      |                             [01;31m[K^~~~~~~~~~~~[m[K
+      |                             [32m[Kset_persistence[m[K
+[01m[K/usr/local/include/mqtt/create_options.h:[m[K In constructor ‘[01m[Kmqtt::create_options::create_options(mqtt::create_options&&)[m[K’:
+[01m[K/usr/local/include/mqtt/create_options.h:192:11:[m[K [01;31m[Kerror: [m[Kclass ‘[01m[Kmqtt::create_options[m[K’ does not have any field named ‘[01m[Kpersistence_[m[K’
+  192 |           [01;31m[Kpersistence_[m[K{std::move(opts.persistence_)} {}
+      |           [01;31m[K^~~~~~~~~~~~[m[K
+[01m[K/usr/local/include/mqtt/create_options.h:192:39:[m[K [01;31m[Kerror: [m[K‘[01m[Kclass mqtt::create_options[m[K’ has no member named ‘[01m[Kpersistence_[m[K’; did you mean ‘[01m[Kset_persistence[m[K’?
+  192 |           persistence_{std::move(opts.[01;31m[Kpersistence_[m[K)} {}
+      |                                       [01;31m[K^~~~~~~~~~~~[m[K
+      |                                       [32m[Kset_persistence[m[K
+[01m[K/usr/local/include/mqtt/create_options.h:[m[K In member function ‘[01m[Kvoid mqtt::create_options::set_persistence(const int&)[m[K’:
+[01m[K/usr/local/include/mqtt/create_options.h:220:65:[m[K [01;31m[Kerror: [m[K‘[01m[Kpersistence_[m[K’ was not declared in this scope; did you mean ‘[01m[Kpersistence[m[K’?
+  220 |     void set_persistence(const persistence_type& persistence) { [01;31m[Kpersistence_[m[K = persistence; }
+      |                                                                 [01;31m[K^~~~~~~~~~~~[m[K
+      |                                                                 [32m[Kpersistence[m[K
+[01m[K/usr/local/include/mqtt/create_options.h:[m[K At global scope:
+[01m[K/usr/local/include/mqtt/create_options.h:350:28:[m[K [01;31m[Kerror: [m[K‘[01m[Kpersistence_type[m[K’ does not name a type; did you mean ‘[01m[Kpersistence_free[m[K’?
+  350 |     auto persistence(const [01;31m[Kpersistence_type[m[K& persistence) -> self& {
+      |                            [01;31m[K^~~~~~~~~~~~~~~~[m[K
+      |                            [32m[Kpersistence_free[m[K
+In file included from [01m[K/usr/local/include/mqtt/async_client.h:48[m[K,
+                 from [01m[K/home/huilian/hc26_6_30/crawler_control/src/cloud_bridge/include/cloud_bridge/mqtt_client.h:4[m[K,
+                 from [01m[K/home/huilian/hc26_6_30/crawler_control/src/cloud_bridge/src/cloud_bridge_node.cpp:31[m[K:
+[01m[K/usr/local/include/mqtt/event.h:90:29:[m[K [01;31m[Kerror: [m[K‘[01m[Kvariant[m[K’ in namespace ‘[01m[Kstd[m[K’ does not name a template type
+   90 |     using event_type = std::[01;31m[Kvariant[m[K<
+      |                             [01;31m[K^~~~~~~[m[K
+[01m[K/usr/local/include/mqtt/event.h:90:24:[m[K [01;36m[Knote: [m[K‘[01m[Kstd::variant[m[K’ is only available from C++17 onwards
+   90 |     using event_type = [01;36m[Kstd[m[K::variant<
+      |                        [01;36m[K^~~[m[K
+[01m[K/usr/local/include/mqtt/event.h:95:5:[m[K [01;31m[Kerror: [m[K‘[01m[Kevent_type[m[K’ does not name a type
+   95 |     [01;31m[Kevent_type[m[K evt_{};
+      |     [01;31m[K^~~~~~~~~~[m[K
+[01m[K/usr/local/include/mqtt/event.h:107:21:[m[K [01;31m[Kerror: [m[Kexpected ‘[01m[K)[m[K’ before ‘[01m[Kevt[m[K’
+  107 |     event[34m[K([m[Kevent_type[01;31m[K [m[K[32m[Kevt[m[K) : evt_{std::move(evt)} {}
+      |          [34m[K~[m[K          [01;31m[K^[m[K[32m[K~~~[m[K
+      |                     [32m[K)[m[K
+[01m[K/usr/local/include/mqtt/event.h:107:50:[m[K [01;31m[Kerror: [m[Kexpected unqualified-id before ‘[01m[K{[m[K’ token
+  107 |     event(event_type evt) : evt_{std::move(evt)} [01;31m[K{[m[K}
+      |                                                  [01;31m[K^[m[K
+[01m[K/usr/local/include/mqtt/event.h:153:22:[m[K [01;31m[Kerror: [m[Kdeclaration of ‘[01m[Koperator=[m[K’ as non-function
+  153 |     event& operator=([01;31m[Kevent_type[m[K evt) {
+      |                      [01;31m[K^~~~~~~~~~[m[K
+[01m[K/usr/local/include/mqtt/event.h:153:20:[m[K [01;31m[Kerror: [m[Kexpected ‘[01m[K;[m[K’ at end of member declaration
+  153 |     event& operator[01;31m[K=[m[K(event_type evt) {
+      |                    [01;31m[K^[m[K
+      |                     [32m[K;[m[K
+[01m[K/usr/local/include/mqtt/event.h:153:32:[m[K [01;31m[Kerror: [m[Kexpected ‘[01m[K)[m[K’ before ‘[01m[Kevt[m[K’
+  153 |     event& operator=[34m[K([m[Kevent_type[01;31m[K [m[K[32m[Kevt[m[K) {
+      |                     [34m[K~[m[K          [01;31m[K^[m[K[32m[K~~~[m[K
+      |                                [32m[K)[m[K
+[01m[K/usr/local/include/mqtt/event.h:[m[K In constructor ‘[01m[Kmqtt::event::event(mqtt::message_ptr)[m[K’:
+[01m[K/usr/local/include/mqtt/event.h:112:30:[m[K [01;31m[Kerror: [m[Kclass ‘[01m[Kmqtt::event[m[K’ does not have any field named ‘[01m[Kevt_[m[K’
+  112 |     event(message_ptr msg) : [01;31m[Kevt_[m[K{std::move(msg)} {}
+      |                              [01;31m[K^~~~[m[K
+[01m[K/usr/local/include/mqtt/event.h:[m[K In constructor ‘[01m[Kmqtt::event::event(mqtt::const_message_ptr)[m[K’:
+[01m[K/usr/local/include/mqtt/event.h:117:36:[m[K [01;31m[Kerror: [m[Kclass ‘[01m[Kmqtt::event[m[K’ does not have any field named ‘[01m[Kevt_[m[K’
+  117 |     event(const_message_ptr msg) : [01;31m[Kevt_[m[K{std::move(msg)} {}
+      |                                    [01;31m[K^~~~[m[K
+[01m[K/usr/local/include/mqtt/event.h:[m[K In constructor ‘[01m[Kmqtt::event::event(mqtt::connected_event)[m[K’:
+[01m[K/usr/local/include/mqtt/event.h:122:34:[m[K [01;31m[Kerror: [m[Kclass ‘[01m[Kmqtt::event[m[K’ does not have any field named ‘[01m[Kevt_[m[K’
+  122 |     event(connected_event evt) : [01;31m[Kevt_[m[K{std::move(evt)} {}
+      |                                  [01;31m[K^~~~[m[K
+[01m[K/usr/local/include/mqtt/event.h:[m[K In constructor ‘[01m[Kmqtt::event::event(mqtt::connection_lost_event)[m[K’:
+[01m[K/usr/local/include/mqtt/event.h:127:40:[m[K [01;31m[Kerror: [m[Kclass ‘[01m[Kmqtt::event[m[K’ does not have any field named ‘[01m[Kevt_[m[K’
+  127 |     event(connection_lost_event evt) : [01;31m[Kevt_[m[K{std::move(evt)} {}
+      |                                        [01;31m[K^~~~[m[K
+[01m[K/usr/local/include/mqtt/event.h:[m[K In constructor ‘[01m[Kmqtt::event::event(mqtt::disconnected_event)[m[K’:
+[01m[K/usr/local/include/mqtt/event.h:132:37:[m[K [01;31m[Kerror: [m[Kclass ‘[01m[Kmqtt::event[m[K’ does not have any field named ‘[01m[Kevt_[m[K’
+  132 |     event(disconnected_event evt) : [01;31m[Kevt_[m[K{std::move(evt)} {}
+      |                                     [01;31m[K^~~~[m[K
+[01m[K/usr/local/include/mqtt/event.h:[m[K In constructor ‘[01m[Kmqtt::event::event(mqtt::shutdown_event)[m[K’:
+[01m[K/usr/local/include/mqtt/event.h:137:33:[m[K [01;31m[Kerror: [m[Kclass ‘[01m[Kmqtt::event[m[K’ does not have any field named ‘[01m[Kevt_[m[K’
+  137 |     event(shutdown_event evt) : [01;31m[Kevt_[m[K{std::move(evt)} {}
+      |                                 [01;31m[K^~~~[m[K
+[01m[K/usr/local/include/mqtt/event.h:[m[K In copy constructor ‘[01m[Kmqtt::event::event(const mqtt::event&)[m[K’:
+[01m[K/usr/local/include/mqtt/event.h:142:31:[m[K [01;31m[Kerror: [m[Kclass ‘[01m[Kmqtt::event[m[K’ does not have any field named ‘[01m[Kevt_[m[K’
+  142 |     event(const event& evt) : [01;31m[Kevt_[m[K{evt.evt_} {}
+      |                               [01;31m[K^~~~[m[K
+[01m[K/usr/local/include/mqtt/event.h:142:40:[m[K [01;31m[Kerror: [m[K‘[01m[Kconst class mqtt::event[m[K’ has no member named ‘[01m[Kevt_[m[K’
+  142 |     event(const event& evt) : evt_{evt.[01;31m[Kevt_[m[K} {}
+      |                                        [01;31m[K^~~~[m[K
+[01m[K/usr/local/include/mqtt/event.h:[m[K In constructor ‘[01m[Kmqtt::event::event(mqtt::event&&)[m[K’:
+[01m[K/usr/local/include/mqtt/event.h:147:26:[m[K [01;31m[Kerror: [m[Kclass ‘[01m[Kmqtt::event[m[K’ does not have any field named ‘[01m[Kevt_[m[K’
+  147 |     event(event&& evt) : [01;31m[Kevt_[m[K{std::move(evt.evt_)} {}
+      |                          [01;31m[K^~~~[m[K
+[01m[K/usr/local/include/mqtt/event.h:147:45:[m[K [01;31m[Kerror: [m[K‘[01m[Kclass mqtt::event[m[K’ has no member named ‘[01m[Kevt_[m[K’
+  147 |     event(event&& evt) : evt_{std::move(evt.[01;31m[Kevt_[m[K)} {}
+      |                                             [01;31m[K^~~~[m[K
+[01m[K/usr/local/include/mqtt/event.h:[m[K In member function ‘[01m[Kmqtt::event& mqtt::event::operator=(const mqtt::event&)[m[K’:
+[01m[K/usr/local/include/mqtt/event.h:164:13:[m[K [01;31m[Kerror: [m[K‘[01m[Kevt_[m[K’ was not declared in this scope; did you mean ‘[01m[Kecvt_r[m[K’?
+  164 |             [01;31m[Kevt_[m[K = rhs.evt_;
+      |             [01;31m[K^~~~[m[K
+      |             [32m[Kecvt_r[m[K
+[01m[K/usr/local/include/mqtt/event.h:164:24:[m[K [01;31m[Kerror: [m[K‘[01m[Kconst class mqtt::event[m[K’ has no member named ‘[01m[Kevt_[m[K’
+  164 |             evt_ = rhs.[01;31m[Kevt_[m[K;
+      |                        [01;31m[K^~~~[m[K
+[01m[K/usr/local/include/mqtt/event.h:[m[K In member function ‘[01m[Kmqtt::event& mqtt::event::operator=(mqtt::event&&)[m[K’:
+[01m[K/usr/local/include/mqtt/event.h:174:13:[m[K [01;31m[Kerror: [m[K‘[01m[Kevt_[m[K’ was not declared in this scope; did you mean ‘[01m[Kecvt_r[m[K’?
+  174 |             [01;31m[Kevt_[m[K = std::move(rhs.evt_);
+      |             [01;31m[K^~~~[m[K
+      |             [32m[Kecvt_r[m[K
+[01m[K/usr/local/include/mqtt/event.h:174:34:[m[K [01;31m[Kerror: [m[K‘[01m[Kclass mqtt::event[m[K’ has no member named ‘[01m[Kevt_[m[K’
+  174 |             evt_ = std::move(rhs.[01;31m[Kevt_[m[K);
+      |                                  [01;31m[K^~~~[m[K
+[01m[K/usr/local/include/mqtt/event.h:[m[K In member function ‘[01m[Kbool mqtt::event::is_message() const[m[K’:
+[01m[K/usr/local/include/mqtt/event.h:182:43:[m[K [01;31m[Kerror: [m[K‘[01m[Kholds_alternative[m[K’ is not a member of ‘[01m[Kstd[m[K’
+  182 |     bool is_message() const { return std::[01;31m[Kholds_alternative[m[K<const_message_ptr>(evt_); }
+      |                                           [01;31m[K^~~~~~~~~~~~~~~~~[m[K
+[01m[K/usr/local/include/mqtt/event.h:182:78:[m[K [01;31m[Kerror: [m[Kexpected primary-expression before ‘[01m[K>[m[K’ token
+  182 |     bool is_message() const { return std::holds_alternative<const_message_ptr[01;31m[K>[m[K(evt_); }
+      |                                                                              [01;31m[K^[m[K
+[01m[K/usr/local/include/mqtt/event.h:182:80:[m[K [01;31m[Kerror: [m[K‘[01m[Kevt_[m[K’ was not declared in this scope; did you mean ‘[01m[Kecvt_r[m[K’?
+  182 |     bool is_message() const { return std::holds_alternative<const_message_ptr>([01;31m[Kevt_[m[K); }
+      |                                                                                [01;31m[K^~~~[m[K
+      |                                                                                [32m[Kecvt_r[m[K
+[01m[K/usr/local/include/mqtt/event.h:[m[K In member function ‘[01m[Kbool mqtt::event::is_connected() const[m[K’:
+[01m[K/usr/local/include/mqtt/event.h:188:45:[m[K [01;31m[Kerror: [m[K‘[01m[Kholds_alternative[m[K’ is not a member of ‘[01m[Kstd[m[K’
+  188 |     bool is_connected() const { return std::[01;31m[Kholds_alternative[m[K<connected_event>(evt_); }
+      |                                             [01;31m[K^~~~~~~~~~~~~~~~~[m[K
+[01m[K/usr/local/include/mqtt/event.h:188:78:[m[K [01;31m[Kerror: [m[Kexpected primary-expression before ‘[01m[K>[m[K’ token
+  188 |     bool is_connected() const { return std::holds_alternative<connected_event[01;31m[K>[m[K(evt_); }
+      |                                                                              [01;31m[K^[m[K
+[01m[K/usr/local/include/mqtt/event.h:188:80:[m[K [01;31m[Kerror: [m[K‘[01m[Kevt_[m[K’ was not declared in this scope; did you mean ‘[01m[Kecvt_r[m[K’?
+  188 |     bool is_connected() const { return std::holds_alternative<connected_event>([01;31m[Kevt_[m[K); }
+      |                                                                                [01;31m[K^~~~[m[K
+      |                                                                                [32m[Kecvt_r[m[K
+[01m[K/usr/local/include/mqtt/event.h:[m[K In member function ‘[01m[Kbool mqtt::event::is_connection_lost() const[m[K’:
+[01m[K/usr/local/include/mqtt/event.h:195:21:[m[K [01;31m[Kerror: [m[K‘[01m[Kholds_alternative[m[K’ is not a member of ‘[01m[Kstd[m[K’
+  195 |         return std::[01;31m[Kholds_alternative[m[K<connection_lost_event>(evt_);
+      |                     [01;31m[K^~~~~~~~~~~~~~~~~[m[K
+[01m[K/usr/local/include/mqtt/event.h:195:60:[m[K [01;31m[Kerror: [m[Kexpected primary-expression before ‘[01m[K>[m[K’ token
+  195 |         return std::holds_alternative<connection_lost_event[01;31m[K>[m[K(evt_);
+      |                                                            [01;31m[K^[m[K
+[01m[K/usr/local/include/mqtt/event.h:195:62:[m[K [01;31m[Kerror: [m[K‘[01m[Kevt_[m[K’ was not declared in this scope; did you mean ‘[01m[Kecvt_r[m[K’?
+  195 |         return std::holds_alternative<connection_lost_event>([01;31m[Kevt_[m[K);
+      |                                                              [01;31m[K^~~~[m[K
+      |                                                              [32m[Kecvt_r[m[K
+[01m[K/usr/local/include/mqtt/event.h:[m[K In member function ‘[01m[Kbool mqtt::event::is_disconnected() const[m[K’:
+[01m[K/usr/local/include/mqtt/event.h:202:48:[m[K [01;31m[Kerror: [m[K‘[01m[Kholds_alternative[m[K’ is not a member of ‘[01m[Kstd[m[K’
+  202 |     bool is_disconnected() const { return std::[01;31m[Kholds_alternative[m[K<disconnected_event>(evt_); }
+      |                                                [01;31m[K^~~~~~~~~~~~~~~~~[m[K
+[01m[K/usr/local/include/mqtt/event.h:202:84:[m[K [01;31m[Kerror: [m[Kexpected primary-expression before ‘[01m[K>[m[K’ token
+  202 |     bool is_disconnected() const { return std::holds_alternative<disconnected_event[01;31m[K>[m[K(evt_); }
+      |                                                                                    [01;31m[K^[m[K
+[01m[K/usr/local/include/mqtt/event.h:202:86:[m[K [01;31m[Kerror: [m[K‘[01m[Kevt_[m[K’ was not declared in this scope; did you mean ‘[01m[Kecvt_r[m[K’?
+  202 |     bool is_disconnected() const { return std::holds_alternative<disconnected_event>([01;31m[Kevt_[m[K); }
+      |                                                                                      [01;31m[K^~~~[m[K
+      |                                                                                      [32m[Kecvt_r[m[K
+[01m[K/usr/local/include/mqtt/event.h:[m[K In member function ‘[01m[Kbool mqtt::event::is_shutdown() const[m[K’:
+[01m[K/usr/local/include/mqtt/event.h:208:44:[m[K [01;31m[Kerror: [m[K‘[01m[Kholds_alternative[m[K’ is not a member of ‘[01m[Kstd[m[K’
+  208 |     bool is_shutdown() const { return std::[01;31m[Kholds_alternative[m[K<disconnected_event>(evt_); }
+      |                                            [01;31m[K^~~~~~~~~~~~~~~~~[m[K
+[01m[K/usr/local/include/mqtt/event.h:208:80:[m[K [01;31m[Kerror: [m[Kexpected primary-expression before ‘[01m[K>[m[K’ token
+  208 |     bool is_shutdown() const { return std::holds_alternative<disconnected_event[01;31m[K>[m[K(evt_); }
+      |                                                                                [01;31m[K^[m[K
+[01m[K/usr/local/include/mqtt/event.h:208:82:[m[K [01;31m[Kerror: [m[K‘[01m[Kevt_[m[K’ was not declared in this scope; did you mean ‘[01m[Kecvt_r[m[K’?
+  208 |     bool is_shutdown() const { return std::holds_alternative<disconnected_event>([01;31m[Kevt_[m[K); }
+      |                                                                                  [01;31m[K^~~~[m[K
+      |                                                                                  [32m[Kecvt_r[m[K
+[01m[K/usr/local/include/mqtt/event.h:[m[K In member function ‘[01m[Kbool mqtt::event::is_any_disconnect() const[m[K’:
+[01m[K/usr/local/include/mqtt/event.h:215:21:[m[K [01;31m[Kerror: [m[K‘[01m[Kholds_alternative[m[K’ is not a member of ‘[01m[Kstd[m[K’
+  215 |         return std::[01;31m[Kholds_alternative[m[K<connection_lost_event>(evt_) ||
+      |                     [01;31m[K^~~~~~~~~~~~~~~~~[m[K
+[01m[K/usr/local/include/mqtt/event.h:215:60:[m[K [01;31m[Kerror: [m[Kexpected primary-expression before ‘[01m[K>[m[K’ token
+  215 |         return std::holds_alternative<connection_lost_event[01;31m[K>[m[K(evt_) ||
+      |                                                            [01;31m[K^[m[K
+[01m[K/usr/local/include/mqtt/event.h:215:62:[m[K [01;31m[Kerror: [m[K‘[01m[Kevt_[m[K’ was not declared in this scope; did you mean ‘[01m[Kecvt_r[m[K’?
+  215 |         return std::holds_alternative<connection_lost_event>([01;31m[Kevt_[m[K) ||
+      |                                                              [01;31m[K^~~~[m[K
+      |                                                              [32m[Kecvt_r[m[K
+[01m[K/usr/local/include/mqtt/event.h:216:21:[m[K [01;31m[Kerror: [m[K‘[01m[Kholds_alternative[m[K’ is not a member of ‘[01m[Kstd[m[K’
+  216 |                std::[01;31m[Kholds_alternative[m[K<disconnected_event>(evt_) ||
+      |                     [01;31m[K^~~~~~~~~~~~~~~~~[m[K
+[01m[K/usr/local/include/mqtt/event.h:216:57:[m[K [01;31m[Kerror: [m[Kexpected primary-expression before ‘[01m[K>[m[K’ token
+  216 |                std::holds_alternative<disconnected_event[01;31m[K>[m[K(evt_) ||
+      |                                                         [01;31m[K^[m[K
+[01m[K/usr/local/include/mqtt/event.h:217:21:[m[K [01;31m[Kerror: [m[K‘[01m[Kholds_alternative[m[K’ is not a member of ‘[01m[Kstd[m[K’
+  217 |                std::[01;31m[Kholds_alternative[m[K<shutdown_event>(evt_);
+      |                     [01;31m[K^~~~~~~~~~~~~~~~~[m[K
+[01m[K/usr/local/include/mqtt/event.h:217:53:[m[K [01;31m[Kerror: [m[Kexpected primary-expression before ‘[01m[K>[m[K’ token
+  217 |                std::holds_alternative<shutdown_event[01;31m[K>[m[K(evt_);
+      |                                                     [01;31m[K^[m[K
+[01m[K/usr/local/include/mqtt/event.h:[m[K In member function ‘[01m[Kmqtt::const_message_ptr mqtt::event::get_message()[m[K’:
+[01m[K/usr/local/include/mqtt/event.h:224:74:[m[K [01;31m[Kerror: [m[K‘[01m[Kevt_[m[K’ was not declared in this scope; did you mean ‘[01m[Kecvt_r[m[K’?
+  224 |     const_message_ptr get_message() { return std::get<const_message_ptr>([01;31m[Kevt_[m[K); }
+      |                                                                          [01;31m[K^~~~[m[K
+      |                                                                          [32m[Kecvt_r[m[K
+[01m[K/usr/local/include/mqtt/event.h:[m[K In member function ‘[01m[Kmqtt::disconnected_event mqtt::event::get_disconnected()[m[K’:
+[01m[K/usr/local/include/mqtt/event.h:234:81:[m[K [01;31m[Kerror: [m[K‘[01m[Kevt_[m[K’ was not declared in this scope; did you mean ‘[01m[Kecvt_r[m[K’?
+  234 |     disconnected_event get_disconnected() { return std::get<disconnected_event>([01;31m[Kevt_[m[K); }
+      |                                                                                 [01;31m[K^~~~[m[K
+      |                                                                                 [32m[Kecvt_r[m[K
+[01m[K/usr/local/include/mqtt/event.h:[m[K In member function ‘[01m[Kconstexpr std::remove_reference<std::shared_ptr<const mqtt::message> >::type* mqtt::event::get_message_if()[m[K’:
+[01m[K/usr/local/include/mqtt/event.h:242:21:[m[K [01;31m[Kerror: [m[K‘[01m[Kget_if[m[K’ is not a member of ‘[01m[Kstd[m[K’; did you mean ‘[01m[Kget_time[m[K’?
+  242 |         return std::[01;31m[Kget_if[m[K<const_message_ptr>(&evt_);
+      |                     [01;31m[K^~~~~~[m[K
+      |                     [32m[Kget_time[m[K
+[01m[K/usr/local/include/mqtt/event.h:242:45:[m[K [01;31m[Kerror: [m[Kexpected primary-expression before ‘[01m[K>[m[K’ token
+  242 |         return std::get_if<const_message_ptr[01;31m[K>[m[K(&evt_);
+      |                                             [01;31m[K^[m[K
+[01m[K/usr/local/include/mqtt/event.h:242:48:[m[K [01;31m[Kerror: [m[K‘[01m[Kevt_[m[K’ was not declared in this scope; did you mean ‘[01m[Kecvt_r[m[K’?
+  242 |         return std::get_if<const_message_ptr>(&[01;31m[Kevt_[m[K);
+      |                                                [01;31m[K^~~~[m[K
+      |                                                [32m[Kecvt_r[m[K
+[01m[K/usr/local/include/mqtt/event.h:[m[K In member function ‘[01m[Kconstexpr std::remove_reference<mqtt::disconnected_event>::type* mqtt::event::get_disconnected_if()[m[K’:
+[01m[K/usr/local/include/mqtt/event.h:254:21:[m[K [01;31m[Kerror: [m[K‘[01m[Kget_if[m[K’ is not a member of ‘[01m[Kstd[m[K’; did you mean ‘[01m[Kget_time[m[K’?
+  254 |         return std::[01;31m[Kget_if[m[K<disconnected_event>(&evt_);
+      |                     [01;31m[K^~~~~~[m[K
+      |                     [32m[Kget_time[m[K
+[01m[K/usr/local/include/mqtt/event.h:254:46:[m[K [01;31m[Kerror: [m[Kexpected primary-expression before ‘[01m[K>[m[K’ token
+  254 |         return std::get_if<disconnected_event[01;31m[K>[m[K(&evt_);
+      |                                              [01;31m[K^[m[K
+[01m[K/usr/local/include/mqtt/event.h:254:49:[m[K [01;31m[Kerror: [m[K‘[01m[Kevt_[m[K’ was not declared in this scope; did you mean ‘[01m[Kecvt_r[m[K’?
+  254 |         return std::get_if<disconnected_event>(&[01;31m[Kevt_[m[K);
+      |                                                 [01;31m[K^~~~[m[K
+      |                                                 [32m[Kecvt_r[m[K
+In file included from [01m[K/usr/local/include/mqtt/ssl_options.h:36[m[K,
+                 from [01m[K/usr/local/include/mqtt/connect_options.h:34[m[K,
+                 from [01m[K/usr/local/include/mqtt/iasync_client.h:30[m[K,
+                 from [01m[K/usr/local/include/mqtt/async_client.h:51[m[K,
+                 from [01m[K/home/huilian/hc26_6_30/crawler_control/src/cloud_bridge/include/cloud_bridge/mqtt_client.h:4[m[K,
+                 from [01m[K/home/huilian/hc26_6_30/crawler_control/src/cloud_bridge/src/cloud_bridge_node.cpp:31[m[K:
+[01m[K/usr/local/include/mqtt/topic.h:[m[K At global scope:
+[01m[K/usr/local/include/mqtt/topic.h:220:10:[m[K [01;31m[Kerror: [m[K‘[01m[Kvariant[m[K’ in namespace ‘[01m[Kstd[m[K’ does not name a template type
+  220 |     std::[01;31m[Kvariant[m[K<string, std::vector<string>> filter_;
+      |          [01;31m[K^~~~~~~[m[K
+[01m[K/usr/local/include/mqtt/topic.h:220:5:[m[K [01;36m[Knote: [m[K‘[01m[Kstd::variant[m[K’ is only available from C++17 onwards
+  220 |     [01;36m[Kstd[m[K::variant<string, std::vector<string>> filter_;
+      |     [01;36m[K^~~[m[K
+In file included from [01m[K/home/huilian/hc26_6_30/crawler_control/src/cloud_bridge/include/cloud_bridge/mqtt_client.h:4[m[K,
+                 from [01m[K/home/huilian/hc26_6_30/crawler_control/src/cloud_bridge/src/cloud_bridge_node.cpp:31[m[K:
+[01m[K/usr/local/include/mqtt/async_client.h:245:15:[m[K [01;31m[Kerror: [m[K‘[01m[Kpersistence_type[m[K’ does not name a type; did you mean ‘[01m[Kpersistence_free[m[K’?
+  245 |         const [01;31m[Kpersistence_type[m[K& persistence = NO_PERSISTENCE
+      |               [01;31m[K^~~~~~~~~~~~~~~~[m[K
+      |               [32m[Kpersistence_free[m[K
+[01m[K/usr/local/include/mqtt/async_client.h:265:15:[m[K [01;31m[Kerror: [m[K‘[01m[Kpersistence_type[m[K’ does not name a type; did you mean ‘[01m[Kpersistence_free[m[K’?
+  265 |         const [01;31m[Kpersistence_type[m[K& persistence = NO_PERSISTENCE
+      |               [01;31m[K^~~~~~~~~~~~~~~~[m[K
+      |               [32m[Kpersistence_free[m[K
+[01m[K/usr/local/include/mqtt/async_client.h:284:15:[m[K [01;31m[Kerror: [m[K‘[01m[Kpersistence_type[m[K’ does not name a type; did you mean ‘[01m[Kpersistence_free[m[K’?
+  284 |         const [01;31m[Kpersistence_type[m[K& persistence = NO_PERSISTENCE
+      |               [01;31m[K^~~~~~~~~~~~~~~~[m[K
+      |               [32m[Kpersistence_free[m[K
+[01m[K/usr/local/include/mqtt/async_client.h:245:47:[m[K [01;31m[Kerror: [m[Kcould not convert ‘[01m[Kmqtt::NO_PERSISTENCE[m[K’ from ‘[01m[Kconst mqtt::no_persistence[m[K’ to ‘[01m[Kconst int&[m[K’
+  245 |         const persistence_type& persistence = [01;31m[KNO_PERSISTENCE[m[K
+      |                                               [01;31m[K^~~~~~~~~~~~~~[m[K
+      |                                               [01;31m[K|[m[K
+      |                                               [01;31m[Kconst mqtt::no_persistence[m[K
+[01m[K/usr/local/include/mqtt/async_client.h:265:47:[m[K [01;31m[Kerror: [m[Kcould not convert ‘[01m[Kmqtt::NO_PERSISTENCE[m[K’ from ‘[01m[Kconst mqtt::no_persistence[m[K’ to ‘[01m[Kconst int&[m[K’
+  265 |         const persistence_type& persistence = [01;31m[KNO_PERSISTENCE[m[K
+      |                                               [01;31m[K^~~~~~~~~~~~~~[m[K
+      |                                               [01;31m[K|[m[K
+      |                                               [01;31m[Kconst mqtt::no_persistence[m[K
+[01m[K/usr/local/include/mqtt/async_client.h:284:47:[m[K [01;31m[Kerror: [m[Kcould not convert ‘[01m[Kmqtt::NO_PERSISTENCE[m[K’ from ‘[01m[Kconst mqtt::no_persistence[m[K’ to ‘[01m[Kconst int&[m[K’
+  284 |         const persistence_type& persistence = [01;31m[KNO_PERSISTENCE[m[K
+      |                                               [01;31m[K^~~~~~~~~~~~~~[m[K
+      |                                               [01;31m[K|[m[K
+      |                                               [01;31m[Kconst mqtt::no_persistence[m[K
+[01m[K/usr/local/include/mqtt/async_client.h:[m[K In constructor ‘[01m[Kmqtt::async_client::async_client(const string&, const string&, const int&)[m[K’:
+[01m[K/usr/local/include/mqtt/async_client.h:247:55:[m[K [01;31m[Kerror: [m[Kcall of overloaded ‘[01m[Kcreate_options(<brace-enclosed initializer list>)[m[K’ is ambiguous
+  247 |         : createOpts_{serverURI, clientId, persistence[01;31m[K}[m[K {
+      |                                                       [01;31m[K^[m[K
+In file included from [01m[K/usr/local/include/mqtt/async_client.h:46[m[K,
+                 from [01m[K/home/huilian/hc26_6_30/crawler_control/src/cloud_bridge/include/cloud_bridge/mqtt_client.h:4[m[K,
+                 from [01m[K/home/huilian/hc26_6_30/crawler_control/src/cloud_bridge/src/cloud_bridge_node.cpp:31[m[K:
+[01m[K/usr/local/include/mqtt/create_options.h:148:5:[m[K [01;36m[Knote: [m[Kcandidate: ‘[01m[Kmqtt::create_options::create_options(const string&, const string&, int, const int&)[m[K’
+  148 |     [01;36m[Kcreate_options[m[K(
+      |     [01;36m[K^~~~~~~~~~~~~~[m[K
+[01m[K/usr/local/include/mqtt/create_options.h:130:14:[m[K [01;36m[Knote: [m[Kcandidate: ‘[01m[Kmqtt::create_options::create_options(const string&, const string&, const int&)[m[K’
+  130 |     explicit [01;36m[Kcreate_options[m[K(
+      |              [01;36m[K^~~~~~~~~~~~~~[m[K
+make[2]: *** [CMakeFiles/cloud_bridge_node.dir/build.make:63：CMakeFiles/cloud_bridge_node.dir/src/cloud_bridge_node.cpp.o] 错误 1
+make[1]: *** [CMakeFiles/Makefile2:371：CMakeFiles/cloud_bridge_node.dir/all] 错误 2
+make: *** [Makefile:141：all] 错误 2

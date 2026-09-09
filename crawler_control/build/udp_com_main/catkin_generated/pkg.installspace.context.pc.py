@@ -4,5 +4,5 @@ PROJECT_PKG_CONFIG_INCLUDE_DIRS = "".split(';') if "" != "" else []
 PROJECT_CATKIN_DEPENDS = "roscpp;std_msgs;mower_msgs".replace(';', ' ')
 PKG_CONFIG_LIBRARIES_WITH_PREFIX = "".split(';') if "" != "" else []
 PROJECT_NAME = "udp_com_main"
-PROJECT_SPACE_DIR = "/home/nvidia/crawler_control/install"
+PROJECT_SPACE_DIR = "/home/huilian/hc26_6_30/crawler_control/install"
 PROJECT_VERSION = "1.0.0"

@@ -1,6 +1,6 @@
 file(REMOVE_RECURSE
-  "/home/nvidia/crawler_control/devel/.private/pure_pursuit/lib/pure_pursuit/pure_pursuit"
-  "/home/nvidia/crawler_control/devel/.private/pure_pursuit/lib/pure_pursuit/pure_pursuit.pdb"
+  "/home/huilian/hc26_6_30/crawler_control/devel/lib/pure_pursuit/pure_pursuit"
+  "/home/huilian/hc26_6_30/crawler_control/devel/lib/pure_pursuit/pure_pursuit.pdb"
   "CMakeFiles/pure_pursuit.dir/src/main.cpp.o"
   "CMakeFiles/pure_pursuit.dir/src/pure_pursuit.cpp.o"
 )

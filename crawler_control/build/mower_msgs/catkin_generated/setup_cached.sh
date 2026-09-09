@@ -7,10 +7,7 @@
 # new environment variables
 
 # modified environment variables
-export CMAKE_PREFIX_PATH="/home/nvidia/crawler_control/devel/.private/mower_msgs:$CMAKE_PREFIX_PATH"
-export LD_LIBRARY_PATH="/home/nvidia/crawler_control/devel/.private/mower_msgs/lib:$LD_LIBRARY_PATH"
-export PKG_CONFIG_PATH="/home/nvidia/crawler_control/devel/.private/mower_msgs/lib/pkgconfig:$PKG_CONFIG_PATH"
-export PWD='/home/nvidia/crawler_control/build/mower_msgs'
-export PYTHONPATH="/home/nvidia/crawler_control/devel/.private/mower_msgs/lib/python3/dist-packages:$PYTHONPATH"
-export ROSLISP_PACKAGE_DIRECTORIES="/home/nvidia/crawler_control/devel/.private/mower_msgs/share/common-lisp:$ROSLISP_PACKAGE_DIRECTORIES"
-export ROS_PACKAGE_PATH="/home/nvidia/crawler_control/src/mower_msgs:$ROS_PACKAGE_PATH"
+export CMAKE_PREFIX_PATH="/home/huilian/hc26_6_30/crawler_control/devel:$CMAKE_PREFIX_PATH"
+export PWD='/home/huilian/hc26_6_30/crawler_control/build/mower_msgs'
+export ROSLISP_PACKAGE_DIRECTORIES='/home/huilian/hc26_6_30/crawler_control/devel/share/common-lisp'
+export ROS_PACKAGE_PATH="/home/huilian/hc26_6_30/crawler_control/src/can_msgs:/home/huilian/hc26_6_30/crawler_control/src/mower_msgs:/home/huilian/hc26_6_30/crawler_control/src/agv_can_bridge:/home/huilian/hc26_6_30/crawler_control/src/udp_com_main:/home/huilian/hc26_6_30/crawler_control/src/minibus_msg_util:/home/huilian/hc26_6_30/crawler_control/src/cloud_bridge:/home/huilian/hc26_6_30/crawler_control/src/pure_pursuit:/home/huilian/hc26_6_30/crawler_control/src/task:$ROS_PACKAGE_PATH"

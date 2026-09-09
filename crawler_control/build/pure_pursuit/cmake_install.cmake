@@ -1,8 +1,8 @@
-# Install script for directory: /home/nvidia/crawler_control/src/pure_pursuit
+# Install script for directory: /home/huilian/hc26_6_30/crawler_control/src/pure_pursuit
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "/home/nvidia/crawler_control/install")
+  set(CMAKE_INSTALL_PREFIX "/home/huilian/hc26_6_30/crawler_control/install")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
@@ -49,107 +49,158 @@ endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
   list(APPEND CMAKE_ABSOLUTE_DESTINATION_FILES
-   "/home/nvidia/crawler_control/install/_setup_util.py")
+   "/home/huilian/hc26_6_30/crawler_control/install/_setup_util.py")
   if(CMAKE_WARN_ON_ABSOLUTE_INSTALL_DESTINATION)
     message(WARNING "ABSOLUTE path INSTALL DESTINATION : ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
   endif()
   if(CMAKE_ERROR_ON_ABSOLUTE_INSTALL_DESTINATION)
     message(FATAL_ERROR "ABSOLUTE path INSTALL DESTINATION forbidden (by caller): ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
   endif()
-file(INSTALL DESTINATION "/home/nvidia/crawler_control/install" TYPE PROGRAM FILES "/home/nvidia/crawler_control/build/pure_pursuit/catkin_generated/installspace/_setup_util.py")
+file(INSTALL DESTINATION "/home/huilian/hc26_6_30/crawler_control/install" TYPE PROGRAM FILES "/home/huilian/hc26_6_30/crawler_control/build/pure_pursuit/catkin_generated/installspace/_setup_util.py")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
   list(APPEND CMAKE_ABSOLUTE_DESTINATION_FILES
-   "/home/nvidia/crawler_control/install/env.sh")
+   "/home/huilian/hc26_6_30/crawler_control/install/env.sh")
   if(CMAKE_WARN_ON_ABSOLUTE_INSTALL_DESTINATION)
     message(WARNING "ABSOLUTE path INSTALL DESTINATION : ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
   endif()
   if(CMAKE_ERROR_ON_ABSOLUTE_INSTALL_DESTINATION)
     message(FATAL_ERROR "ABSOLUTE path INSTALL DESTINATION forbidden (by caller): ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
   endif()
-file(INSTALL DESTINATION "/home/nvidia/crawler_control/install" TYPE PROGRAM FILES "/home/nvidia/crawler_control/build/pure_pursuit/catkin_generated/installspace/env.sh")
+file(INSTALL DESTINATION "/home/huilian/hc26_6_30/crawler_control/install" TYPE PROGRAM FILES "/home/huilian/hc26_6_30/crawler_control/build/pure_pursuit/catkin_generated/installspace/env.sh")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
   list(APPEND CMAKE_ABSOLUTE_DESTINATION_FILES
-   "/home/nvidia/crawler_control/install/setup.bash;/home/nvidia/crawler_control/install/local_setup.bash")
+   "/home/huilian/hc26_6_30/crawler_control/install/setup.bash;/home/huilian/hc26_6_30/crawler_control/install/local_setup.bash")
   if(CMAKE_WARN_ON_ABSOLUTE_INSTALL_DESTINATION)
     message(WARNING "ABSOLUTE path INSTALL DESTINATION : ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
   endif()
   if(CMAKE_ERROR_ON_ABSOLUTE_INSTALL_DESTINATION)
     message(FATAL_ERROR "ABSOLUTE path INSTALL DESTINATION forbidden (by caller): ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
   endif()
-file(INSTALL DESTINATION "/home/nvidia/crawler_control/install" TYPE FILE FILES
-    "/home/nvidia/crawler_control/build/pure_pursuit/catkin_generated/installspace/setup.bash"
-    "/home/nvidia/crawler_control/build/pure_pursuit/catkin_generated/installspace/local_setup.bash"
+file(INSTALL DESTINATION "/home/huilian/hc26_6_30/crawler_control/install" TYPE FILE FILES
+    "/home/huilian/hc26_6_30/crawler_control/build/pure_pursuit/catkin_generated/installspace/setup.bash"
+    "/home/huilian/hc26_6_30/crawler_control/build/pure_pursuit/catkin_generated/installspace/local_setup.bash"
     )
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
   list(APPEND CMAKE_ABSOLUTE_DESTINATION_FILES
-   "/home/nvidia/crawler_control/install/setup.sh;/home/nvidia/crawler_control/install/local_setup.sh")
+   "/home/huilian/hc26_6_30/crawler_control/install/setup.sh;/home/huilian/hc26_6_30/crawler_control/install/local_setup.sh")
   if(CMAKE_WARN_ON_ABSOLUTE_INSTALL_DESTINATION)
     message(WARNING "ABSOLUTE path INSTALL DESTINATION : ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
   endif()
   if(CMAKE_ERROR_ON_ABSOLUTE_INSTALL_DESTINATION)
     message(FATAL_ERROR "ABSOLUTE path INSTALL DESTINATION forbidden (by caller): ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
   endif()
-file(INSTALL DESTINATION "/home/nvidia/crawler_control/install" TYPE FILE FILES
-    "/home/nvidia/crawler_control/build/pure_pursuit/catkin_generated/installspace/setup.sh"
-    "/home/nvidia/crawler_control/build/pure_pursuit/catkin_generated/installspace/local_setup.sh"
+file(INSTALL DESTINATION "/home/huilian/hc26_6_30/crawler_control/install" TYPE FILE FILES
+    "/home/huilian/hc26_6_30/crawler_control/build/pure_pursuit/catkin_generated/installspace/setup.sh"
+    "/home/huilian/hc26_6_30/crawler_control/build/pure_pursuit/catkin_generated/installspace/local_setup.sh"
     )
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
   list(APPEND CMAKE_ABSOLUTE_DESTINATION_FILES
-   "/home/nvidia/crawler_control/install/setup.zsh;/home/nvidia/crawler_control/install/local_setup.zsh")
+   "/home/huilian/hc26_6_30/crawler_control/install/setup.zsh;/home/huilian/hc26_6_30/crawler_control/install/local_setup.zsh")
   if(CMAKE_WARN_ON_ABSOLUTE_INSTALL_DESTINATION)
     message(WARNING "ABSOLUTE path INSTALL DESTINATION : ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
   endif()
   if(CMAKE_ERROR_ON_ABSOLUTE_INSTALL_DESTINATION)
     message(FATAL_ERROR "ABSOLUTE path INSTALL DESTINATION forbidden (by caller): ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
   endif()
-file(INSTALL DESTINATION "/home/nvidia/crawler_control/install" TYPE FILE FILES
-    "/home/nvidia/crawler_control/build/pure_pursuit/catkin_generated/installspace/setup.zsh"
-    "/home/nvidia/crawler_control/build/pure_pursuit/catkin_generated/installspace/local_setup.zsh"
+file(INSTALL DESTINATION "/home/huilian/hc26_6_30/crawler_control/install" TYPE FILE FILES
+    "/home/huilian/hc26_6_30/crawler_control/build/pure_pursuit/catkin_generated/installspace/setup.zsh"
+    "/home/huilian/hc26_6_30/crawler_control/build/pure_pursuit/catkin_generated/installspace/local_setup.zsh"
     )
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
   list(APPEND CMAKE_ABSOLUTE_DESTINATION_FILES
-   "/home/nvidia/crawler_control/install/.rosinstall")
+   "/home/huilian/hc26_6_30/crawler_control/install/setup.fish;/home/huilian/hc26_6_30/crawler_control/install/local_setup.fish")
   if(CMAKE_WARN_ON_ABSOLUTE_INSTALL_DESTINATION)
     message(WARNING "ABSOLUTE path INSTALL DESTINATION : ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
   endif()
   if(CMAKE_ERROR_ON_ABSOLUTE_INSTALL_DESTINATION)
     message(FATAL_ERROR "ABSOLUTE path INSTALL DESTINATION forbidden (by caller): ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
   endif()
-file(INSTALL DESTINATION "/home/nvidia/crawler_control/install" TYPE FILE FILES "/home/nvidia/crawler_control/build/pure_pursuit/catkin_generated/installspace/.rosinstall")
+file(INSTALL DESTINATION "/home/huilian/hc26_6_30/crawler_control/install" TYPE FILE FILES
+    "/home/huilian/hc26_6_30/crawler_control/build/pure_pursuit/catkin_generated/installspace/setup.fish"
+    "/home/huilian/hc26_6_30/crawler_control/build/pure_pursuit/catkin_generated/installspace/local_setup.fish"
+    )
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/pkgconfig" TYPE FILE FILES "/home/nvidia/crawler_control/build/pure_pursuit/catkin_generated/installspace/pure_pursuit.pc")
+  list(APPEND CMAKE_ABSOLUTE_DESTINATION_FILES
+   "/home/huilian/hc26_6_30/crawler_control/install/.rosinstall")
+  if(CMAKE_WARN_ON_ABSOLUTE_INSTALL_DESTINATION)
+    message(WARNING "ABSOLUTE path INSTALL DESTINATION : ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
+  endif()
+  if(CMAKE_ERROR_ON_ABSOLUTE_INSTALL_DESTINATION)
+    message(FATAL_ERROR "ABSOLUTE path INSTALL DESTINATION forbidden (by caller): ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
+  endif()
+file(INSTALL DESTINATION "/home/huilian/hc26_6_30/crawler_control/install" TYPE FILE FILES "/home/huilian/hc26_6_30/crawler_control/build/pure_pursuit/catkin_generated/installspace/.rosinstall")
+endif()
+
+if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/pure_pursuit/srv" TYPE FILE FILES "/home/huilian/hc26_6_30/crawler_control/src/pure_pursuit/srv/TurnCompleted.srv")
+endif()
+
+if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/pure_pursuit/cmake" TYPE FILE FILES "/home/huilian/hc26_6_30/crawler_control/build/pure_pursuit/catkin_generated/installspace/pure_pursuit-msg-paths.cmake")
+endif()
+
+if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include" TYPE DIRECTORY FILES "/home/huilian/hc26_6_30/crawler_control/devel/include/pure_pursuit")
+endif()
+
+if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/roseus/ros" TYPE DIRECTORY FILES "/home/huilian/hc26_6_30/crawler_control/devel/share/roseus/ros/pure_pursuit")
+endif()
+
+if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/common-lisp/ros" TYPE DIRECTORY FILES "/home/huilian/hc26_6_30/crawler_control/devel/share/common-lisp/ros/pure_pursuit")
+endif()
+
+if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/gennodejs/ros" TYPE DIRECTORY FILES "/home/huilian/hc26_6_30/crawler_control/devel/share/gennodejs/ros/pure_pursuit")
+endif()
+
+if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
+  execute_process(COMMAND "/usr/bin/python3" -m compileall "/home/huilian/hc26_6_30/crawler_control/devel/lib/python3/dist-packages/pure_pursuit")
+endif()
+
+if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/python3/dist-packages" TYPE DIRECTORY FILES "/home/huilian/hc26_6_30/crawler_control/devel/lib/python3/dist-packages/pure_pursuit")
+endif()
+
+if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/pkgconfig" TYPE FILE FILES "/home/huilian/hc26_6_30/crawler_control/build/pure_pursuit/catkin_generated/installspace/pure_pursuit.pc")
+endif()
+
+if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/pure_pursuit/cmake" TYPE FILE FILES "/home/huilian/hc26_6_30/crawler_control/build/pure_pursuit/catkin_generated/installspace/pure_pursuit-msg-extras.cmake")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
   file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/pure_pursuit/cmake" TYPE FILE FILES
-    "/home/nvidia/crawler_control/build/pure_pursuit/catkin_generated/installspace/pure_pursuitConfig.cmake"
-    "/home/nvidia/crawler_control/build/pure_pursuit/catkin_generated/installspace/pure_pursuitConfig-version.cmake"
+    "/home/huilian/hc26_6_30/crawler_control/build/pure_pursuit/catkin_generated/installspace/pure_pursuitConfig.cmake"
+    "/home/huilian/hc26_6_30/crawler_control/build/pure_pursuit/catkin_generated/installspace/pure_pursuitConfig-version.cmake"
     )
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/pure_pursuit" TYPE FILE FILES "/home/nvidia/crawler_control/src/pure_pursuit/package.xml")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/pure_pursuit" TYPE FILE FILES "/home/huilian/hc26_6_30/crawler_control/src/pure_pursuit/package.xml")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/pure_pursuit/launch" TYPE DIRECTORY FILES "/home/nvidia/crawler_control/src/pure_pursuit/launch/")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/pure_pursuit/launch" TYPE DIRECTORY FILES "/home/huilian/hc26_6_30/crawler_control/src/pure_pursuit/launch/")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
-  include("/home/nvidia/crawler_control/build/pure_pursuit/gtest/cmake_install.cmake")
+  include("/home/huilian/hc26_6_30/crawler_control/build/pure_pursuit/gtest/cmake_install.cmake")
 
 endif()
 
@@ -161,5 +212,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/nvidia/crawler_control/build/pure_pursuit/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/huilian/hc26_6_30/crawler_control/build/pure_pursuit/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

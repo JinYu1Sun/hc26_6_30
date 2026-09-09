@@ -1,0 +1,8 @@
+[31m[1mCMake Error[0m at /home/huilian/hc26_6_30/crawler_control/src/cloud_bridge/CMakeLists.txt:34 (message):
+  Paho MQTT C++ library not found.
+
+  Install: sudo apt install libpaho-mqtt-dev libpaho-mqttpp-dev
+
+  or build from source: https://github.com/eclipse/paho.mqtt.cpp
+
+

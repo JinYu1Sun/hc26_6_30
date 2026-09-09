@@ -1,6 +1,6 @@
 file(REMOVE_RECURSE
-  "/home/nvidia/crawler_control/devel/.private/can_msgs/share/gennodejs/ros/can_msgs/msg/CanState.js"
-  "/home/nvidia/crawler_control/devel/.private/can_msgs/share/gennodejs/ros/can_msgs/msg/Frame.js"
+  "/home/huilian/hc26_6_30/crawler_control/devel/share/gennodejs/ros/can_msgs/msg/CanState.js"
+  "/home/huilian/hc26_6_30/crawler_control/devel/share/gennodejs/ros/can_msgs/msg/Frame.js"
   "CMakeFiles/can_msgs_generate_messages_nodejs"
 )
 

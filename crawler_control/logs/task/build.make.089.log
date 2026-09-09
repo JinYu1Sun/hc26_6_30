@@ -1,0 +1,4 @@
+[35m[1mScanning dependencies of target task[0m
+[ 50%] [32mBuilding CXX object CMakeFiles/task.dir/src/task_node.cpp.o[0m
+[100%] [32m[1mLinking CXX executable /home/huilian/hc26_6_30/crawler_control/devel/lib/task/task[0m
+[100%] Built target task

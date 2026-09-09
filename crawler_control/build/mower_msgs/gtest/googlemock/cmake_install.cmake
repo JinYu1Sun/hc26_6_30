@@ -2,7 +2,7 @@
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "/home/nvidia/crawler_control/install")
+  set(CMAKE_INSTALL_PREFIX "/home/huilian/hc26_6_30/crawler_control/install")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
@@ -39,7 +39,7 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
-  include("/home/nvidia/crawler_control/build/mower_msgs/gtest/googletest/cmake_install.cmake")
+  include("/home/huilian/hc26_6_30/crawler_control/build/mower_msgs/gtest/googletest/cmake_install.cmake")
 
 endif()
 

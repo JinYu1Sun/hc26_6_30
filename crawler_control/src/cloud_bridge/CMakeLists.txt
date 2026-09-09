@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.0.2)
 project(cloud_bridge)
 
-add_compile_options(-std=c++14)
+add_compile_options(-std=c++17)
 
 find_package(catkin REQUIRED COMPONENTS
   roscpp
@@ -25,8 +25,6 @@ if(NOT nlohmann_json_FOUND)
 endif()
 
 # Paho MQTT C++（apt: libpaho-mqttpp-dev，或源码安装到 /usr/local）
-# 只用 C++ API，链接 paho-mqttpp3 即可，其 NEEDED 会自动带出匹配的 C 库
-# （显式链接 paho-mqtt3a/3as 反而可能与其构建变体不一致导致运行时双加载）
 find_library(PAHO_MQTT_CPP_LIB NAMES paho-mqttpp3
   PATHS /usr/local/lib /usr/lib /usr/lib/x86_64-linux-gnu /usr/lib/aarch64-linux-gnu)
 
@@ -37,6 +35,17 @@ if(NOT PAHO_MQTT_CPP_LIB)
     "or build from source: https://github.com/eclipse/paho.mqtt.cpp")
 endif()
 message(STATUS "Paho MQTT C++: ${PAHO_MQTT_CPP_LIB}")
+
+# Paho MQTT C 库（C++ 库的底层依赖，必须显式链接）
+find_library(PAHO_MQTT_C_LIB NAMES paho-mqtt3as paho-mqtt3a
+  PATHS /usr/local/lib /usr/lib /usr/lib/x86_64-linux-gnu /usr/lib/aarch64-linux-gnu)
+
+if(NOT PAHO_MQTT_C_LIB)
+  message(FATAL_ERROR
+    "Paho MQTT C library not found.\n"
+    "Install: sudo apt install libpaho-mqtt-dev")
+endif()
+message(STATUS "Paho MQTT C: ${PAHO_MQTT_C_LIB}")
 
 catkin_package(
   INCLUDE_DIRS include
@@ -60,6 +69,7 @@ target_link_libraries(cloud_bridge_node
   ${catkin_LIBRARIES}
   ${OpenCV_LIBRARIES}
   ${PAHO_MQTT_CPP_LIB}
+  ${PAHO_MQTT_C_LIB}
   Threads::Threads
 )
 

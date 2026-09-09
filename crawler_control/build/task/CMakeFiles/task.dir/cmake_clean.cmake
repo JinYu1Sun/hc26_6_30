@@ -1,6 +1,6 @@
 file(REMOVE_RECURSE
-  "/home/nvidia/crawler_control/devel/.private/task/lib/task/task"
-  "/home/nvidia/crawler_control/devel/.private/task/lib/task/task.pdb"
+  "/home/huilian/hc26_6_30/crawler_control/devel/lib/task/task"
+  "/home/huilian/hc26_6_30/crawler_control/devel/lib/task/task.pdb"
   "CMakeFiles/task.dir/src/task_node.cpp.o"
 )
 

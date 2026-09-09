@@ -1,0 +1,8 @@
+prefix=/home/huilian/hc26_6_30/crawler_control/devel
+
+Name: cloud_bridge
+Description: Description of cloud_bridge
+Version: 1.0.0
+Cflags: -I/home/huilian/hc26_6_30/crawler_control/src/cloud_bridge/include
+Libs: -L${prefix}/lib 
+Requires: roscpp std_msgs sensor_msgs mower_msgs util cv_bridge

@@ -48,10 +48,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/nvidia/crawler_control/src/can_msgs
+CMAKE_SOURCE_DIR = /home/huilian/hc26_6_30/crawler_control/src/can_msgs
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/nvidia/crawler_control/build/can_msgs
+CMAKE_BINARY_DIR = /home/huilian/hc26_6_30/crawler_control/build/can_msgs
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -137,9 +137,9 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/nvidia/crawler_control/build/can_msgs/CMakeFiles /home/nvidia/crawler_control/build/can_msgs/CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/huilian/hc26_6_30/crawler_control/build/can_msgs/CMakeFiles /home/huilian/hc26_6_30/crawler_control/build/can_msgs/CMakeFiles/progress.marks
 	$(MAKE) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/nvidia/crawler_control/build/can_msgs/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/huilian/hc26_6_30/crawler_control/build/can_msgs/CMakeFiles 0
 .PHONY : all
 
 # The main clean target

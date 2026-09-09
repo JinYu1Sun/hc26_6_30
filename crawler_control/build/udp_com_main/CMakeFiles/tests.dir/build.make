@@ -43,10 +43,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/nvidia/crawler_control/src/udp_com_main
+CMAKE_SOURCE_DIR = /home/huilian/hc26_6_30/crawler_control/src/udp_com_main
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/nvidia/crawler_control/build/udp_com_main
+CMAKE_BINARY_DIR = /home/huilian/hc26_6_30/crawler_control/build/udp_com_main
 
 # Utility rule file for tests.
 
@@ -67,6 +67,6 @@ CMakeFiles/tests.dir/clean:
 .PHONY : CMakeFiles/tests.dir/clean
 
 CMakeFiles/tests.dir/depend:
-	cd /home/nvidia/crawler_control/build/udp_com_main && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/nvidia/crawler_control/src/udp_com_main /home/nvidia/crawler_control/src/udp_com_main /home/nvidia/crawler_control/build/udp_com_main /home/nvidia/crawler_control/build/udp_com_main /home/nvidia/crawler_control/build/udp_com_main/CMakeFiles/tests.dir/DependInfo.cmake --color=$(COLOR)
+	cd /home/huilian/hc26_6_30/crawler_control/build/udp_com_main && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/huilian/hc26_6_30/crawler_control/src/udp_com_main /home/huilian/hc26_6_30/crawler_control/src/udp_com_main /home/huilian/hc26_6_30/crawler_control/build/udp_com_main /home/huilian/hc26_6_30/crawler_control/build/udp_com_main /home/huilian/hc26_6_30/crawler_control/build/udp_com_main/CMakeFiles/tests.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/tests.dir/depend
 

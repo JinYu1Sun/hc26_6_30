@@ -1,13 +1,13 @@
 file(REMOVE_RECURSE
-  "/home/nvidia/crawler_control/devel/.private/util/share/common-lisp/ros/util/msg/DiagnosticResult.lisp"
-  "/home/nvidia/crawler_control/devel/.private/util/share/common-lisp/ros/util/msg/GpsPosition.lisp"
-  "/home/nvidia/crawler_control/devel/.private/util/share/common-lisp/ros/util/msg/LocalPath.lisp"
-  "/home/nvidia/crawler_control/devel/.private/util/share/common-lisp/ros/util/msg/LocalPose.lisp"
-  "/home/nvidia/crawler_control/devel/.private/util/share/common-lisp/ros/util/msg/MapPath.lisp"
-  "/home/nvidia/crawler_control/devel/.private/util/share/common-lisp/ros/util/msg/PolygonWithHoles.lisp"
-  "/home/nvidia/crawler_control/devel/.private/util/share/common-lisp/ros/util/msg/PolygonWithHolesStamped.lisp"
-  "/home/nvidia/crawler_control/devel/.private/util/share/common-lisp/ros/util/msg/Position.lisp"
-  "/home/nvidia/crawler_control/devel/.private/util/share/common-lisp/ros/util/srv/Intervene.lisp"
+  "/home/huilian/hc26_6_30/crawler_control/devel/share/common-lisp/ros/util/msg/DiagnosticResult.lisp"
+  "/home/huilian/hc26_6_30/crawler_control/devel/share/common-lisp/ros/util/msg/GpsPosition.lisp"
+  "/home/huilian/hc26_6_30/crawler_control/devel/share/common-lisp/ros/util/msg/LocalPath.lisp"
+  "/home/huilian/hc26_6_30/crawler_control/devel/share/common-lisp/ros/util/msg/LocalPose.lisp"
+  "/home/huilian/hc26_6_30/crawler_control/devel/share/common-lisp/ros/util/msg/MapPath.lisp"
+  "/home/huilian/hc26_6_30/crawler_control/devel/share/common-lisp/ros/util/msg/PolygonWithHoles.lisp"
+  "/home/huilian/hc26_6_30/crawler_control/devel/share/common-lisp/ros/util/msg/PolygonWithHolesStamped.lisp"
+  "/home/huilian/hc26_6_30/crawler_control/devel/share/common-lisp/ros/util/msg/Position.lisp"
+  "/home/huilian/hc26_6_30/crawler_control/devel/share/common-lisp/ros/util/srv/Intervene.lisp"
   "CMakeFiles/util_generate_messages_lisp"
 )
 

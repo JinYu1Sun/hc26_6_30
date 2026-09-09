@@ -7,9 +7,4 @@
 # new environment variables
 
 # modified environment variables
-export CMAKE_PREFIX_PATH="/home/nvidia/crawler_control/devel/.private/pure_pursuit:$CMAKE_PREFIX_PATH"
-export LD_LIBRARY_PATH="/home/nvidia/crawler_control/devel/.private/pure_pursuit/lib:$LD_LIBRARY_PATH"
-export PKG_CONFIG_PATH="/home/nvidia/crawler_control/devel/.private/pure_pursuit/lib/pkgconfig:$PKG_CONFIG_PATH"
-export PWD='/home/nvidia/crawler_control/build/pure_pursuit'
-export ROSLISP_PACKAGE_DIRECTORIES="/home/nvidia/crawler_control/devel/.private/pure_pursuit/share/common-lisp:$ROSLISP_PACKAGE_DIRECTORIES"
-export ROS_PACKAGE_PATH="/home/nvidia/crawler_control/src/pure_pursuit:$ROS_PACKAGE_PATH"
+export PWD='/home/huilian/hc26_6_30/crawler_control/build/pure_pursuit'

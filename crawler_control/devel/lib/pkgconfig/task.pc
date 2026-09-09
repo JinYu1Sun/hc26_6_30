@@ -1,0 +1,8 @@
+prefix=/home/huilian/hc26_6_30/crawler_control/devel
+
+Name: task
+Description: Description of task
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

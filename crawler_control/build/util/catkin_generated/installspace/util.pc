@@ -1,4 +1,4 @@
-prefix=/home/nvidia/crawler_control/install
+prefix=/home/huilian/hc26_6_30/crawler_control/install
 
 Name: util
 Description: Description of util

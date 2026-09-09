@@ -43,10 +43,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/nvidia/crawler_control/src/minibus_msg_util
+CMAKE_SOURCE_DIR = /home/huilian/hc26_6_30/crawler_control/src/minibus_msg_util
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/nvidia/crawler_control/build/util
+CMAKE_BINARY_DIR = /home/huilian/hc26_6_30/crawler_control/build/util
 
 # Utility rule file for doxygen.
 
@@ -67,6 +67,6 @@ CMakeFiles/doxygen.dir/clean:
 .PHONY : CMakeFiles/doxygen.dir/clean
 
 CMakeFiles/doxygen.dir/depend:
-	cd /home/nvidia/crawler_control/build/util && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/nvidia/crawler_control/src/minibus_msg_util /home/nvidia/crawler_control/src/minibus_msg_util /home/nvidia/crawler_control/build/util /home/nvidia/crawler_control/build/util /home/nvidia/crawler_control/build/util/CMakeFiles/doxygen.dir/DependInfo.cmake --color=$(COLOR)
+	cd /home/huilian/hc26_6_30/crawler_control/build/util && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/huilian/hc26_6_30/crawler_control/src/minibus_msg_util /home/huilian/hc26_6_30/crawler_control/src/minibus_msg_util /home/huilian/hc26_6_30/crawler_control/build/util /home/huilian/hc26_6_30/crawler_control/build/util /home/huilian/hc26_6_30/crawler_control/build/util/CMakeFiles/doxygen.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/doxygen.dir/depend
 

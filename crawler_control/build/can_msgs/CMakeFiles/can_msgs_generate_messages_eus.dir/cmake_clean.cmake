@@ -1,7 +1,7 @@
 file(REMOVE_RECURSE
-  "/home/nvidia/crawler_control/devel/.private/can_msgs/share/roseus/ros/can_msgs/manifest.l"
-  "/home/nvidia/crawler_control/devel/.private/can_msgs/share/roseus/ros/can_msgs/msg/CanState.l"
-  "/home/nvidia/crawler_control/devel/.private/can_msgs/share/roseus/ros/can_msgs/msg/Frame.l"
+  "/home/huilian/hc26_6_30/crawler_control/devel/share/roseus/ros/can_msgs/manifest.l"
+  "/home/huilian/hc26_6_30/crawler_control/devel/share/roseus/ros/can_msgs/msg/CanState.l"
+  "/home/huilian/hc26_6_30/crawler_control/devel/share/roseus/ros/can_msgs/msg/Frame.l"
   "CMakeFiles/can_msgs_generate_messages_eus"
 )
 

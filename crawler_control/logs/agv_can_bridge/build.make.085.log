@@ -1,0 +1,4 @@
+[35m[1mScanning dependencies of target agv_can_bridge[0m
+[ 50%] [32mBuilding CXX object CMakeFiles/agv_can_bridge.dir/src/agv_can_bridge.cpp.o[0m
+[100%] [32m[1mLinking CXX executable /home/huilian/hc26_6_30/crawler_control/devel/lib/agv_can_bridge/agv_can_bridge[0m
+[100%] Built target agv_can_bridge

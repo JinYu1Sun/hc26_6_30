@@ -67,14 +67,14 @@ set(pure_pursuit_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(pure_pursuit_SOURCE_PREFIX /home/nvidia/crawler_control/src/pure_pursuit)
-  set(pure_pursuit_DEVEL_PREFIX /home/nvidia/crawler_control/devel/.private/pure_pursuit)
+  set(pure_pursuit_SOURCE_PREFIX /home/huilian/hc26_6_30/crawler_control/src/pure_pursuit)
+  set(pure_pursuit_DEVEL_PREFIX /home/huilian/hc26_6_30/crawler_control/devel)
   set(pure_pursuit_INSTALL_PREFIX "")
   set(pure_pursuit_PREFIX ${pure_pursuit_DEVEL_PREFIX})
 else()
   set(pure_pursuit_SOURCE_PREFIX "")
   set(pure_pursuit_DEVEL_PREFIX "")
-  set(pure_pursuit_INSTALL_PREFIX /home/nvidia/crawler_control/install)
+  set(pure_pursuit_INSTALL_PREFIX /home/huilian/hc26_6_30/crawler_control/install)
   set(pure_pursuit_PREFIX ${pure_pursuit_INSTALL_PREFIX})
 endif()
 
@@ -91,9 +91,9 @@ endif()
 # flag project as catkin-based to distinguish if a find_package()-ed project is a catkin project
 set(pure_pursuit_FOUND_CATKIN_PROJECT TRUE)
 
-if(NOT " " STREQUAL " ")
+if(NOT "include " STREQUAL " ")
   set(pure_pursuit_INCLUDE_DIRS "")
-  set(_include_dirs "")
+  set(_include_dirs "include")
   if(NOT " " STREQUAL " ")
     set(_report "Check the issue tracker '' and consider creating a ticket if the problem has not been reported yet.")
   elseif(NOT " " STREQUAL " ")
@@ -118,7 +118,7 @@ endif()
 
 set(libraries "")
 foreach(library ${libraries})
-  # keep build configuration keywords, target names and absolute libraries as-is
+  # keep build configuration keywords, generator expressions, target names, and absolute libraries as-is
   if("${library}" MATCHES "^(debug|optimized|general)$")
     list(APPEND pure_pursuit_LIBRARIES ${library})
   elseif(${library} MATCHES "^-l")
@@ -146,6 +146,8 @@ foreach(library ${libraries})
       target_link_options("${interface_target_name}" INTERFACE "${library}")
     endif()
     list(APPEND pure_pursuit_LIBRARIES "${interface_target_name}")
+  elseif(${library} MATCHES "^\\$<")
+    list(APPEND pure_pursuit_LIBRARIES ${library})
   elseif(TARGET ${library})
     list(APPEND pure_pursuit_LIBRARIES ${library})
   elseif(IS_ABSOLUTE ${library})
@@ -154,7 +156,7 @@ foreach(library ${libraries})
     set(lib_path "")
     set(lib "${library}-NOTFOUND")
     # since the path where the library is found is returned we have to iterate over the paths manually
-    foreach(path /home/nvidia/crawler_control/install/lib;/home/nvidia/crawler_control/devel/lib;/opt/ros/noetic/lib)
+    foreach(path /home/huilian/hc26_6_30/crawler_control/install/lib;/home/huilian/hc26_6_30/crawler_control/devel/lib;/opt/ros/noetic/lib)
       find_library(lib ${library}
         PATHS ${path}
         NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH)
@@ -177,7 +179,7 @@ foreach(library ${libraries})
   endif()
 endforeach()
 
-set(pure_pursuit_EXPORTED_TARGETS "")
+set(pure_pursuit_EXPORTED_TARGETS "pure_pursuit_generate_messages_cpp;pure_pursuit_generate_messages_eus;pure_pursuit_generate_messages_lisp;pure_pursuit_generate_messages_nodejs;pure_pursuit_generate_messages_py")
 # create dummy targets for exported code generation targets to make life of users easier
 foreach(t ${pure_pursuit_EXPORTED_TARGETS})
   if(NOT TARGET ${t})
@@ -185,7 +187,7 @@ foreach(t ${pure_pursuit_EXPORTED_TARGETS})
   endif()
 endforeach()
 
-set(depends "")
+set(depends "geometry_msgs;roscpp;std_msgs;message_runtime")
 foreach(depend ${depends})
   string(REPLACE " " ";" depend_list ${depend})
   # the package name of the dependency must be kept in a unique variable so that it is not overwritten in recursive calls
@@ -214,7 +216,7 @@ foreach(depend ${depends})
   _list_append_deduplicate(pure_pursuit_EXPORTED_TARGETS ${${pure_pursuit_dep}_EXPORTED_TARGETS})
 endforeach()
 
-set(pkg_cfg_extras "")
+set(pkg_cfg_extras "pure_pursuit-msg-extras.cmake")
 foreach(extra ${pkg_cfg_extras})
   if(NOT IS_ABSOLUTE ${extra})
     set(extra ${pure_pursuit_DIR}/${extra})

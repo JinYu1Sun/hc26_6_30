@@ -1,0 +1,6 @@
+/usr/bin/ld: CMakeFiles/cloud_bridge_node.dir/src/mqtt_client.cpp.o: undefined reference to symbol 'MQTTProperties_free'
+/usr/bin/ld: /usr/local/lib/libpaho-mqtt3as.so.1: error adding symbols: DSO missing from command line
+collect2: error: ld returned 1 exit status
+make[2]: *** [CMakeFiles/cloud_bridge_node.dir/build.make:214：/home/huilian/hc26_6_30/crawler_control/devel/lib/cloud_bridge/cloud_bridge_node] 错误 1
+make[1]: *** [CMakeFiles/Makefile2:371：CMakeFiles/cloud_bridge_node.dir/all] 错误 2
+make: *** [Makefile:141：all] 错误 2

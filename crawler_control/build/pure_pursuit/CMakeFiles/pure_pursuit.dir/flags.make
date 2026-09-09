@@ -6,5 +6,5 @@ CXX_FLAGS =
 
 CXX_DEFINES = -DROSCONSOLE_BACKEND_LOG4CXX -DROS_BUILD_SHARED_LIBS=1 -DROS_PACKAGE_NAME=\"pure_pursuit\"
 
-CXX_INCLUDES = -I/home/nvidia/crawler_control/src/pure_pursuit/include -I/home/nvidia/crawler_control/devel/.private/mower_msgs/include -I/home/nvidia/crawler_control/devel/.private/util/include -I/opt/ros/noetic/include -I/opt/ros/noetic/share/xmlrpcpp/cmake/../../../include/xmlrpcpp 
+CXX_INCLUDES = -I/home/huilian/hc26_6_30/crawler_control/devel/include -I/home/huilian/hc26_6_30/crawler_control/src/pure_pursuit/include -I/opt/ros/noetic/include -I/opt/ros/noetic/share/xmlrpcpp/cmake/../../../include/xmlrpcpp 
 

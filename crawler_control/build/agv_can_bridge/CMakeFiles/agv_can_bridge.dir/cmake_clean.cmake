@@ -1,6 +1,6 @@
 file(REMOVE_RECURSE
-  "/home/nvidia/crawler_control/devel/.private/agv_can_bridge/lib/agv_can_bridge/agv_can_bridge"
-  "/home/nvidia/crawler_control/devel/.private/agv_can_bridge/lib/agv_can_bridge/agv_can_bridge.pdb"
+  "/home/huilian/hc26_6_30/crawler_control/devel/lib/agv_can_bridge/agv_can_bridge"
+  "/home/huilian/hc26_6_30/crawler_control/devel/lib/agv_can_bridge/agv_can_bridge.pdb"
   "CMakeFiles/agv_can_bridge.dir/src/agv_can_bridge.cpp.o"
 )
 

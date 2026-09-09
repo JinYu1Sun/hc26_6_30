@@ -1,0 +1,8 @@
+prefix=/home/huilian/hc26_6_30/crawler_control/devel
+
+Name: agv_can_bridge
+Description: Description of agv_can_bridge
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: can_msgs mower_msgs std_msgs

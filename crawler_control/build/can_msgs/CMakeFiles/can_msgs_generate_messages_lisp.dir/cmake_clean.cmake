@@ -1,6 +1,6 @@
 file(REMOVE_RECURSE
-  "/home/nvidia/crawler_control/devel/.private/can_msgs/share/common-lisp/ros/can_msgs/msg/CanState.lisp"
-  "/home/nvidia/crawler_control/devel/.private/can_msgs/share/common-lisp/ros/can_msgs/msg/Frame.lisp"
+  "/home/huilian/hc26_6_30/crawler_control/devel/share/common-lisp/ros/can_msgs/msg/CanState.lisp"
+  "/home/huilian/hc26_6_30/crawler_control/devel/share/common-lisp/ros/can_msgs/msg/Frame.lisp"
   "CMakeFiles/can_msgs_generate_messages_lisp"
 )
 
