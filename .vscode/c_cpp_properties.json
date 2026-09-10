@@ -5,9 +5,10 @@
             "includePath": [
                 "${workspaceFolder}/**",
                 "/opt/ros/noetic/include/**",
-                "/home/hl/Mower/devel/include/**",
+                "${workspaceFolder}/Mower/devel/include/**",
+                "${workspaceFolder}/crawler_control/devel/include/**",
                 "/usr/include/opencv4/**",
-                "/home/hl/Mower/src/polygon_coverage_planning/polygon_coverage_ros/include/**"
+                "${workspaceFolder}/Mower/src/polygon_coverage_planning/polygon_coverage_ros/include/**"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",
@@ -15,6 +16,6 @@
             "cppStandard": "gnu++17",
             "intelliSenseMode": "linux-gcc-x64"
         }
-    ],
+ ],
     "version": 4
 }
