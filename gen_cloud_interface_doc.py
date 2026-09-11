@@ -93,8 +93,6 @@ def style_sheet(ws, widths):
 OVERVIEW = [
     ["指令/状态通道", "MQTT over TCP", "1883", "双向", "遥控/刀盘/任务下发；定位/状态上报",
      "明文，无TLS；broker如需用户名密码在车端launch配置"],
-    ["视频通道", "SRT (H.264 + MPEG-TS)", "双方约定，例9000", "车端 → 云平台",
-     "实时视频流", "车端caller主动推流，云平台listener监听，无passphrase"],
 ]
 
 DOWN_CMDS = [
@@ -129,18 +127,6 @@ DOWN_CMDS = [
         "notes": "start：车端依次执行 启动路径跟踪→复位→加载地图→选模式→开工(约2~3秒)；"
                  "stop：停止任务并复位，随后关闭路径跟踪节点",
     },
-    {
-        "name": "视频控制", "topic": PREFIX + "/cmd/video",
-        "example": '{"enable": true, "fps": 5, "width": 640, "height": 480, "bitrate": 800}',
-        "fields": [
-            ["enable", "bool", "true/false", "开启/关闭SRT推流(默认关闭)"],
-            ["fps", "number", "0.1 ~ 30", "推流帧率(降帧省带宽)"],
-            ["width", "int", "16 ~ 1920", "输出宽度(车端缩放)"],
-            ["height", "int", "16 ~ 1080", "输出高度(车端缩放)"],
-            ["bitrate", "int", "100 ~ 8000", "H.264码率kbps，越低占用带宽越小"],
-        ],
-        "notes": "所有字段可选，只下发要修改的字段，运行时即时生效(车端自动重启推流)",
-    },
 ]
 
 UP_DATA = [
@@ -172,20 +158,6 @@ UP_DATA = [
     },
 ]
 
-SRT_INFO = {
-    "source": "车端 /camera/image_rect 图像话题",
-    "encode": "H.264 (libx264, veryfast + zerolatency)，MPEG-TS 封装",
-    "mode": "车端 SRT caller 主动推流；云平台 SRT listener 监听",
-    "url": 'srt://<云平台IP>:<端口>?mode=caller  (车端launch参数 srt_target 配置)',
-    "crypto": "无 passphrase，明文",
-    "cloud_example": [
-        'ffplay -fflags nobuffer "srt://0.0.0.0:9000?mode=listener"',
-        'ffmpeg -i "srt://0.0.0.0:9000?mode=listener" -c copy out.mp4',
-        'gst-launch-1.0 srtsrc uri="srt://0.0.0.0:9000?mode=listener" ! tsdemux ! h264parse ! avdec_h264 ! autovideosink',
-    ],
-    "notes": "先启动云端listener再让车端enable推流；车端推流中断约3秒自动重连一次",
-}
-
 ROS_MAP = [
     ["cmd/move", "发布 /mower/manual_driving_cmd (mower_msgs/Manual_Driving_Cmd)",
      "task_node 透传 /vehicle/cmd → UDP下发单片机"],
@@ -198,14 +170,12 @@ ROS_MAP = [
     ["定位上报", "订阅 /Mower/position (util/Position)，2Hz节流后上报", "外部定位模块发布"],
     ["车辆状态", "订阅 /vehicle/status、/vehicle/left|right_wheel_speed、/vehicle/mower_height_to_app",
      "udp_com_main 节点发布"],
-    ["视频推流", "订阅 /camera/image_rect，缩放后经ffmpeg编码H.264以SRT推送", "摄像头驱动节点发布"],
 ]
 
 SAFETY = [
     "车端0.5s收不到move指令自动停车，云端断连不会导致车辆持续行驶",
     "车端原有避障急停/侧翻保护/出边界保护与云端指令并行生效，云端无需处理",
     "MQTT断线后车端自动重连(指数退避，最长30s)，重连后自动恢复订阅",
-    "SRT推流中断自动重建(约3秒一次)",
 ]
 
 MOSQ_EXAMPLES = [
@@ -215,7 +185,6 @@ MOSQ_EXAMPLES = [
     ("开刀盘", "mosquitto_pub -h <broker> -t 'mower/mower_001/cmd/blade' -m '{\"state\":1,\"height\":6}'"),
     ("启动自动任务", "mosquitto_pub -h <broker> -t 'mower/mower_001/cmd/task' -m '{\"action\":\"start\",\"map_name\":\"map_0630\",\"map_mode\":\"single_map\"}'"),
     ("停止任务", "mosquitto_pub -h <broker> -t 'mower/mower_001/cmd/task' -m '{\"action\":\"stop\"}'"),
-    ("开视频", "mosquitto_pub -h <broker> -t 'mower/mower_001/cmd/video' -m '{\"enable\":true,\"fps\":5,\"width\":640,\"height\":480,\"bitrate\":800}'"),
 ]
 
 
@@ -230,7 +199,7 @@ def build_docx(path):
     add_para(doc, "版本 V1.0    适用：车端 cloud_bridge 节点（ROS1）与云平台对接", size=Pt(10.5))
 
     add_heading(doc, "1. 概述", 1)
-    add_para(doc, "车端与云平台之间有两条通道，均为明文传输、无加密无认证。设备ID默认为 "
+    add_para(doc, "车端与云平台之间通过一条 MQTT 通道通信，明文传输、无加密无认证。设备ID默认为 "
                   + DEVICE_ID + "，MQTT主题前缀 mower/{设备ID}/，均在车端launch文件中配置。")
     add_table(doc, ["通道", "协议", "端口", "方向", "用途", "说明"], OVERVIEW)
 
@@ -256,31 +225,15 @@ def build_docx(path):
         if up["notes"]:
             add_para(doc, "说明：" + up["notes"])
 
-    add_heading(doc, "4. 视频流（SRT）", 1)
-    for line in [
-        "视频源：" + SRT_INFO["source"],
-        "编码：" + SRT_INFO["encode"],
-        "传输模式：" + SRT_INFO["mode"],
-        "推流地址：" + SRT_INFO["url"],
-        "加密：" + SRT_INFO["crypto"],
-    ]:
-        add_para(doc, line)
-    add_para(doc, "云端接收/播放示例：", bold=True)
-    for ex in SRT_INFO["cloud_example"]:
-        add_code(doc, ex)
-    add_para(doc, "注意：" + SRT_INFO["notes"])
-    add_para(doc, "视频参数（fps/分辨率/码率/开关）通过 2.4 节 cmd/video 指令远程调整，"
-                  "可实现降帧率、降清晰度以节省带宽。")
-
-    add_heading(doc, "5. 车端 ROS 接口映射（参考）", 1)
+    add_heading(doc, "4. 车端 ROS 接口映射（参考）", 1)
     add_para(doc, "云平台无需关心，仅供双方联调排障时对照：")
     add_table(doc, ["云端接口", "车端ROS动作", "下游环节"], ROS_MAP)
 
-    add_heading(doc, "6. 安全与异常行为", 1)
+    add_heading(doc, "5. 安全与异常行为", 1)
     for s in SAFETY:
         add_para(doc, "• " + s)
 
-    add_heading(doc, "7. 联调示例（mosquitto 客户端模拟云平台）", 1)
+    add_heading(doc, "6. 联调示例（mosquitto 客户端模拟云平台）", 1)
     for name, cmd in MOSQ_EXAMPLES:
         add_para(doc, name + "：")
         add_code(doc, cmd)
@@ -304,7 +257,7 @@ def build_xlsx(path):
     for row in [
         ["设备ID", DEVICE_ID + "（车端launch配置）", "", "", "", ""],
         ["MQTT主题前缀", "mower/{设备ID}/", "", "", "", ""],
-        ["payload格式", "UTF-8 JSON（视频通道除外）", "", "", "", ""],
+        ["payload格式", "UTF-8 JSON", "", "", "", ""],
         ["时间戳stamp", "Unix秒(double，车端ROS时间)", "", "", "", ""],
         ["QoS", "下行指令QoS 1；上行QoS 0", "", "", "", ""],
     ]:
@@ -344,24 +297,13 @@ def build_xlsx(path):
             first = False
     style_sheet(ws, [12, 30, 14, 20, 56, 32, 10, 44, 40])
 
-    ws = wb.create_sheet("4-视频SRT推流")
-    ws.append(["项目", "内容"])
-    for k in ["source", "encode", "mode", "url", "crypto", "notes"]:
-        ws.append([{"source": "视频源", "encode": "编码", "mode": "传输模式",
-                    "url": "推流地址", "crypto": "加密", "notes": "注意事项"}[k],
-                   SRT_INFO[k]])
-    ws.append(["云端接收示例", ""])
-    for ex in SRT_INFO["cloud_example"]:
-        ws.append(["", ex])
-    style_sheet(ws, [16, 100])
-
-    ws = wb.create_sheet("5-车端ROS映射")
+    ws = wb.create_sheet("4-车端ROS映射")
     ws.append(["云端接口", "车端ROS动作", "下游环节"])
     for row in ROS_MAP:
         ws.append(row)
     style_sheet(ws, [24, 62, 44])
 
-    ws = wb.create_sheet("6-安全与联调")
+    ws = wb.create_sheet("5-安全与联调")
     ws.append(["类别", "内容"])
     for s in SAFETY:
         ws.append(["安全约定", s])

@@ -6,13 +6,10 @@ add_compile_options(-std=c++17)
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   std_msgs
-  sensor_msgs
   mower_msgs
   util
-  cv_bridge
 )
 
-find_package(OpenCV REQUIRED)
 find_package(Threads REQUIRED)
 
 # nlohmann_json（apt: nlohmann-json3-dev）
@@ -49,13 +46,12 @@ message(STATUS "Paho MQTT C: ${PAHO_MQTT_C_LIB}")
 
 catkin_package(
   INCLUDE_DIRS include
-  CATKIN_DEPENDS roscpp std_msgs sensor_msgs mower_msgs util cv_bridge
+  CATKIN_DEPENDS roscpp std_msgs mower_msgs util
 )
 
 include_directories(
   include
   ${catkin_INCLUDE_DIRS}
-  ${OpenCV_INCLUDE_DIRS}
 )
 
 add_executable(cloud_bridge_node
@@ -67,7 +63,6 @@ add_dependencies(cloud_bridge_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_
 
 target_link_libraries(cloud_bridge_node
   ${catkin_LIBRARIES}
-  ${OpenCV_LIBRARIES}
   ${PAHO_MQTT_CPP_LIB}
   ${PAHO_MQTT_C_LIB}
   Threads::Threads

@@ -2,10 +2,6 @@
 #include <std_msgs/Int16.h>
 #include <std_msgs/String.h>
 #include <std_msgs/UInt16.h>
-#include <sensor_msgs/Image.h>
-#include <sensor_msgs/image_encodings.h>
-#include <cv_bridge/cv_bridge.h>
-#include <opencv2/opencv.hpp>
 
 #include <mower_msgs/Manual_Driving_Cmd.h>
 #include <mower_msgs/VehicleStatus.h>
@@ -13,13 +9,6 @@
 
 #include <nlohmann/json.hpp>
 
-#include <signal.h>
-#include <sys/types.h>
-#include <sys/wait.h>
-#include <unistd.h>
-
-#include <cerrno>
-#include <cstring>
 #include <algorithm>
 #include <atomic>
 #include <memory>
@@ -33,145 +22,6 @@
 namespace cloud_bridge
 {
 
-// ---------------- SRT 视频推流器 ----------------
-// 订阅到的图像帧经缩放后以 rawvideo 写入 ffmpeg 子进程 stdin，
-// ffmpeg 编码 H.264 后以 SRT caller 模式推送到云平台。
-struct VideoCfg
-{
-  bool enable = false;
-  double fps = 5.0;
-  int width = 640;
-  int height = 480;
-  int bitrate = 800;  // kbps
-};
-
-class SrtStreamer
-{
-public:
-  SrtStreamer() = default;
-  ~SrtStreamer() { stopLocked(); }
-
-  void setTarget(const std::string& target) { target_ = target; }
-
-  // 参数变化时按需重启 ffmpeg
-  void configure(const VideoCfg& cfg)
-  {
-    std::lock_guard<std::mutex> lock(mutex_);
-    const bool param_changed =
-        cfg.fps != cfg_.fps || cfg.width != cfg_.width ||
-        cfg.height != cfg_.height || cfg.bitrate != cfg_.bitrate;
-    cfg_ = cfg;
-    if (cfg_.enable)
-    {
-      if (child_pid_ <= 0 || param_changed)
-      {
-        stopLocked();
-        startLocked();
-      }
-    }
-    else
-    {
-      stopLocked();
-    }
-  }
-
-  // 推入一帧 BGR 图像（必须已缩放到 cfg_.width x cfg_.height）
-  void push(const cv::Mat& bgr)
-  {
-    std::lock_guard<std::mutex> lock(mutex_);
-    if (!cfg_.enable || pipe_fd_ < 0)
-      return;
-    cv::Mat cont = bgr.isContinuous() ? bgr : bgr.clone();
-    const size_t len = cont.total() * cont.elemSize();
-    if (::write(pipe_fd_, cont.data, len) < 0)
-    {
-      // ffmpeg 退出（如云端未监听），限频重启
-      const double now = ros::Time::now().toSec();
-      if (now - last_restart_time_ > 3.0)
-      {
-        last_restart_time_ = now;
-        ROS_WARN("ffmpeg pipe broken, restarting SRT stream");
-        stopLocked();
-        startLocked();
-      }
-      else
-      {
-        stopLocked();
-      }
-    }
-  }
-
-private:
-  void startLocked()
-  {
-    if (target_.empty())
-    {
-      ROS_ERROR("srt_target not set, video streaming disabled");
-      return;
-    }
-    int fds[2];
-    if (::pipe(fds) != 0)
-    {
-      ROS_ERROR("pipe() failed: %s", strerror(errno));
-      return;
-    }
-    const std::string size =
-        std::to_string(cfg_.width) + "x" + std::to_string(cfg_.height);
-    const std::string fps = std::to_string(cfg_.fps);
-    const std::string bitrate = std::to_string(cfg_.bitrate) + "k";
-
-    const pid_t pid = ::fork();
-    if (pid == 0)
-    {
-      // 子进程：stdin 接管读端，执行 ffmpeg
-      ::setsid();
-      ::dup2(fds[0], STDIN_FILENO);
-      ::close(fds[0]);
-      ::close(fds[1]);
-      ::execlp("ffmpeg", "ffmpeg", "-loglevel", "error",
-               "-f", "rawvideo", "-pix_fmt", "bgr24",
-               "-s", size.c_str(), "-r", fps.c_str(), "-i", "pipe:0",
-               "-c:v", "libx264", "-preset", "veryfast", "-tune", "zerolatency",
-               "-b:v", bitrate.c_str(), "-pix_fmt", "yuv420p",
-               "-f", "mpegts", target_.c_str(), (char*)nullptr);
-      _exit(1);  // execlp 失败（未安装 ffmpeg 等）
-    }
-    ::close(fds[0]);
-    if (pid < 0)
-    {
-      ::close(fds[1]);
-      ROS_ERROR("fork() failed: %s", strerror(errno));
-      return;
-    }
-    pipe_fd_ = fds[1];
-    child_pid_ = pid;
-    ROS_INFO("SRT streaming started: %s %dx%d@%.1ffps %s", target_.c_str(),
-             cfg_.width, cfg_.height, cfg_.fps, bitrate.c_str());
-  }
-
-  void stopLocked()
-  {
-    if (pipe_fd_ >= 0)
-    {
-      ::close(pipe_fd_);  // ffmpeg 读到 EOF 自行退出
-      pipe_fd_ = -1;
-    }
-    if (child_pid_ > 0)
-    {
-      ::kill(child_pid_, SIGTERM);
-      ::waitpid(child_pid_, nullptr, 0);
-      child_pid_ = -1;
-    }
-  }
-
-  VideoCfg cfg_;
-  std::string target_;
-  int pipe_fd_ = -1;
-  pid_t child_pid_ = -1;
-  double last_restart_time_ = 0.0;
-  std::mutex mutex_;
-};
-
 // ---------------- 主节点 ----------------
 
 class CloudBridgeNode
@@ -180,8 +30,6 @@ public:
   CloudBridgeNode() : pnh_("~")
   {
     loadParams();
-    streamer_.setTarget(srt_target_);
-    streamer_.configure(video_cfg_);  // launch 里 video_enable=true 时立即起流
 
     pub_manual_ = nh_.advertise<mower_msgs::Manual_Driving_Cmd>(
         "/mower/manual_driving_cmd", 1);
@@ -197,13 +45,11 @@ public:
                                      &CloudBridgeNode::rightWheelCb, this);
     sub_mower_height_ = nh_.subscribe("/vehicle/mower_height_to_app", 1,
                                       &CloudBridgeNode::mowerHeightCb, this);
-    sub_image_ = nh_.subscribe(image_topic_, 1, &CloudBridgeNode::imageCb, this);
 
     const std::string prefix = topic_prefix_ + "/" + device_id_;
     topic_cmd_move_ = prefix + "/cmd/move";
     topic_cmd_blade_ = prefix + "/cmd/blade";
     topic_cmd_task_ = prefix + "/cmd/task";
-    topic_cmd_video_ = prefix + "/cmd/video";
     topic_state_location_ = prefix + "/state/location";
     topic_state_vehicle_ = prefix + "/state/vehicle";
 
@@ -215,7 +61,6 @@ public:
     mqtt_->addSubscription(topic_cmd_move_, 1);
     mqtt_->addSubscription(topic_cmd_blade_, 1);
     mqtt_->addSubscription(topic_cmd_task_, 1);
-    mqtt_->addSubscription(topic_cmd_video_, 1);
 
     if (!mqtt_->start())
       ROS_WARN("MQTT first connect failed, retrying in background");
@@ -249,15 +94,6 @@ private:
 
     pnh_.param("location_hz", location_hz_, 2.0);
     pnh_.param("status_hz", status_hz_, 1.0);
-    pnh_.param<std::string>("image_topic", image_topic_,
-                            std::string("/camera/image_rect"));
-
-    pnh_.param<std::string>("srt_target", srt_target_, std::string(""));
-    pnh_.param("video_enable", video_cfg_.enable, false);
-    pnh_.param("video_fps", video_cfg_.fps, 5.0);
-    pnh_.param("video_width", video_cfg_.width, 640);
-    pnh_.param("video_height", video_cfg_.height, 480);
-    pnh_.param("video_bitrate", video_cfg_.bitrate, 800);
 
     pnh_.param("cmd_timeout", cmd_timeout_, 0.5);
     pnh_.param("drive_max", drive_max_, 10000);
@@ -293,8 +129,6 @@ private:
         handleBladeCmd(j);
       else if (topic == topic_cmd_task_)
         handleTaskCmd(j);
-      else if (topic == topic_cmd_video_)
-        handleVideoCmd(j);
     }
     catch (const nlohmann::json::exception& e)
     {
@@ -414,35 +248,6 @@ private:
     }).detach();
   }
 
-  void handleVideoCmd(const nlohmann::json& j)
-  {
-    VideoCfg cfg;
-    {
-      std::lock_guard<std::mutex> lock(video_mutex_);
-      cfg = video_cfg_;
-    }
-    if (j.contains("enable"))
-    {
-      const auto& e = j["enable"];
-      cfg.enable = e.is_boolean() ? e.get<bool>() : (e.get<int>() != 0);
-    }
-    if (j.contains("fps"))
-      cfg.fps = std::max(0.1, std::min(30.0, j["fps"].get<double>()));
-    if (j.contains("width"))
-      cfg.width = std::max(16, std::min(1920, j["width"].get<int>()));
-    if (j.contains("height"))
-      cfg.height = std::max(16, std::min(1080, j["height"].get<int>()));
-    if (j.contains("bitrate"))
-      cfg.bitrate = std::max(100, std::min(8000, j["bitrate"].get<int>()));
-    {
-      std::lock_guard<std::mutex> lock(video_mutex_);
-      video_cfg_ = cfg;
-    }
-    streamer_.configure(cfg);
-    ROS_INFO("video cfg: enable=%d fps=%.1f %dx%d bitrate=%dkbps", cfg.enable,
-             cfg.fps, cfg.width, cfg.height, cfg.bitrate);
-  }
-
   // ---------------- ROS 侧收发 ----------------
 
   void publishManualCmd(double linear, double angular)
@@ -549,44 +354,6 @@ private:
     mqtt_->publish(topic_state_vehicle_, j.dump(), 0);
   }
 
-  void imageCb(const sensor_msgs::ImageConstPtr& msg)
-  {
-    VideoCfg cfg;
-    {
-      std::lock_guard<std::mutex> lock(video_mutex_);
-      cfg = video_cfg_;
-    }
-    if (!cfg.enable)
-      return;
-
-    // 帧率节流
-    const ros::Time now = ros::Time::now();
-    {
-      std::lock_guard<std::mutex> lock(video_mutex_);
-      if ((now - last_frame_time_).toSec() < 1.0 / cfg.fps)
-        return;
-      last_frame_time_ = now;
-    }
-
-    cv_bridge::CvImageConstPtr cv_ptr;
-    try
-    {
-      // mono8 / bgr8 / yuv422 等统一转成 BGR8
-      cv_ptr = cv_bridge::toCvShare(msg, sensor_msgs::image_encodings::BGR8);
-    }
-    catch (const cv_bridge::Exception& e)
-    {
-      ROS_WARN_THROTTLE(5, "cv_bridge convert failed: %s", e.what());
-      return;
-    }
-
-    cv::Mat frame = cv_ptr->image;
-    if (frame.cols != cfg.width || frame.rows != cfg.height)
-      cv::resize(frame, frame, cv::Size(cfg.width, cfg.height));
-
-    streamer_.push(frame);
-  }
-
   // ---------------- 成员 ----------------
 
   ros::NodeHandle nh_;
@@ -595,17 +362,16 @@ private:
   ros::Publisher pub_manual_;
   ros::Publisher pub_signal_;
   ros::Subscriber sub_position_, sub_vehicle_status_, sub_left_wheel_;
-  ros::Subscriber sub_right_wheel_, sub_mower_height_, sub_image_;
+  ros::Subscriber sub_right_wheel_, sub_mower_height_;
   ros::Timer location_timer_, status_timer_, watchdog_timer_;
 
   MqttConfig mqtt_cfg_;
   std::unique_ptr<MqttClient> mqtt_;
   std::string device_id_, topic_prefix_;
-  std::string topic_cmd_move_, topic_cmd_blade_, topic_cmd_task_, topic_cmd_video_;
+  std::string topic_cmd_move_, topic_cmd_blade_, topic_cmd_task_;
   std::string topic_state_location_, topic_state_vehicle_;
 
   double location_hz_ = 2.0, status_hz_ = 1.0;
-  std::string image_topic_;
 
   double cmd_timeout_ = 0.5;
   int drive_max_ = 10000, turn_max_ = 12566;
@@ -630,20 +396,12 @@ private:
   bool has_status_ = false;
   int battery_soc_ = 0, warning_one_ = 0, warning_two_ = 0;
   int left_wheel_ = 0, right_wheel_ = 0, mower_height_fb_ = 0;
-
-  std::string srt_target_;
-  VideoCfg video_cfg_;
-  std::mutex video_mutex_;
-  ros::Time last_frame_time_;
-  SrtStreamer streamer_;
 };
 
 }  // namespace cloud_bridge
 
 int main(int argc, char** argv)
 {
-  // ffmpeg 子进程退出后管道写会触发 SIGPIPE，忽略之，由 write 返回值处理
-  signal(SIGPIPE, SIG_IGN);
   ros::init(argc, argv, "cloud_bridge");
   cloud_bridge::CloudBridgeNode node;
   ros::AsyncSpinner spinner(2);

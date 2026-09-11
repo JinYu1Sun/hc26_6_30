@@ -7,9 +7,8 @@
 | 通道 | 协议 | 方向 | 用途 |
 |---|---|---|---|
 | 指令/状态通道 | MQTT over 明文 TCP，端口 1883 | 双向 | 遥控、刀盘、任务下发；定位、车辆状态上报 |
-| 视频通道 | SRT（H.264 + MPEG-TS） | 车端 → 云平台 | 实时视频流，车端 caller 主动推流，云平台 listener 监听 |
 
-- 两条通道均**无加密、无认证**（MQTT broker 如要求用户名密码，在车端 launch 中配置 `username`/`password` 即可，协议本身不变；SRT 不使用 passphrase）。
+- 通道**无加密、无认证**（MQTT broker 如要求用户名密码，在车端 launch 中配置 `username`/`password` 即可，协议本身不变）。
 - MQTT 主题前缀：`mower/{device_id}/`，`device_id` 在车端 launch 中配置，默认 `mower_001`。
 - MQTT payload 均为 **UTF-8 JSON**；数值为 number 类型；时间戳 `stamp` 为 Unix 秒（double，车端 ROS 时间）。
 - QoS：下行指令 QoS 1；上行状态/定位 QoS 0。
@@ -61,21 +60,6 @@
 - `start`：依次执行 启动路径跟踪节点 → 复位 → 加载地图 → 选模式 → 开工，全程约 2~3 秒。
 - `stop`：停止任务并复位，随后关闭路径跟踪节点。
 
-### 1.4 视频控制 `mower/{id}/cmd/video`
-
-```json
-{"enable": true, "fps": 5, "width": 640, "height": 480, "bitrate": 800}
-```
-
-| 字段 | 类型 | 范围 | 说明 |
-|---|---|---|---|
-| enable | bool | true/false | 开启/关闭 SRT 推流（默认关闭，需云端显式开启） |
-| fps | number | 0.1 ~ 30 | 推流帧率（降帧省带宽） |
-| width / height | int | 16 ~ 1920 / 16 ~ 1080 | 输出分辨率（车端缩放，降清晰度） |
-| bitrate | int | 100 ~ 8000 | H.264 码率 kbps，越低占用带宽越小 |
-
-所有字段均可选，只下发要修改的字段即可，运行时即时生效（参数变化后车端自动重启推流）。
-
 ## 二、上行：割草机 → 云平台（MQTT）
 
 ### 2.1 定位上报 `mower/{id}/state/location`
@@ -102,30 +86,7 @@
 {"battery_soc": 85, "warning_state_one": 0, "warning_state_two": 0, "left_wheel_speed": 120, "right_wheel_speed": 118, "mower_height": 6, "stamp": 1751356800.5}
 ```
 
-## 三、视频流（SRT）
-
-- 视频源：车端 `/camera/image_rect` 图像话题。
-- 编码：**H.264（libx264，veryfast + zerolatency）**，封装 **MPEG-TS**。
-- 传输模式：车端为 **SRT caller**，主动连接云平台；云平台需以 **listener** 模式在约定端口监听。
-- 推流地址：在车端 launch 的 `srt_target` 参数配置，格式 `srt://<云平台IP>:<端口>?mode=caller`。
-- 无 passphrase 加密（SRT 明文模式）。
-
-云端接收/播放示例：
-
-```bash
-# ffplay 直接播放
-ffplay -fflags nobuffer "srt://0.0.0.0:9000?mode=listener"
-
-# ffmpeg 转存/转分发
-ffmpeg -i "srt://0.0.0.0:9000?mode=listener" -c copy out.mp4
-
-# GStreamer 收流
-gst-launch-1.0 srtsrc uri="srt://0.0.0.0:9000?mode=listener" ! tsdemux ! h264parse ! avdec_h264 ! autovideosink
-```
-
-云端注意：先启动 listener 再让车端 enable 推流；车端推流中断会自动重连（约 3 秒一次）。
-
-## 四、联调示例（mosquitto 客户端模拟云平台）
+## 三、联调示例（mosquitto 客户端模拟云平台）
 
 ```bash
 # 订阅全部 MQTT 上行
@@ -141,12 +102,10 @@ mosquitto_pub -h <broker> -t 'mower/mower_001/cmd/blade' -m '{"state":1,"height"
 mosquitto_pub -h <broker> -t 'mower/mower_001/cmd/task' -m '{"action":"start","map_name":"map_0630","map_mode":"single_map"}'
 # 停止任务
 mosquitto_pub -h <broker> -t 'mower/mower_001/cmd/task' -m '{"action":"stop"}'
-# 开视频（5fps 640x480 800kbps），云端先起 SRT listener
-mosquitto_pub -h <broker> -t 'mower/mower_001/cmd/video' -m '{"enable":true,"fps":5,"width":640,"height":480,"bitrate":800}'
 ```
 
-## 五、安全约定
+## 四、安全约定
 
 - 车端 0.5s 收不到 move 指令自动停车；云端断连不会导致车辆持续行驶。
 - 车端原有的避障急停、侧翻保护、出边界保护与云端指令**并行生效**，云端无需处理。
-- MQTT 断线后车端自动重连（指数退避，最长 30s），重连后自动恢复订阅；SRT 推流中断自动重建。
+- MQTT 断线后车端自动重连（指数退避，最长 30s），重连后自动恢复订阅。
