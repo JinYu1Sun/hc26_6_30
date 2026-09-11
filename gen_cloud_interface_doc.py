@@ -15,6 +15,7 @@ from openpyxl.utils import get_column_letter
 CN_FONT = "宋体"
 EN_FONT = "Times New Roman"
 SIZE = Pt(12)  # 小四
+RED = RGBColor(0xC0, 0x00, 0x00)
 
 HEADER_FILL = PatternFill("solid", fgColor="4472C4")
 HEADER_FONT = Font(name="微软雅黑", size=11, bold=True, color="FFFFFF")
@@ -26,17 +27,19 @@ DEVICE_ID = "mower_001"
 PREFIX = "mower/{" + "设备ID" + "}"
 
 
-def set_run_font(run, bold=False, size=SIZE):
+def set_run_font(run, bold=False, size=SIZE, color=None):
     run.font.name = EN_FONT
     run.font.size = size
     run.font.bold = bold
+    if color is not None:
+        run.font.color.rgb = color
     run._element.rPr.rFonts.set(qn('w:eastAsia'), CN_FONT)
 
 
-def add_para(doc, text, bold=False, size=SIZE):
+def add_para(doc, text, bold=False, size=SIZE, color=None):
     p = doc.add_paragraph()
     r = p.add_run(text)
-    set_run_font(r, bold=bold, size=size)
+    set_run_font(r, bold=bold, size=size, color=color)
     return p
 
 
@@ -48,28 +51,30 @@ def add_heading(doc, text, level):
     return h
 
 
-def add_code(doc, text):
+def add_code(doc, text, color=None):
     p = doc.add_paragraph()
     r = p.add_run(text)
     r.font.name = "Consolas"
     r.font.size = Pt(10)
+    if color is not None:
+        r.font.color.rgb = color
     r._element.rPr.rFonts.set(qn('w:eastAsia'), CN_FONT)
     return p
 
 
-def add_table(doc, header, rows):
+def add_table(doc, header, rows, color=None):
     t = doc.add_table(rows=1, cols=len(header))
     t.style = "Table Grid"
     t.alignment = WD_TABLE_ALIGNMENT.CENTER
     for i, h in enumerate(header):
         cell = t.rows[0].cells[i]
         r = cell.paragraphs[0].add_run(h)
-        set_run_font(r, bold=True, size=Pt(10))
+        set_run_font(r, bold=True, size=Pt(10), color=color)
     for row in rows:
         cells = t.add_row().cells
         for i, v in enumerate(row):
             r = cells[i].paragraphs[0].add_run(str(v))
-            set_run_font(r, size=Pt(10))
+            set_run_font(r, size=Pt(10), color=color)
     return t
 
 
@@ -185,6 +190,27 @@ MOSQ_EXAMPLES = [
     ("停止任务", "mosquitto_pub -h <broker> -t 'mower/mower_001/cmd/task' -m '{\"action\":\"stop\"}'"),
 ]
 
+# 2026-09-11 起删除的接口（不再支持，仅存档备查）
+DELETED_NOTE = "以下接口已于 2026-09-11 从车端 cloud_bridge 中删除，云平台请勿再使用："
+
+DELETED_VIDEO = {
+    "name": "视频控制（已删除）", "topic": PREFIX + "/cmd/video",
+    "example": '{"enable": true, "fps": 5, "width": 640, "height": 480, "bitrate": 800}',
+    "fields": [
+        ["enable", "bool", "true/false", "开启/关闭 SRT 推流"],
+        ["fps", "number", "0.1 ~ 30", "推流帧率"],
+        ["width / height", "int", "16~1920 / 16~1080", "输出分辨率"],
+        ["bitrate", "int", "100 ~ 8000", "H.264 码率 kbps"],
+    ],
+    "notes": "整条 SRT 视频通道（H.264 + MPEG-TS，车端 caller 推流）已随本接口一并移除，"
+             "车端不再订阅 /camera/image_rect，launch 中 srt_target/video_* 参数均已删除",
+}
+
+DELETED_VEHICLE_FIELDS = [
+    ["left_wheel_speed", "int", "左轮速度（原来自 /vehicle/left_wheel_speed）"],
+    ["right_wheel_speed", "int", "右轮速度（原来自 /vehicle/right_wheel_speed）"],
+]
+
 
 # ==================== Word ====================
 
@@ -235,6 +261,18 @@ def build_docx(path):
     for name, cmd in MOSQ_EXAMPLES:
         add_para(doc, name + "：")
         add_code(doc, cmd)
+
+    add_heading(doc, "7. 已删除接口（2026-09-11 起不再支持）", 1)
+    add_para(doc, DELETED_NOTE, bold=True, color=RED)
+    add_heading(doc, "7.1 " + DELETED_VIDEO["name"], 2)
+    add_para(doc, "MQTT主题：" + DELETED_VIDEO["topic"], bold=True, color=RED)
+    add_para(doc, "示例：", color=RED)
+    add_code(doc, DELETED_VIDEO["example"], color=RED)
+    add_table(doc, ["字段", "类型", "取值范围", "说明"], DELETED_VIDEO["fields"], color=RED)
+    add_para(doc, "说明：" + DELETED_VIDEO["notes"], color=RED)
+    add_heading(doc, "7.2 车辆状态上报已删除字段（state/vehicle）", 2)
+    add_para(doc, "以下字段已从 " + PREFIX + "/state/vehicle 的 payload 中移除：", color=RED)
+    add_table(doc, ["字段", "类型", "说明"], DELETED_VEHICLE_FIELDS, color=RED)
 
     doc.save(path)
     print("Word 文档已生成:", path)
@@ -308,6 +346,33 @@ def build_xlsx(path):
     for name, cmd in MOSQ_EXAMPLES:
         ws.append(["联调示例-" + name, cmd])
     style_sheet(ws, [20, 110])
+
+    RED_FONT = Font(name="微软雅黑", size=10, color="C00000")
+    ws = wb.create_sheet("6-已删除接口")
+    ws.append(["接口", "MQTT主题", "payload示例", "字段", "类型", "取值范围/说明"])
+    ws.append([DELETED_NOTE, "", "", "", "", ""])
+    first = True
+    for f in DELETED_VIDEO["fields"]:
+        ws.append([
+            DELETED_VIDEO["name"] if first else "",
+            DELETED_VIDEO["topic"] if first else "",
+            DELETED_VIDEO["example"] if first else "",
+            f[0], f[1], f[2] + "；" + f[3],
+        ])
+        first = False
+    ws.append([DELETED_VIDEO["notes"], "", "", "", "", ""])
+    first = True
+    for f in DELETED_VEHICLE_FIELDS:
+        ws.append([
+            "车辆状态已删字段" if first else "",
+            PREFIX + "/state/vehicle" if first else "",
+            "", f[0], f[1], f[2],
+        ])
+        first = False
+    style_sheet(ws, [22, 30, 52, 16, 12, 44])
+    for row in ws.iter_rows(min_row=2):
+        for cell in row:
+            cell.font = RED_FONT
 
     wb.save(path)
     print("Excel 文档已生成:", path)
