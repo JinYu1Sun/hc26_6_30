@@ -22,7 +22,6 @@ set(CMAKE_CXX_TARGET_INCLUDE_PATH
   "/home/huilian/hc26_6_30/crawler_control/devel/include"
   "/opt/ros/noetic/include"
   "/opt/ros/noetic/share/xmlrpcpp/cmake/../../../include/xmlrpcpp"
-  "/usr/include/opencv4"
   )
 
 # Targets to which this target links.

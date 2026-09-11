@@ -145,12 +145,10 @@ UP_DATA = [
     {
         "name": "车辆状态", "topic": PREFIX + "/state/vehicle", "freq": "1Hz(可调)",
         "example": '{"battery_soc":85,"warning_state_one":0,"warning_state_two":0,'
-                   '"left_wheel_speed":120,"right_wheel_speed":118,"mower_height":6,'
-                   '"stamp":1751356800.5}',
+                   '"mower_height":6,"stamp":1751356800.5}',
         "fields": [
             ["battery_soc", "int", "电量百分比"],
             ["warning_state_one / two", "int", "下位机报警状态字"],
-            ["left_wheel_speed / right_wheel_speed", "int", "左右轮转速"],
             ["mower_height", "int", "刀盘高度反馈档位"],
             ["stamp", "number", "Unix秒(double)"],
         ],
@@ -167,8 +165,8 @@ ROS_MAP = [
      "task_node 拉起 pure_pursuit；location_map 触发任务"],
     ["cmd/task stop", "/signal = stop，延时2s后 stop_execution", "各规划节点复位，pure_pursuit 退出"],
     ["cmd/task pause/continue", "/signal = pause / continue", "pure_pursuit 暂停/恢复跟踪"],
-    ["定位上报", "订阅 /Mower/position (util/Position)，2Hz节流后上报", "外部定位模块发布"],
-    ["车辆状态", "订阅 /vehicle/status、/vehicle/left|right_wheel_speed、/vehicle/mower_height_to_app",
+    ["定位上报", "订阅 /Mower/position (mower_msgs/Position)，2Hz节流后上报", "外部定位模块发布"],
+    ["车辆状态", "订阅 /vehicle/status、/vehicle/mower_height_to_app",
      "udp_com_main 节点发布"],
 ]
 

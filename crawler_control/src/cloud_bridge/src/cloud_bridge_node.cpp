@@ -1,11 +1,10 @@
 #include <ros/ros.h>
-#include <std_msgs/Int16.h>
 #include <std_msgs/String.h>
 #include <std_msgs/UInt16.h>
 
 #include <mower_msgs/Manual_Driving_Cmd.h>
+#include <mower_msgs/Position.h>
 #include <mower_msgs/VehicleStatus.h>
-#include <util/Position.h>
 
 #include <nlohmann/json.hpp>
 
@@ -39,10 +38,6 @@ public:
                                   &CloudBridgeNode::positionCb, this);
     sub_vehicle_status_ = nh_.subscribe("/vehicle/status", 1,
                                         &CloudBridgeNode::vehicleStatusCb, this);
-    sub_left_wheel_ = nh_.subscribe("/vehicle/left_wheel_speed", 1,
-                                    &CloudBridgeNode::leftWheelCb, this);
-    sub_right_wheel_ = nh_.subscribe("/vehicle/right_wheel_speed", 1,
-                                     &CloudBridgeNode::rightWheelCb, this);
     sub_mower_height_ = nh_.subscribe("/vehicle/mower_height_to_app", 1,
                                       &CloudBridgeNode::mowerHeightCb, this);
 
@@ -284,7 +279,7 @@ private:
     }
   }
 
-  void positionCb(const util::Position::ConstPtr& msg)
+  void positionCb(const mower_msgs::Position::ConstPtr& msg)
   {
     std::lock_guard<std::mutex> lock(position_mutex_);
     latest_position_ = *msg;
@@ -293,7 +288,7 @@ private:
 
   void locationTimerCb(const ros::TimerEvent&)
   {
-    util::Position pos;
+    mower_msgs::Position pos;
     {
       std::lock_guard<std::mutex> lock(position_mutex_);
       if (!has_position_)
@@ -318,18 +313,6 @@ private:
     has_status_ = true;
   }
 
-  void leftWheelCb(const std_msgs::Int16::ConstPtr& msg)
-  {
-    std::lock_guard<std::mutex> lock(status_mutex_);
-    left_wheel_ = msg->data;
-  }
-
-  void rightWheelCb(const std_msgs::Int16::ConstPtr& msg)
-  {
-    std::lock_guard<std::mutex> lock(status_mutex_);
-    right_wheel_ = msg->data;
-  }
-
   void mowerHeightCb(const std_msgs::UInt16::ConstPtr& msg)
   {
     std::lock_guard<std::mutex> lock(status_mutex_);
@@ -346,8 +329,6 @@ private:
       j = {{"battery_soc", battery_soc_},
            {"warning_state_one", warning_one_},
            {"warning_state_two", warning_two_},
-           {"left_wheel_speed", left_wheel_},
-           {"right_wheel_speed", right_wheel_},
            {"mower_height", mower_height_fb_}};
     }
     j["stamp"] = ros::Time::now().toSec();
@@ -361,8 +342,7 @@ private:
 
   ros::Publisher pub_manual_;
   ros::Publisher pub_signal_;
-  ros::Subscriber sub_position_, sub_vehicle_status_, sub_left_wheel_;
-  ros::Subscriber sub_right_wheel_, sub_mower_height_;
+  ros::Subscriber sub_position_, sub_vehicle_status_, sub_mower_height_;
   ros::Timer location_timer_, status_timer_, watchdog_timer_;
 
   MqttConfig mqtt_cfg_;
@@ -389,13 +369,13 @@ private:
   std::atomic<bool> task_seq_running_{false};
 
   std::mutex position_mutex_;
-  util::Position latest_position_;
+  mower_msgs::Position latest_position_;
   bool has_position_ = false;
 
   std::mutex status_mutex_;
   bool has_status_ = false;
   int battery_soc_ = 0, warning_one_ = 0, warning_two_ = 0;
-  int left_wheel_ = 0, right_wheel_ = 0, mower_height_fb_ = 0;
+  int mower_height_fb_ = 0;
 };
 
 }  // namespace cloud_bridge

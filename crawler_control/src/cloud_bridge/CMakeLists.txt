@@ -7,7 +7,6 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   std_msgs
   mower_msgs
-  util
 )
 
 find_package(Threads REQUIRED)
@@ -46,7 +45,7 @@ message(STATUS "Paho MQTT C: ${PAHO_MQTT_C_LIB}")
 
 catkin_package(
   INCLUDE_DIRS include
-  CATKIN_DEPENDS roscpp std_msgs mower_msgs util
+  CATKIN_DEPENDS roscpp std_msgs mower_msgs
 )
 
 include_directories(

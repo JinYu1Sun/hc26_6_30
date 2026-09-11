@@ -72,7 +72,7 @@
 
 | 字段 | 说明 |
 |---|---|
-| x / y / z | 局部平面坐标（米），来自车端融合定位 `/Mower/position` |
+| x / y / z | 局部平面坐标（米），来自车端融合定位 `/Mower/position`（`mower_msgs/Position`） |
 | roll / pitch / yaw | 姿态（弧度） |
 | state | 定位状态字（车端定位模块定义，0=无定位；1/2/5=有效融合定位） |
 
@@ -83,7 +83,7 @@
 默认 1Hz 上报。
 
 ```json
-{"battery_soc": 85, "warning_state_one": 0, "warning_state_two": 0, "left_wheel_speed": 120, "right_wheel_speed": 118, "mower_height": 6, "stamp": 1751356800.5}
+{"battery_soc": 85, "warning_state_one": 0, "warning_state_two": 0, "mower_height": 6, "stamp": 1751356800.5}
 ```
 
 ## 三、联调示例（mosquitto 客户端模拟云平台）

@@ -3,7 +3,7 @@
   <name>cloud_bridge</name>
   <version>1.0.0</version>
   <description>MQTT cloud bridge for the mower: remote driving, blade control,
-    auto task start/stop, video streaming and location reporting.</description>
+    auto task start/stop and location reporting.</description>
 
   <maintainer email="dev@todo.todo">huilian</maintainer>
   <license>TODO</license>
@@ -12,10 +12,7 @@
 
   <depend>roscpp</depend>
   <depend>std_msgs</depend>
-  <depend>sensor_msgs</depend>
   <depend>mower_msgs</depend>
-  <depend>util</depend>
-  <depend>cv_bridge</depend>
 
   <export>
   </export>

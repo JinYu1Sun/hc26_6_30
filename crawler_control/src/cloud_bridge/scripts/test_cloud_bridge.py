@@ -31,10 +31,10 @@ import time
 
 import paho.mqtt.client as mqtt
 
-DEFAULT_HOST = "222.249.116.234"   # 云平台公网 broker(取自 mqtt_config.yaml)
+DEFAULT_HOST = "broker.emqx.io"   # 云平台公网 broker(取自 mqtt_config.yaml)
 DEFAULT_PORT = 1883
-DEFAULT_USER = "tianrunjia"
-DEFAULT_PASS = "tianrunjia"
+DEFAULT_USER = ""
+DEFAULT_PASS = ""
 
 
 def make_client(args, on_message=None):

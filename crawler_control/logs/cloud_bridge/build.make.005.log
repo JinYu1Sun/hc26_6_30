@@ -1,0 +1,24 @@
+[  0%] Built target rosgraph_msgs_generate_messages_eus
+[  0%] Built target mower_msgs_generate_messages_py
+[  0%] Built target roscpp_generate_messages_eus
+[  0%] Built target mower_msgs_generate_messages_eus
+[  0%] Built target std_msgs_generate_messages_eus
+[  0%] Built target roscpp_generate_messages_cpp
+[  0%] Built target roscpp_generate_messages_py
+[  0%] Built target rosgraph_msgs_generate_messages_py
+[  0%] Built target rosgraph_msgs_generate_messages_lisp
+[  0%] Built target roscpp_generate_messages_lisp
+[  0%] Built target rosgraph_msgs_generate_messages_nodejs
+[  0%] Built target mower_msgs_generate_messages_nodejs
+[  0%] Built target std_msgs_generate_messages_cpp
+[  0%] Built target std_msgs_generate_messages_nodejs
+[  0%] Built target std_msgs_generate_messages_py
+[  0%] Built target std_msgs_generate_messages_lisp
+[  0%] Built target mower_msgs_generate_messages_cpp
+[  0%] Built target roscpp_generate_messages_nodejs
+[  0%] Built target mower_msgs_generate_messages_lisp
+[  0%] Built target rosgraph_msgs_generate_messages_cpp
+Scanning dependencies of target cloud_bridge_node
+[ 33%] Building CXX object CMakeFiles/cloud_bridge_node.dir/src/cloud_bridge_node.cpp.o
+[ 66%] Linking CXX executable /home/huilian/hc26_6_30/crawler_control/devel/lib/cloud_bridge/cloud_bridge_node
+[100%] Built target cloud_bridge_node

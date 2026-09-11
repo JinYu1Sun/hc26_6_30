@@ -6,5 +6,5 @@ CXX_FLAGS =   -std=c++17
 
 CXX_DEFINES = -DROSCONSOLE_BACKEND_LOG4CXX -DROS_BUILD_SHARED_LIBS=1 -DROS_PACKAGE_NAME=\"cloud_bridge\"
 
-CXX_INCLUDES = -I/home/huilian/hc26_6_30/crawler_control/src/cloud_bridge/include -I/home/huilian/hc26_6_30/crawler_control/devel/include -I/opt/ros/noetic/include -I/opt/ros/noetic/share/xmlrpcpp/cmake/../../../include/xmlrpcpp -isystem /usr/include/opencv4 
+CXX_INCLUDES = -I/home/huilian/hc26_6_30/crawler_control/src/cloud_bridge/include -I/home/huilian/hc26_6_30/crawler_control/devel/include -I/opt/ros/noetic/include -I/opt/ros/noetic/share/xmlrpcpp/cmake/../../../include/xmlrpcpp 
 

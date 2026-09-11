@@ -5,4 +5,4 @@ Description: Description of cloud_bridge
 Version: 1.0.0
 Cflags: -I${prefix}/include
 Libs: -L${prefix}/lib 
-Requires: roscpp std_msgs sensor_msgs mower_msgs util cv_bridge
+Requires: roscpp std_msgs mower_msgs

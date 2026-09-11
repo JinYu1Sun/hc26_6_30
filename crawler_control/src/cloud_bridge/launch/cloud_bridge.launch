@@ -2,18 +2,23 @@
   <node pkg="cloud_bridge" type="cloud_bridge_node" name="cloud_bridge" output="screen">
 
     <!-- ===== MQTT broker（明文 TCP，无加密无认证）===== -->
-    <param name="broker_host" value="127.0.0.1"/>   <!-- 云平台 MQTT broker 地址 -->
-    <param name="broker_port" value="1884"/>
-    <param name="client_id" value="cloud_bridge_mower_001"/>
+    <!-- <param name="broker_host" value="127.0.0.1"/>   云平台 MQTT broker 地址 -->
+    <!-- <param name="broker_port" value="1884"/> -->
+    <!-- <param name="client_id" value="cloud_bridge_mower_001"/> -->
+    <param name="broker_host" value="broker.emqx.io"/>
+    <param name="broker_port" value="1883"/>
+    <param name="client_id" value="cloud_bridge_mower_test"/>
+
     <param name="username" value=""/>               <!-- 留空 = 不使用用户名密码 -->
     <param name="password" value=""/>
     <param name="keep_alive_interval" value="30"/>
     <param name="connect_timeout" value="5"/>
 
     <!-- ===== 设备与主题：mower/{device_id}/... ===== -->
-    <param name="device_id" value="mower_001"/>
+    <!-- <param name="device_id" value="mower_001"/>
+    <param name="topic_prefix" value="mower"/> -->
+    <param name="device_id" value="mower_test_huilian"/>
     <param name="topic_prefix" value="mower"/>
-
     <!-- ===== 上行频率 ===== -->
     <param name="location_hz" value="10.0"/>         <!-- 定位上报频率（开机即上报） -->
     <param name="status_hz" value="20.0"/>           <!-- 车辆状态上报频率 -->

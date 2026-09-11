@@ -80,7 +80,7 @@ def chapter_overview(doc):
                   "MqttClient 收到后回调 CloudBridgeNode::onMqttMessage，按主题分发到 move/blade/task "
                   "三个处理函数。遥控类指令转成 ROS 消息发到 /mower/manual_driving_cmd；任务类指令转成字符串发到 /signal，"
                   "由 task_node / pure_pursuit 等原有节点消费。")
-    add_para(doc, "2) ROS 状态 → MQTT 上行：节点订阅 /Mower/position、/vehicle/status、左右轮速、刀盘高度等话题，"
+    add_para(doc, "2) ROS 状态 → MQTT 上行：节点订阅 /Mower/position、/vehicle/status、刀盘高度等话题，"
                   "用定时器按固定频率（定位、车辆状态两路独立配置）把最新值拼成 JSON，通过 MQTT 发布到 "
                   "mower/{device_id}/state/xxx 主题。")
     add_para(doc, "线程模型：ROS 侧用 ros::AsyncSpinner(2) 开两个线程跑订阅/定时器回调；"
@@ -424,13 +424,12 @@ def chapter_node_head(doc):
 
     add_heading(doc, "4.1 头文件包含", 2)
     add_code(doc, """#include <ros/ros.h>
-#include <std_msgs/Int16.h>
 #include <std_msgs/String.h>
 #include <std_msgs/UInt16.h>
 
 #include <mower_msgs/Manual_Driving_Cmd.h>
+#include <mower_msgs/Position.h>
 #include <mower_msgs/VehicleStatus.h>
-#include <util/Position.h>
 
 #include <nlohmann/json.hpp>
 
@@ -443,10 +442,10 @@ def chapter_node_head(doc):
 #include <vector>
 
 #include "cloud_bridge/mqtt_client.h\"""")
-    add_para(doc, "分四组：1) ROS 与消息类型：ros/ros.h 是 ROS C++ 主头；std_msgs::Int16 用于左右轮速反馈、"
-                  "String 用于 /signal 任务信号、UInt16 用于刀盘高度反馈。"
+    add_para(doc, "分四组：1) ROS 与消息类型：ros/ros.h 是 ROS C++ 主头；"
+                  "std_msgs::String 用于 /signal 任务信号、UInt16 用于刀盘高度反馈。"
                   "2) 项目自定义消息：mower_msgs::Manual_Driving_Cmd（遥控指令）、VehicleStatus（车辆状态）、"
-                  "util::Position（融合定位）。3) nlohmann/json 是现代 C++ JSON 库，一条语句完成解析/构造。"
+                  "Position（融合定位）。3) nlohmann/json 是现代 C++ JSON 库，一条语句完成解析/构造。"
                   "4) STL 头：algorithm（std::max/std::min 限幅）、atomic（跨线程标志位）、"
                   "memory（std::unique_ptr）、mutex、string、thread（延时任务线程）、vector。"
                   "最后双引号包含本包的 mqtt_client.h，引入 MqttClient 封装。")
@@ -462,7 +461,8 @@ def chapter_node_head(doc):
 
     sub_position_ = nh_.subscribe("/Mower/position", 1,
                                   &CloudBridgeNode::positionCb, this);
-    ...
+    sub_vehicle_status_ = nh_.subscribe("/vehicle/status", 1,
+                                        &CloudBridgeNode::vehicleStatusCb, this);
     sub_mower_height_ = nh_.subscribe("/vehicle/mower_height_to_app", 1,
                                       &CloudBridgeNode::mowerHeightCb, this);""")
     add_para(doc, "成员初始化列表里 pnh_(\"~\") 创建私有 NodeHandle：读参数时自动在节点命名空间下查找"
@@ -703,7 +703,7 @@ def chapter_node_rest(doc):
                   "表示不用事件信息。")
 
     add_heading(doc, "4.11 定位上报：positionCb + locationTimerCb", 2)
-    add_code(doc, """  void positionCb(const util::Position::ConstPtr& msg)
+    add_code(doc, """  void positionCb(const mower_msgs::Position::ConstPtr& msg)
   {
     std::lock_guard<std::mutex> lock(position_mutex_);
     latest_position_ = *msg;
@@ -712,7 +712,7 @@ def chapter_node_rest(doc):
 
   void locationTimerCb(const ros::TimerEvent&)
   {
-    util::Position pos;
+    mower_msgs::Position pos;
     {
       std::lock_guard<std::mutex> lock(position_mutex_);
       if (!has_position_)
@@ -742,7 +742,7 @@ def chapter_node_rest(doc):
     warning_two_ = msg->warning_state_two;
     has_status_ = true;
   }
-  // leftWheelCb / rightWheelCb / mowerHeightCb 结构相同，各存一个数值
+  // mowerHeightCb 与 vehicleStatusCb 结构相同，各存一个数值
 
   void statusTimerCb(const ros::TimerEvent&)
   {
@@ -751,15 +751,18 @@ def chapter_node_rest(doc):
       std::lock_guard<std::mutex> lock(status_mutex_);
       if (!has_status_)
         return;
-      j = {{"battery_soc", battery_soc_}, ... };
+      j = {{"battery_soc", battery_soc_},
+           {"warning_state_one", warning_one_},
+           {"warning_state_two", warning_two_},
+           {"mower_height", mower_height_fb_}};
     }
     j["stamp"] = ros::Time::now().toSec();
     mqtt_->publish(topic_state_vehicle_, j.dump(), 0);
   }""")
-    add_para(doc, "四个订阅回调共用一把 status_mutex_ 保护一组松散状态（电量、报警字、左右轮速、刀盘高度反馈），"
+    add_para(doc, "两个订阅回调共用一把 status_mutex_ 保护一组松散状态（电量、报警字、刀盘高度反馈），"
                   "粒度粗一点但逻辑简单。statusTimerCb 同样锁内取值锁外发布，"
                   "j[\"stamp\"] = ... 演示 nlohmann::json 的 operator[] 赋值（键不存在则创建）。"
-                  "has_status_ 由 VehicleStatus 回调置位——车辆状态话题起来了才开始上报，轮速等字段没收到就是 0。")
+                  "has_status_ 由 VehicleStatus 回调置位——车辆状态话题起来了才开始上报。")
 
     add_heading(doc, "4.13 成员变量总览", 2)
     add_code(doc, """  // 跨线程访问：MQTT 回调线程写，ROS 定时器线程读

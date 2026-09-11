@@ -30,11 +30,11 @@ sudo ldconfig
 
 ## 编译
 
-本包在 crawler_control 工作空间内，依赖同空间的 `mower_msgs` 和 `util`（即 minibus_msg_util）：
+本包在 crawler_control 工作空间内，依赖同空间的 `mower_msgs`：
 
 ```bash
 cd ~/crawler_control
-catkin_make -DCATKIN_WHITELIST_PACKAGES="mower_msgs;util;cloud_bridge"
+catkin_make -DCATKIN_WHITELIST_PACKAGES="mower_msgs;cloud_bridge"
 source devel/setup.bash
 ```
 
