@@ -53,6 +53,7 @@ private:
     ros::Publisher left_speed_pub_;
     ros::Publisher right_speed_pub_;
     ros::Publisher height_pub_;
+    ros::Publisher PC_or_Remote_pub_;
     ros::Timer height_echo_timer_;
 
     int udp_socket_;
@@ -97,6 +98,9 @@ public:
         
         // 创建割盘高度发布者（std_msgs/UInt16）
         height_pub_ = nh_.advertise<std_msgs::UInt16>("/vehicle/mower_height_to_app", 10);
+        
+        // 创建PC或Remote标志发布者（std_msgs/UInt16）
+        PC_or_Remote_pub_ = nh_.advertise<std_msgs::UInt16>("/vehicle/pc_or_remote", 10);
         
         // 启动接收线程
         running_ = true;
@@ -323,6 +327,11 @@ private:
                 }
                 fout.close();
                 break;
+            }
+            case 0x05: {   // ===== 割草机状态帧 =====
+                std_msgs::UInt16 PC_or_Remote_msg;
+                PC_or_Remote_msg.data = pkt.data[3];
+                PC_or_Remote_pub_.publish(PC_or_Remote_msg);
             }
             default:
                 ROS_WARN("unknown msg id: 0x%02X", msg_id);

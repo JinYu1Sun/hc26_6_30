@@ -73,7 +73,8 @@ private:
 	waypoint lookahead_waypoint_;	// 预瞄点
 	waypoint last_lookahead_waypoint_;	//
 	float lookahead_distance_;	// 预瞄距离
-	
+	uint PC_or_Remote_; // 0: PC, 1: Remote
+
 	float last_lookahead_distance_;   // 期望速度
 	ros::Subscriber sub_position_;
 	ros::Subscriber sub_local_path_;
@@ -81,7 +82,7 @@ private:
 	ros::Subscriber sub_avoid_state_;
 	ros::Subscriber sub_outboundary_;
 	ros::Subscriber sub_signal_;
-	
+	ros::Subscriber sub_PC_or_Remote_;
 
 	ros::Publisher pub_command_;    // 发送控制指令
 
@@ -111,7 +112,7 @@ private:
 	void avoidstateCallback(const std_msgs::UInt8ConstPtr &avoid_msg);
 	void OutBoundaryCallBack(const std_msgs::BoolConstPtr &outboundary_msg);
 	void signalCallback(const std_msgs::StringConstPtr &signal_msg);
-
+	void PC_or_RemoteCallback(const std_msgs::UInt8ConstPtr &PC_or_Remote_msg);
 	bool turnCompletedCallback(pure_pursuit::TurnCompleted::Request &req, pure_pursuit::TurnCompleted::Response &res);
 
 	int findNearestPoint(const std::vector<waypoint> &local_waypoints);   // 找最近点索引

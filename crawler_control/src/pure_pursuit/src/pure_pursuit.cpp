@@ -28,7 +28,7 @@ PurePursuit::PurePursuit(const ros::NodeHandle &nh) : nh_(nh)
 	sub_avoid_state_ = nh_.subscribe("/lawn_mower/avoid_state", 1, &PurePursuit::avoidstateCallback, this);
 	sub_outboundary_ = nh_.subscribe("/lawn_mower/out_of_bounds", 1, &PurePursuit::OutBoundaryCallBack, this);
 	sub_signal_ = nh_.subscribe("/signal", 1, &PurePursuit::signalCallback, this);
-	
+	sub_PC_or_Remote_ = nh_.subscribe("/PC_or_Remote", 1, &PurePursuit::PC_or_RemoteCallback, this);
 	pub_command_ = nh_.advertise<mower_msgs::VehicleCmd>("/vehicle/cmd", 1);
 
 	turn_completed_srv_ = nh_.advertiseService("/turn_completed", &PurePursuit::turnCompletedCallback, this);
@@ -153,6 +153,19 @@ void PurePursuit::signalCallback(const std_msgs::StringConstPtr &msg_signal)
 		mower_height_cfg_ = 0;
 		turn_completed_points_.clear();
 		ROS_INFO("Pure Pursuit node reset, msg is %s", msg_signal->data.c_str());
+	}
+}
+
+void PurePursuit::PC_or_RemoteCallback(const std_msgs::UInt8ConstPtr &PC_or_Remote_msg)
+{
+	if (PC_or_Remote_msg->data == 0)
+	{
+		PC_or_Remote_= 0;
+		ROS_INFO("Pure Pursuit node: PC control");
+	}else
+	{
+		PC_or_Remote_= 1;
+		ROS_INFO("Pure Pursuit node: Remote control");
 	}
 }
 
@@ -350,7 +363,7 @@ void PurePursuit::state_machine_run()
 				running_state_.store(RunStateValue::Reverse);
 				goto STATEMACHINE;
 			}
-			if (avoid_state_ == 3)
+			if (avoid_state_ == 3&&PC_or_Remote_==1)
 			{
 				ROS_WARN("紧急预警，需停车");
 				running_state_.store(RunStateValue::Stop);
@@ -480,7 +493,7 @@ void PurePursuit::state_machine_run()
 
 			// pp算法计算和速度
 			twist_cmd = calculate_PurePursuit(v_expect, lookahead_waypoint_);
-			if (lookahead_waypoint_.global_x== last_lookahead_waypoint_.global_x &&lookahead_waypoint_.global_y== last_lookahead_waypoint_.global_y&&(last_lookahead_distance_-lookahead_distance_)<0.05)
+			if (lookahead_waypoint_.global_x== last_lookahead_waypoint_.global_x &&lookahead_waypoint_.global_y== last_lookahead_waypoint_.global_y&&(last_lookahead_distance_-lookahead_distance_)<0.05&&abs(last_lookahead_waypoint_.local_yaw-lookahead_waypoint_.local_yaw)<0.1)
 			{	
 				follow_count_++;
 				ROS_WARN("小车可能卡住了, follow_count_ = %d", follow_count_);
