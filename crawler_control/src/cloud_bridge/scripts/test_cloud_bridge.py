@@ -68,11 +68,20 @@ def make_client(args, on_message=None):
     return client
 
 
-def pub(client, topic, payload):
+def close_client(client, flush_timeout=0.5):
+    """先 flush 未发完的消息,再停止 loop 并断开连接。"""
+    client.loop(timeout=flush_timeout)
+    client.loop_stop()
+    client.disconnect()
+
+
+def pub(client, topic, payload, qos=1, timeout=3):
     data = json.dumps(payload)
-    info = client.publish(topic, data, qos=1)
-    info.wait_for_publish(timeout=3)
-    print(f"[PUB] {topic} {data}")
+    info = client.publish(topic, data, qos=qos)
+    if not info.wait_for_publish(timeout=timeout):
+        print(f"[WARN] {topic} 未在 {timeout}s 内收到 broker 确认", file=sys.stderr)
+    else:
+        print(f"[PUB] {topic} {data}")
 
 
 def fmt_msg(topic, payload):
@@ -96,8 +105,7 @@ def cmd_sub(args):
     except KeyboardInterrupt:
         pass
     finally:
-        client.loop_stop()
-        client.disconnect()
+        close_client(client)
 
 
 def cmd_check(args):
@@ -115,8 +123,7 @@ def cmd_check(args):
     client.subscribe(f"{args.prefix}/{args.device_id}/#", qos=1)
     print(f"监听 {args.duration}s ...")
     time.sleep(args.duration)
-    client.loop_stop()
-    client.disconnect()
+    close_client(client)
 
     print("\n===== 检查结果 =====")
     if not stats:
@@ -150,13 +157,13 @@ def cmd_move(args):
     n = int(args.duration * args.hz)
     print(f"以 {args.hz}Hz 发送 {args.duration}s: {payload}")
     for i in range(n):
-        pub(client, topic, payload) if i == 0 or (i + 1) % args.hz == 0 else \
-            client.publish(topic, json.dumps(payload), qos=1)
+        client.publish(topic, json.dumps(payload), qos=1)
+        if i == 0 or (i + 1) % args.hz == 0:
+            print(f"  已发送 {i+1}/{n}")
         time.sleep(interval)
     pub(client, topic, {"linear": 0, "angular": 0})
     print("已发送停车指令。")
-    client.loop_stop()
-    client.disconnect()
+    close_client(client)
 
 
 def cmd_blade(args):
@@ -166,8 +173,7 @@ def cmd_blade(args):
     if args.height is not None:
         payload["height"] = args.height
     pub(client, topic, payload)
-    client.loop_stop()
-    client.disconnect()
+    close_client(client)
 
 
 def cmd_task(args):
@@ -179,8 +185,7 @@ def cmd_task(args):
             payload["map_name"] = args.map_name
         payload["map_mode"] = args.map_mode
     pub(client, topic, payload)
-    client.loop_stop()
-    client.disconnect()
+    close_client(client)
 
 
 def cmd_watchdog(args):
@@ -193,8 +198,7 @@ def cmd_watchdog(args):
         client.publish(topic, json.dumps(payload), qos=1)
         time.sleep(interval)
     print("已停发。请到车端观察 /vehicle/cmd 是否在 0.5s 后自动回零。")
-    client.loop_stop()
-    client.disconnect()
+    close_client(client)
 
 
 def main():
