@@ -3,6 +3,9 @@
 
 CMakeFiles/pure_pursuit.dir/src/main.cpp.o
  /home/huilian/hc26_6_30/crawler_control/devel/include/mower_msgs/VehicleCmd.h
+ /home/huilian/hc26_6_30/crawler_control/devel/include/pure_pursuit/TurnCompleted.h
+ /home/huilian/hc26_6_30/crawler_control/devel/include/pure_pursuit/TurnCompletedRequest.h
+ /home/huilian/hc26_6_30/crawler_control/devel/include/pure_pursuit/TurnCompletedResponse.h
  /home/huilian/hc26_6_30/crawler_control/devel/include/util/LocalPath.h
  /home/huilian/hc26_6_30/crawler_control/devel/include/util/Position.h
  /home/huilian/hc26_6_30/crawler_control/src/pure_pursuit/include/pure_pursuit/pure_pursuit.h
@@ -71,6 +74,9 @@ CMakeFiles/pure_pursuit.dir/src/main.cpp.o
  /opt/ros/noetic/include/xmlrpcpp/XmlRpcValue.h
 CMakeFiles/pure_pursuit.dir/src/pure_pursuit.cpp.o
  /home/huilian/hc26_6_30/crawler_control/devel/include/mower_msgs/VehicleCmd.h
+ /home/huilian/hc26_6_30/crawler_control/devel/include/pure_pursuit/TurnCompleted.h
+ /home/huilian/hc26_6_30/crawler_control/devel/include/pure_pursuit/TurnCompletedRequest.h
+ /home/huilian/hc26_6_30/crawler_control/devel/include/pure_pursuit/TurnCompletedResponse.h
  /home/huilian/hc26_6_30/crawler_control/devel/include/util/LocalPath.h
  /home/huilian/hc26_6_30/crawler_control/devel/include/util/Position.h
  /home/huilian/hc26_6_30/crawler_control/src/pure_pursuit/include/geometry.h

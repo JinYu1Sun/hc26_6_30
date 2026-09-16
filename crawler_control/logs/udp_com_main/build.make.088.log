@@ -1,0 +1,4 @@
+[35m[1mScanning dependencies of target udp_async_node[0m
+[ 50%] [32mBuilding CXX object CMakeFiles/udp_async_node.dir/src/udp_async_node.cpp.o[0m
+[100%] [32m[1mLinking CXX executable /home/huilian/hc26_6_30/crawler_control/devel/lib/udp_com_main/udp_async_node[0m
+[100%] Built target udp_async_node

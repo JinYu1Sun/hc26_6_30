@@ -19,6 +19,9 @@ cloud_bridge 云平台公网联调测试脚本（模拟云平台侧）
   python test_cloud_bridge.py move --linear 0.3 -t 3      # 前进3秒(默认10Hz),随后发停车
   python test_cloud_bridge.py blade --state 1 --height 6  # 开刀盘
   python test_cloud_bridge.py task --action start --map-name map_0630
+  python test_cloud_bridge.py init --action request       # 请求定位初始化
+  python test_cloud_bridge.py init --action confirm       # 确认定位初始化(开始走8字形)
+  python test_cloud_bridge.py init --action cancel        # 取消定位初始化
   python test_cloud_bridge.py watchdog                    # 看门狗测试:发2s move后停发
   python test_cloud_bridge.py --host 1.2.3.4 sub          # 覆盖 broker 地址
 """
@@ -188,6 +191,14 @@ def cmd_task(args):
     close_client(client)
 
 
+def cmd_init(args):
+    client = make_client(args)
+    topic = f"{args.prefix}/{args.device_id}/cmd/init_location"
+    payload = {"action": args.action}
+    pub(client, topic, payload)
+    close_client(client)
+
+
 def cmd_watchdog(args):
     client = make_client(args)
     topic = f"{args.prefix}/{args.device_id}/cmd/move"
@@ -239,6 +250,11 @@ def main():
     s.add_argument("--map-mode", default="single_map",
                    choices=["single_map", "multi_map"])
     s.set_defaults(func=cmd_task)
+
+    s = sub.add_parser("init", help="定位初始化控制")
+    s.add_argument("--action", required=True,
+                   choices=["request", "confirm", "cancel"])
+    s.set_defaults(func=cmd_init)
 
     s = sub.add_parser("watchdog", help="看门狗测试(停发后应自动停车)")
     s.add_argument("--linear", type=float, default=0.3)

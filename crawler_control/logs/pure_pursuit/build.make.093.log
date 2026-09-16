@@ -1,4 +1,0 @@
-[35m[1mScanning dependencies of target pure_pursuit[0m
-[ 33%] [32mBuilding CXX object CMakeFiles/pure_pursuit.dir/src/pure_pursuit.cpp.o[0m
-[ 66%] [32m[1mLinking CXX executable /home/nvidia/crawler_control/devel/.private/pure_pursuit/lib/pure_pursuit/pure_pursuit[0m
-[100%] Built target pure_pursuit

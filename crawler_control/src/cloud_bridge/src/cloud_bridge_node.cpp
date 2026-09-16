@@ -45,6 +45,7 @@ public:
     topic_cmd_move_ = prefix + "/cmd/move";
     topic_cmd_blade_ = prefix + "/cmd/blade";
     topic_cmd_task_ = prefix + "/cmd/task";
+    topic_cmd_init_location_ = prefix + "/cmd/init_location";
     topic_state_location_ = prefix + "/state/location";
     topic_state_vehicle_ = prefix + "/state/vehicle";
 
@@ -56,6 +57,7 @@ public:
     mqtt_->addSubscription(topic_cmd_move_, 1);
     mqtt_->addSubscription(topic_cmd_blade_, 1);
     mqtt_->addSubscription(topic_cmd_task_, 1);
+    mqtt_->addSubscription(topic_cmd_init_location_, 1);
 
     if (!mqtt_->start())
       ROS_WARN("MQTT first connect failed, retrying in background");
@@ -124,6 +126,8 @@ private:
         handleBladeCmd(j);
       else if (topic == topic_cmd_task_)
         handleTaskCmd(j);
+      else if (topic == topic_cmd_init_location_)
+        handleInitLocationCmd(j);
     }
     catch (const nlohmann::json::exception& e)
     {
@@ -209,6 +213,31 @@ private:
     else
     {
       ROS_WARN("unknown task action: %s", action.c_str());
+    }
+  }
+
+  void handleInitLocationCmd(const nlohmann::json& j)
+  {
+    const std::string action = j.value("action", "");
+
+    if (action == "request")
+    {
+      sendSignal("init_location");
+      ROS_INFO("init location requested from cloud");
+    }
+    else if (action == "confirm")
+    {
+      sendSignal("true");
+      ROS_INFO("init location confirmed from cloud");
+    }
+    else if (action == "cancel")
+    {
+      sendSignal("false");
+      ROS_INFO("init location cancelled from cloud");
+    }
+    else
+    {
+      ROS_WARN("unknown init_location action: %s", action.c_str());
     }
   }
 
@@ -348,7 +377,8 @@ private:
   MqttConfig mqtt_cfg_;
   std::unique_ptr<MqttClient> mqtt_;
   std::string device_id_, topic_prefix_;
-  std::string topic_cmd_move_, topic_cmd_blade_, topic_cmd_task_;
+  std::string topic_cmd_move_, topic_cmd_blade_, topic_cmd_task_,
+      topic_cmd_init_location_;
   std::string topic_state_location_, topic_state_vehicle_;
 
   double location_hz_ = 2.0, status_hz_ = 1.0;

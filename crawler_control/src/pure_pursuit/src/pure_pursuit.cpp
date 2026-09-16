@@ -162,10 +162,14 @@ void PurePursuit::PC_or_RemoteCallback(const std_msgs::UInt8ConstPtr &PC_or_Remo
 	{
 		PC_or_Remote_= 0;
 		ROS_INFO("Pure Pursuit node: PC control");
-	}else
+	}else if (PC_or_Remote_msg->data == 1)
 	{
 		PC_or_Remote_= 1;
 		ROS_INFO("Pure Pursuit node: Remote control");
+	}else if (PC_or_Remote_msg->data == 2)
+	{
+		PC_or_Remote_= 2;
+		ROS_INFO("Pure Pursuit node: Auto control");
 	}
 }
 
@@ -363,7 +367,7 @@ void PurePursuit::state_machine_run()
 				running_state_.store(RunStateValue::Reverse);
 				goto STATEMACHINE;
 			}
-			if (avoid_state_ == 3&&PC_or_Remote_==1)
+			if (avoid_state_ == 3&&PC_or_Remote_==1&&PC_or_Remote_==2)
 			{
 				ROS_WARN("紧急预警，需停车");
 				running_state_.store(RunStateValue::Stop);

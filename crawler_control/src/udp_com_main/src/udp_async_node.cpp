@@ -330,7 +330,9 @@ private:
             }
             case 0x05: {   // ===== 割草机状态帧 =====
                 std_msgs::UInt16 PC_or_Remote_msg;
+
                 PC_or_Remote_msg.data = pkt.data[3];
+            
                 PC_or_Remote_pub_.publish(PC_or_Remote_msg);
             }
             default:

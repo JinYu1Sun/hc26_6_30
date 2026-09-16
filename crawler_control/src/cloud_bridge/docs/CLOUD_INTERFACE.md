@@ -60,6 +60,25 @@
 - `start`：依次执行 启动路径跟踪节点 → 复位 → 加载地图 → 选模式 → 开工，全程约 2~3 秒。
 - `stop`：停止任务并复位，随后关闭路径跟踪节点。
 
+### 1.4 定位初始化 `mower/{id}/cmd/init_location`
+
+```json
+{"action": "request"}
+{"action": "confirm"}
+{"action": "cancel"}
+```
+
+| action | 说明 |
+|---|---|
+| request | 请求定位初始化，车端进入等待确认状态 |
+| confirm | 确认初始化，车辆开始走 8 字形动作 |
+| cancel | 取消初始化请求 |
+
+流程说明：
+1. 云平台下发 `request`，车端 `task_node` 进入初始化请求状态并上报 `/init_request=true`。
+2. 云平台确认场地安全后下发 `confirm`，车辆才开始走 8 字形。
+3. 初始化过程中可随时下发 `cancel` 取消。
+
 ## 二、上行：割草机 → 云平台（MQTT）
 
 ### 2.1 定位上报 `mower/{id}/state/location`
@@ -102,6 +121,12 @@ mosquitto_pub -h <broker> -t 'mower/mower_001/cmd/blade' -m '{"state":1,"height"
 mosquitto_pub -h <broker> -t 'mower/mower_001/cmd/task' -m '{"action":"start","map_name":"map_0630","map_mode":"single_map"}'
 # 停止任务
 mosquitto_pub -h <broker> -t 'mower/mower_001/cmd/task' -m '{"action":"stop"}'
+# 请求定位初始化
+mosquitto_pub -h <broker> -t 'mower/mower_001/cmd/init_location' -m '{"action":"request"}'
+# 确认定位初始化（车辆开始走 8 字形）
+mosquitto_pub -h <broker> -t 'mower/mower_001/cmd/init_location' -m '{"action":"confirm"}'
+# 取消定位初始化
+mosquitto_pub -h <broker> -t 'mower/mower_001/cmd/init_location' -m '{"action":"cancel"}'
 ```
 
 ## 四、安全约定
