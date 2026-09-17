@@ -38,6 +38,7 @@ ros::Subscriber sub_speedinfo;
 ros::Subscriber sub_yolofront;
 ros::Subscriber sub_imu;
 ros::Subscriber sub_mower_dynamicflag_;
+ros::Subscriber sub_lio_static_initialized_;
 ros::Time init_start_time;    // 初始化开始时间
 
 ros::Time figure8_phase_start; // 当前8字形阶段的开始时间
@@ -69,6 +70,7 @@ bool rollover_flag = false; // 侧翻状态
 bool lowpower_flag = false; // 低电量 现定义-30%
 bool appsignal_flag = false; // 默认  /signal == pause | stop  1; continue  0;
 bool init_finish = false;
+bool lio_static_initialized_flag = false;
 void goStraight()
 {
     mower_msgs::VehicleCmd cmd_msg;
@@ -297,8 +299,13 @@ void FusionMapCallBack(const mower_msgs::Position &msgs)
 
     if (has_position && !init_finish && !last_has_position)
     {
-        figure8_phase_end=ros::Time::now();
-        if((ros::Time::now()-figure8_phase_end).toSec() < 3.0)  goStraight();
+        int has_position_cnt = 100;
+        while (has_position_cnt--)
+        {
+            ROS_INFO("Position acquired! Exiting initialization mode.");
+            ROS_INFO("Stopping vehicle after acquiring position");
+            goStraight()
+        }
         init_finish = true;
     }
     last_has_position=has_position;
@@ -349,6 +356,11 @@ void MowerDynamicFlagCallBack(const std_msgs::Bool &mower_dynamicflag_msgs)
         mower_dynamic_flag = false;
     }
 }
+
+void liostaticinitializedCallBack(const std_msgs::Bool &lio_static_initialized_msgs)
+{
+    lio_static_initialized_flag = lio_static_initialized_msgs.data;
+}
 int main(int argc, char **argv)
 {
     ros::init(argc, argv, "task_node");
@@ -361,6 +373,7 @@ int main(int argc, char **argv)
     sub_yolofront = nh.subscribe("/YoloSeg/yolocontrol_publisher", 1, YoloflagfrontCallBack); //@xhj 2503
     sub_imu = nh.subscribe("/Mower/car_state", 1, ImuCallBack);
     sub_mower_dynamicflag_ = nh.subscribe("/mower/stop_car2", 1, MowerDynamicFlagCallBack);
+    sub_lio_static_initialized_ = nh.subscribe("/Mower/lio_static_initialized", 1, liostaticinitializedCallBack);
 
     pub_direct_control = nh.advertise<mower_msgs::Direct_Control>("/mower/direct_control", 1);
     pub_vehicle_cmd = nh.advertise<mower_msgs::VehicleCmd>("/vehicle/cmd", 1); //@xhj 2406
@@ -391,7 +404,7 @@ int main(int argc, char **argv)
         }
         
         // 如果在初始化模式，执行"8"字形控制
-        if (init_mode&&!has_position)
+        if (init_mode&&!has_position&&lio_static_initialized_flag)
         {
             // 进入新阶段时记录阶段起始时间（只记录一次，不能每次循环都重置）
             if (figure8_count != figure8_last_count)

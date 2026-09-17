@@ -243,6 +243,7 @@ Twist PurePursuit::calculate_PurePursuit(const float &v_expect, const waypoint &
 	float linear_vel = v_expect;
 	// 前瞄距离的平方
 	float ld2 = lookahead_point.local_x * lookahead_point.local_x + lookahead_point.local_y * lookahead_point.local_y;
+	ROS_WARN("local_x: %.4f m, local_y: %.4f m", lookahead_point.local_x, lookahead_point.local_y);
 	// 防止除零
 	if (ld2 < 1e-4)
 	{
@@ -480,7 +481,7 @@ void PurePursuit::state_machine_run()
 		case RunStateValue::Follow:
 			lookahead_distance_=hypot(lookahead_waypoint_.local_x, lookahead_waypoint_.local_y);
 			// 如果小车位置与预瞄点距离小于0.05或小车已经超过预瞄点，则小车已到达预瞄点，切换为转向状态
-			if (lookahead_distance_ < 0.1)
+			if (lookahead_distance_ < 0.2)
 			{
 				twist_cmd.linear = 0.0;
 				twist_cmd.angular = 0.0;
@@ -512,6 +513,7 @@ void PurePursuit::state_machine_run()
 						publishCommand(twist_cmd);
 						loop_rate.sleep();
 					}
+					follow_count_=0;
 					break;
 				}
 					
