@@ -56,6 +56,7 @@ private:
 	std::atomic<RunStateValue> running_state_;
 
 	util::Position car_position_;    //  小车实时位置
+	util::Position last_car_position_;    //  小车实时位置
 	ros::Time last_pos_time_;        // 小车实时位置最新时间
 	
 	std::mutex local_path_mutex_;

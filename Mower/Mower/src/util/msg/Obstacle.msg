@@ -14,3 +14,4 @@ float32 y3 # y_min
 float32 x4 # x_min
 float32 y4 # y_min
 bool is_dynamic # is_dynamic
+string class_name

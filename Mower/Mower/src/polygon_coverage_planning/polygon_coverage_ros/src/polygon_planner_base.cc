@@ -412,6 +412,11 @@ void PolygonPlannerBase::clickPointCallback(
     const geometry_msgs::PointStampedConstPtr& msg) {
   if (!set_start_goal_from_rviz_) return;
 
+  if (!polygon_.has_value()) {
+    ROS_WARN("Polygon not set. Cannot plan path.");
+    return;
+  }
+
   if (!start_.has_value()) {
     ROS_INFO("Selecting START from RVIZ PublishPoint tool.");
     start_ = std::make_optional<Point_2>(msg->point.x, msg->point.y);
@@ -467,6 +472,12 @@ void PolygonPlannerBase::markObstacleCallback(
     ROS_INFO_STREAM("Polygon:" << temp_pwh);
     polygon_ = std::make_optional(temp_pwh);
     altitude_ = std::make_optional(temp_alt);
+  }
+  else
+  {
+    polygon_.reset();
+    std::cout << "地图区域加载异常" << std::endl;
+    return;
   }
 
   planning_complete_ = false;

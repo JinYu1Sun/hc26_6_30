@@ -40,14 +40,19 @@ public:
                                         &CloudBridgeNode::vehicleStatusCb, this);
     sub_mower_height_ = nh_.subscribe("/vehicle/mower_height_to_app", 1,
                                       &CloudBridgeNode::mowerHeightCb, this);
+    sub_map_name_ = nh_.subscribe("/map_name", 1,
+                                  &CloudBridgeNode::mapNameCb, this);
 
     const std::string prefix = topic_prefix_ + "/" + device_id_;
     topic_cmd_move_ = prefix + "/cmd/move";
     topic_cmd_blade_ = prefix + "/cmd/blade";
     topic_cmd_task_ = prefix + "/cmd/task";
     topic_cmd_init_location_ = prefix + "/cmd/init_location";
+    topic_cmd_mapping_ = prefix + "/cmd/mapping";
     topic_state_location_ = prefix + "/state/location";
     topic_state_vehicle_ = prefix + "/state/vehicle";
+    topic_state_mapping_ = prefix + "/state/mapping";
+    topic_state_map_list_ = prefix + "/state/map_list";
 
     mqtt_ = std::unique_ptr<MqttClient>(new MqttClient(mqtt_cfg_));
     mqtt_->setMessageCallback(
@@ -58,6 +63,7 @@ public:
     mqtt_->addSubscription(topic_cmd_blade_, 1);
     mqtt_->addSubscription(topic_cmd_task_, 1);
     mqtt_->addSubscription(topic_cmd_init_location_, 1);
+    mqtt_->addSubscription(topic_cmd_mapping_, 1);
 
     if (!mqtt_->start())
       ROS_WARN("MQTT first connect failed, retrying in background");
@@ -128,6 +134,8 @@ private:
         handleTaskCmd(j);
       else if (topic == topic_cmd_init_location_)
         handleInitLocationCmd(j);
+      else if (topic == topic_cmd_mapping_)
+        handleMappingCmd(j);
     }
     catch (const nlohmann::json::exception& e)
     {
@@ -241,6 +249,66 @@ private:
     }
   }
 
+  static bool validMapName(const std::string& name)
+  {
+    return !name.empty() && name.find('/') == std::string::npos &&
+           name.find("..") == std::string::npos;
+  }
+
+  void handleMappingCmd(const nlohmann::json& j)
+  {
+    const std::string action = j.value("action", "");
+
+    if (action == "enter")
+    {
+      // m_mode：通知雷达/RTK进入建图准备，定位坐标随后会被外部系统归零
+      mapping_active_ = true;
+      sendSignal("m_mode");
+    }
+    else if (action == "start_boundary")
+      sendSignal("start_brd");
+    else if (action == "stop_boundary")
+      sendSignal("cease_brd");
+    else if (action == "start_obstacle")
+      sendSignal("start_obs");
+    else if (action == "stop_obstacle")
+      sendSignal("cease_obs");
+    else if (action == "start_parking")
+      sendSignal("start_point");
+    else if (action == "stop_parking")
+      sendSignal("cease_point");
+    else if (action == "start_path")
+      sendSignal("start_path");
+    else if (action == "stop_path")
+      sendSignal("cease_path");
+    else if (action == "list")
+      sendSignal("p_mode");
+    else if (action == "reset")
+    {
+      mapping_active_ = false;
+      sendSignal("reset");
+    }
+    else if (action == "save" || action == "delete")
+    {
+      const std::string map_name = j.value("map_name", "");
+      if (!validMapName(map_name))
+      {
+        ROS_WARN("mapping %s rejected, bad map_name: %s", action.c_str(),
+                 map_name.c_str());
+        return;
+      }
+      sendSignal((action == "save" ? "save_map/" : "delete_name/") + map_name);
+      if (action == "save")
+        mapping_active_ = false;  // 保存成功视为本次建图结束，停止轨迹转发
+    }
+    else
+    {
+      ROS_WARN("unknown mapping action: %s", action.c_str());
+      return;
+    }
+    ROS_INFO("mapping action: %s", action.c_str());
+  }
+
   void startTaskSequence(const std::string& map_name, const std::string& map_mode)
   {
     if (task_seq_running_.exchange(true))
@@ -331,6 +399,9 @@ private:
         {"state", pos.position_state},
         {"stamp", ros::Time::now().toSec()}};
     mqtt_->publish(topic_state_location_, j.dump(), 0);
+    // 建图期间（enter→save/reset）把定位轨迹同步转发到 state/mapping，云平台据此实时描边
+    if (mapping_active_.load())
+      mqtt_->publish(topic_state_mapping_, j.dump(), 0);
   }
 
   void vehicleStatusCb(const mower_msgs::VehicleStatus::ConstPtr& msg)
@@ -364,6 +435,28 @@ private:
     mqtt_->publish(topic_state_vehicle_, j.dump(), 0);
   }
 
+  // ---------------- 建图数据上行 ----------------
+
+  void mapNameCb(const std_msgs::String::ConstPtr& msg)
+  {
+    // /map_name 内容为 "name1/name2/" 格式
+    nlohmann::json maps = nlohmann::json::array();
+    std::string::size_type begin = 0;
+    while (begin < msg->data.size())
+    {
+      const std::string::size_type slash = msg->data.find('/', begin);
+      const std::string name = msg->data.substr(
+          begin, slash == std::string::npos ? slash : slash - begin);
+      if (!name.empty())
+        maps.push_back(name);
+      if (slash == std::string::npos)
+        break;
+      begin = slash + 1;
+    }
+    nlohmann::json j = {{"maps", maps}, {"stamp", ros::Time::now().toSec()}};
+    mqtt_->publish(topic_state_map_list_, j.dump(), 0);
+  }
+
   // ---------------- 成员 ----------------
 
   ros::NodeHandle nh_;
@@ -372,14 +465,20 @@ private:
   ros::Publisher pub_manual_;
   ros::Publisher pub_signal_;
   ros::Subscriber sub_position_, sub_vehicle_status_, sub_mower_height_;
+  ros::Subscriber sub_map_name_;
   ros::Timer location_timer_, status_timer_, watchdog_timer_;
 
   MqttConfig mqtt_cfg_;
   std::unique_ptr<MqttClient> mqtt_;
   std::string device_id_, topic_prefix_;
   std::string topic_cmd_move_, topic_cmd_blade_, topic_cmd_task_,
-      topic_cmd_init_location_;
+      topic_cmd_init_location_, topic_cmd_mapping_;
   std::string topic_state_location_, topic_state_vehicle_;
+  std::string topic_state_mapping_, topic_state_map_list_;
+
+  // 建图会话标志：收到 cmd/mapping enter 置位，save/reset 清除；
+  // MQTT 回调线程写，ROS 定时器线程读
+  std::atomic<bool> mapping_active_{false};
 
   double location_hz_ = 2.0, status_hz_ = 1.0;
 

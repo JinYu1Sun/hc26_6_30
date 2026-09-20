@@ -5,8 +5,9 @@ cloud_bridge 云平台公网联调测试脚本（模拟云平台侧）
 
 协议依据: docs/CLOUD_INTERFACE.md
   - 主题前缀: mower/{device_id}/, payload 为 UTF-8 JSON
-  - 上行(车->云): state/location, state/vehicle   (QoS 0)
-  - 下行(云->车): cmd/move, cmd/blade, cmd/task    (QoS 1)
+  - 上行(车->云): state/location, state/vehicle, state/mapping(建图会话期间),
+    state/map_list(收到list后回传)   (QoS 0)
+  - 下行(云->车): cmd/move, cmd/blade, cmd/task, cmd/init_location, cmd/mapping  (QoS 1)
   - 车端 0.5s 收不到 move 指令会自动停车(看门狗)
 
 使用前确认:
@@ -22,8 +23,21 @@ cloud_bridge 云平台公网联调测试脚本（模拟云平台侧）
   python test_cloud_bridge.py init --action request       # 请求定位初始化
   python test_cloud_bridge.py init --action confirm       # 确认定位初始化(开始走8字形)
   python test_cloud_bridge.py init --action cancel        # 取消定位初始化
+  python test_cloud_bridge.py mapping --action enter      # 进入建图模式(车端发m_mode)
+  python test_cloud_bridge.py mapping --action start_boundary   # 开始录边界
+  python test_cloud_bridge.py mapping --action stop_boundary    # 停止录边界
+  python test_cloud_bridge.py mapping --action save --map-name map_0701  # 保存地图
+  python test_cloud_bridge.py mapping --action list       # 请求地图列表(看state/map_list)
+  python test_cloud_bridge.py maptrace                    # 跟踪建图轨迹(state/mapping描点)
   python test_cloud_bridge.py watchdog                    # 看门狗测试:发2s move后停发
   python test_cloud_bridge.py --host 1.2.3.4 sub          # 覆盖 broker 地址
+
+建图联调流程:
+  1. mapping --action enter            # 进入建图模式
+  2. maptrace                          # 观察坐标是否归零到(0,0)附近
+  3. mapping --action start_boundary   # 开始录边界
+  4. move ...                          # 遥控车走边界, maptrace 实时描点
+  5. mapping --action stop_boundary && mapping --action save --map-name xxx
 """
 
 import argparse
@@ -199,6 +213,50 @@ def cmd_init(args):
     close_client(client)
 
 
+def cmd_mapping(args):
+    client = make_client(args)
+    topic = f"{args.prefix}/{args.device_id}/cmd/mapping"
+    payload = {"action": args.action}
+    if args.action in ("save", "delete"):
+        if not args.map_name:
+            print("[FAIL] save/delete 需要 --map-name", file=sys.stderr)
+            sys.exit(1)
+        payload["map_name"] = args.map_name
+    pub(client, topic, payload)
+    close_client(client)
+
+
+def cmd_maptrace(args):
+    """跟踪 state/mapping 建图轨迹：打印点数、最新坐标和定位状态，可选存文件。"""
+    points = []
+
+    def on_message(c, u, msg):
+        if not msg.topic.endswith("/state/mapping"):
+            return
+        try:
+            obj = json.loads(msg.payload.decode("utf-8"))
+        except Exception:
+            return
+        points.append((obj.get("x"), obj.get("y")))
+        print(f"[{time.strftime('%H:%M:%S')}] #{len(points)} "
+              f"x={obj.get('x'):.3f} y={obj.get('y'):.3f} state={obj.get('state')}")
+        if args.output:
+            with open(args.output, "w", encoding="utf-8") as f:
+                json.dump(points, f)
+
+    client = make_client(args, on_message)
+    client.subscribe(f"{args.prefix}/{args.device_id}/state/mapping", qos=1)
+    print(f"跟踪 {args.prefix}/{args.device_id}/state/mapping ,Ctrl+C 退出")
+    try:
+        while True:
+            time.sleep(1)
+    except KeyboardInterrupt:
+        print(f"\n共 {len(points)} 个轨迹点"
+              + (f"，已写入 {args.output}" if args.output and points else ""))
+    finally:
+        close_client(client)
+
+
 def cmd_watchdog(args):
     client = make_client(args)
     topic = f"{args.prefix}/{args.device_id}/cmd/move"
@@ -255,6 +313,21 @@ def main():
     s.add_argument("--action", required=True,
                    choices=["request", "confirm", "cancel"])
     s.set_defaults(func=cmd_init)
+
+    s = sub.add_parser("mapping", help="建图控制(enter/start_boundary/save/list等)")
+    s.add_argument("--action", required=True,
+                   choices=["enter", "start_boundary", "stop_boundary",
+                            "start_obstacle", "stop_obstacle",
+                            "start_parking", "stop_parking",
+                            "start_path", "stop_path",
+                            "save", "delete", "list", "reset"])
+    s.add_argument("--map-name", default="")
+    s.set_defaults(func=cmd_mapping)
+
+    s = sub.add_parser("maptrace", help="跟踪建图轨迹(state/mapping描点)")
+    s.add_argument("-o", "--output", default="",
+                   help="可选,轨迹点实时写入该json文件")
+    s.set_defaults(func=cmd_maptrace)
 
     s = sub.add_parser("watchdog", help="看门狗测试(停发后应自动停车)")
     s.add_argument("--linear", type=float, default=0.3)

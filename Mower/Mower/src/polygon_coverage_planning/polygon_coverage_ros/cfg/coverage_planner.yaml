@@ -2,7 +2,7 @@ decomposition_type: 0 # [0: Boustrophedon, 1: Trapezoidal]
 cost_function_type: 0 # [0: Euclidean Distance, 1: Time, 2: Number of Waypoints]
 v_max: 3.0 # Only for time optimization.
 a_max: 1.0 # Only for time optimization.
-wall_distance: 1.2 # 边界预留宽度，不进行规划
+wall_distance: 1.0 # 边界预留宽度，不进行规划
 offset_polygons: false
 sweep_single_direction: true
 

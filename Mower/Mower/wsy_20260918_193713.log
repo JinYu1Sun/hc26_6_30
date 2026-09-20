@@ -1,0 +1,12 @@
+[0m[ INFO] [1789731434.467009537]: Subscribing to /debug/avoid_trajectory[0m
+[0m[ INFO] [1789731434.473352108]: Subscribing to /debug/global_trajectory[0m
+[0m[ INFO] [1789731434.478527279]: Subscribing to /debug/local_trajectory[0m
+[0m[ INFO] [1789731434.483357103]: Subscribing to /lawn_mower/avoid_state[0m
+[0m[ INFO] [1789731434.488267633]: Subscribing to /lawn_mower/grid_map[0m
+[0m[ INFO] [1789731434.492527758]: Subscribing to /lawn_mower/obstacle_polygon[0m
+[0m[ INFO] [1789731434.496956620]: Subscribing to /lawn_mower/view_polygon[0m
+[0m[ INFO] [1789731434.501810476]: Subscribing to /mower/stop_car[0m
+[0m[ INFO] [1789731434.510354630]: Subscribing to /mower/stop_car2[0m
+[0m[ INFO] [1789731434.520250217]: Subscribing to /mower_perception/obstacles[0m
+[0m[ INFO] [1789731434.525528589]: Subscribing to /tf[0m
+[0m[ INFO] [1789731434.537524094]: Recording to '/home/nvidia/Mower/wsy_20260918_193713.bag'.[0m

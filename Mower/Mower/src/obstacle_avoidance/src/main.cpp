@@ -16,8 +16,10 @@ int main(int argc, char** argv) {
     // 创建规划器实例
     obstacle_avoidance::AStarPlanner planner;
     
-    // 进入ROS主循环
-    ros::spin();
+    // 进入ROS主循环：使用异步 spinner 以允许回调在后台线程执行
+    ros::AsyncSpinner spinner(2); // 两个线程足够处理 pose 回调和其他回调
+    spinner.start();
+    ros::waitForShutdown();
     
     return 0;
 } 

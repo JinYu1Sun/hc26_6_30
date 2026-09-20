@@ -58,8 +58,6 @@ ros::Publisher map_hull_pub;
 vector<vector<double>> routine_;
 vector<vector<double>> routine;
 vector<vector<double>> traj_;
-// vector<vector<double>> traj_guide_;
-// vector<vector<double>> traj_global_;
 
 // 新增：用于检测waypoints数据更新的变量
 ros::Time last_waypoints_time_;
@@ -67,22 +65,22 @@ int last_waypoints_count_ = 0;
 bool waypoints_processed_ = false;
 
 // 新增：存储上一次路径的起始点，用于判断是否是新路径
-// geometry_msgs::Point last_start_point_;
 bool has_last_start_point_ = false;
 
 // 新增：多地图收集超时判断相关变量
 ros::Time last_map_received_time_;
-double map_collection_timeout_ = 2.0;  // 5秒超时
+double map_collection_timeout_ = 2.5;  // 2.5秒超时
 bool collection_timeout_started_ = false;
 
-double vmax = 0.8;
-double vmin = 0.25;
-double amax = 0.1;
-double step_size = 0.25;
+double vmax_ = 1.0;
+double vmin_ = 0.25;
+double amax_ = 0.1;
+double step_size = 0.15;
 bool RS_curve_gen_flag = 0;
 bool veh_pose_fisrt_sub = 0;
 bool channel_path_gen_flag = 0;
-std::atomic<bool> repeat_mode_{false};
+std::atomic<bool> repeat_mode_{false}; // 断点复割模式
+std::atomic<bool> fine_mode_{false};  // 精割模式
 
 // 添加地图名称相关变量
 std::string current_map_name_ = "default";  // 当前地图名称
@@ -90,7 +88,6 @@ std::string current_map_name_ = "default";  // 当前地图名称
 // TODO: 多地图路径拼接功能 - 多地图模式标志和路径收集 cnk 0805
 bool multi_map_mode_ = false;
 std::vector<geometry_msgs::PoseArray> collected_map_paths_;  // 收集的各地图路径
-bool is_collecting_paths_ = false;
 int expected_map_count_ = 0;
 int received_map_count_ = 0;
 
@@ -105,7 +102,7 @@ struct MapHull {
 std::string map_files_path_ = csv_path_pre_ + "../src/location_map/map_files/";
 std::string current_map_file_;
 
-// TODO: 多地图路径拼接功能 - YAML文件读取函数 cnk 0805
+// 从文件中读取连接路径
 bool load_collected_link_paths(std::vector<std::vector<geometry_msgs::Pose>> &link_paths)
 {
     link_paths.clear();
@@ -129,7 +126,7 @@ bool load_collected_link_paths(std::vector<std::vector<geometry_msgs::Pose>> &li
             geometry_msgs::Pose point;
             point.position.x = path_point["x"].as<double>();
             point.position.y = path_point["y"].as<double>();
-            point.position.z = path_point["z"].as<double>();
+            point.position.z = 111.0; // 作为连接路径点的特殊标记
             connect_path.push_back(point);
           }
         }
@@ -171,12 +168,13 @@ vector<vector<double>> LinearInterpolate(vector<double> startPnt,
   double dist = sqrt(dx * dx + dy * dy);
   double dis = step_size;
   vector<double> unit_vec = {dx / (dist + 1e-5), dy / (dist + 1e-5)};
-  traj_interpolate.push_back({startPnt[0], startPnt[1], startPnt[2]});
+  traj_interpolate.push_back({startPnt[0], startPnt[1], startPnt[2], startPnt[3]});
   while (dis < dist) {
     double tempX = startPnt[0] + unit_vec[0] * dis;
     double tempY = startPnt[1] + unit_vec[1] * dis;
     double tempYaw = startPnt[2];
-    traj_interpolate.push_back({tempX, tempY, tempYaw});
+    double temp_type = startPnt[3];
+    traj_interpolate.push_back({tempX, tempY, tempYaw, temp_type});
 
     dis += step_size;
   }
@@ -184,10 +182,11 @@ vector<vector<double>> LinearInterpolate(vector<double> startPnt,
   int size = traj_interpolate.size();
   if (dist > 0 && (traj_interpolate[size - 1][0] != endPnt[0] ||
                    traj_interpolate[size - 1][1] != endPnt[1])) {
-    traj_interpolate.push_back({endPnt[0], endPnt[1], endPnt[2]});
+    traj_interpolate.push_back({endPnt[0], endPnt[1], endPnt[2], endPnt[3]});
   } else if (traj_interpolate[size - 1][0] == endPnt[0] &&
              traj_interpolate[size - 1][1] == endPnt[1]) {
     traj_interpolate[size - 1][2] = endPnt[2];
+    traj_interpolate[size - 1][3] = endPnt[3];
   }
   return traj_interpolate;
 }
@@ -308,17 +307,8 @@ void assembleMultiMapPaths() {
     }
     
     ROS_INFO("*** STARTING PATH ASSEMBLY ***");
-    ROS_INFO("Assembling %zu map paths by direct concatenation (no connection paths)", collected_map_paths_.size());
+    ROS_INFO("Assembling %zu map paths.", collected_map_paths_.size());
     
-    // 统计收集的路径点总数
-    int total_collected_points = 0;
-    for (int i = 0; i < collected_map_paths_.size(); i++) {
-        int points = collected_map_paths_[i].poses.size();
-        total_collected_points += points;
-        ROS_INFO("Map %d collected: %d waypoints", i + 1, points);
-    }
-    ROS_INFO("Total collected waypoints: %d", total_collected_points);
-
     std::vector<geometry_msgs::Pose> collected_link_paths; // 连接路径的起终点
     std::vector<std::vector<geometry_msgs::Pose>> connect_paths; // 录制的连接路径
     bool have_connect_paths = load_collected_link_paths(connect_paths);
@@ -344,27 +334,17 @@ void assembleMultiMapPaths() {
         
         for (int j = 0; j < collected_map_paths_[i].poses.size(); j++)
         {
-          // 去除起点，只保留第一个地图的起点
-          // 如果没有连接路径，起点终点都是第一个地图的起点其由于起点终点在地图外，又会自动生成一个起点和终点，所以要删除两个
-          if (i != 0 && (j == 0 || j == 1))
-            continue;
-          // 去除终点，
-          if (j == collected_map_paths_[i].poses.size() - 1 || (i != 0 && j == collected_map_paths_[i].poses.size() - 2))
-            continue;
           final_path.poses.push_back(collected_map_paths_[i].poses[j]);
-  
           // 第一个地图弓型终点，第二个地图弓型起点，第二个地图弓型终点，第三个地图弓型起点......
-          if (i == 0 && j == collected_map_paths_[i].poses.size() - 2)
+          if (i == 0 && j == collected_map_paths_[i].poses.size() - 1)
             collected_link_paths.push_back(collected_map_paths_[i].poses[j]);
-          if (i != 0 && (j == 2 || j == collected_map_paths_[i].poses.size() - 3))
-          {
+          if (i != 0 && (j == 0 || j == collected_map_paths_[i].poses.size() - 1))
             collected_link_paths.push_back(collected_map_paths_[i].poses[j]);
-          }
         }
       }
-      // 最后回到起点，调试测试的时候可以让它最后回到起点，免得自己找回去还不一定在地图内
-      // final_path.poses.push_back(collected_map_paths_[0].poses[0]);
-      // collected_link_paths.push_back(collected_map_paths_[0].poses[0]);
+      // 最后回到起点
+      final_path.poses.push_back(collected_map_paths_[0].poses[0]);
+      collected_link_paths.push_back(collected_map_paths_[0].poses[0]);
     }
     else
     {
@@ -376,12 +356,22 @@ void assembleMultiMapPaths() {
 
         for (int j = 0; j < connect_paths[i].size(); j++)
         {
-          final_path.poses.push_back(connect_paths[i][j]);
           if (j == 0 || j == connect_paths[i].size() - 1)
+          {
             collected_link_paths.push_back(connect_paths[i][j]);
+            connect_paths[i][j].position.z = 0; // 连接路径的起点和终点不做标记，允许被当做转弯点
+          }
+          final_path.poses.push_back(connect_paths[i][j]);
         }
       }
-      final_path.poses.pop_back(); // 删除最后一个地图的最后一个点（因为这个点是最后一个地图的起点）
+      // 走连接路径回去
+      for (int i = connect_paths.size() - 1; i >= 0; i--)
+      {
+        std::reverse(connect_paths[i].begin(), connect_paths[i].end());
+        final_path.poses.insert(final_path.poses.end(), connect_paths[i].begin(), connect_paths[i].end());
+      }
+      // 最后回到起点
+      final_path.poses.push_back(collected_map_paths_[0].poses[0]);
     }
     ROS_INFO("Final assembled path has %zu total points", final_path.poses.size());
 		if (collected_link_paths.size() > 1)
@@ -412,9 +402,6 @@ void assembleMultiMapPaths() {
     new_waypoints_pub.publish(final_path);
 		std::cout << getLogTime() << "多地图路径已发布，路径点数: " << final_path.poses.size() << std::endl;
     
-    // 停止收集模式，设置为处理拼接后的完整路径
-    is_collecting_paths_ = false;
-    
     // 重置状态，准备处理完整路径
     collected_map_paths_.clear();
     received_map_count_ = 0;
@@ -423,9 +410,9 @@ void assembleMultiMapPaths() {
     ROS_INFO("Starting 5D processing of assembled path with %zu points", final_path.poses.size());
     
     // 直接进行5维路径处理（复制wplCallback中的主要逻辑）
-    routine_.clear();
-    routine.clear();
-    traj_.clear();
+    routine_.clear(); // 6维
+    routine.clear();  // 6维
+    traj_.clear();  // 5维
     
     int num = final_path.poses.size();
     if (num <= 1) {
@@ -437,7 +424,8 @@ void assembleMultiMapPaths() {
     for (int i = 0; i < num; i++) {
       double pntx = final_path.poses[i].position.x;
       double pnty = final_path.poses[i].position.y;
-      routine_.push_back({pntx, pnty});
+      double type = final_path.poses[i].position.z; // 标志点是连接路径上的点
+      routine_.push_back({pntx, pnty, 0, 0, 0, type});
     }
     
     ROS_INFO("Converted assembled path to internal format, proceeding with 5D processing...");
@@ -447,45 +435,45 @@ void assembleMultiMapPaths() {
   int routine_id = 0;
   for (int i = 0; i < routine_.size(); i++) {
     if (i < routine_.size() - 1) {
-      if (abs(routine_[i][0] - routine_[i + 1][0]) < 0.05 &&
-          abs(routine_[i][1] - routine_[i + 1][1]) < 0.05)
+      if (abs(routine_[i][0] - routine_[i + 1][0]) < 0.05 && abs(routine_[i][1] - routine_[i + 1][1]) < 0.05)
         continue;
       else {
         double tempx = routine_[i][0];
         double tempy = routine_[i][1];
+        double type = routine_[i][5];
         double tempyaw = atan2(routine_[i + 1][1] - routine_[i][1],
                                routine_[i + 1][0] - routine_[i][0]);
 
-        routine.push_back({tempx, tempy, tempyaw});
+        routine.push_back({tempx, tempy, tempyaw, 0, 0, type});
         ++routine_id;
       }
     } else {
-      routine.push_back(
-          {routine_[i][0], routine_[i][1], routine[routine_id - 1][2]});
+      routine.push_back({routine_[i][0], routine_[i][1], routine[routine_id - 1][2], 0, 0, routine_[i][5]});
     }
   }
 
   // 调用LinearInterpolate针对两点之间进行线性插值
-  vector<double> traj_pnt = {0.0, 0.0, 0.0, 0.0,
-                             0.0}; // define the format of the trajectory point;
+  vector<double> traj_pnt = {0.0, 0.0, 0.0, 0.0, 0.0}; // define the format of the trajectory point;
   int cnt = 0;
   for (int i = 0; i < routine.size() - 1; i++) {
     double s_x = routine[i][0];
     double s_y = routine[i][1];
     double s_yaw = routine[i][2];
+    double s_type = routine[i][5];
     double g_x = routine[i + 1][0];
     double g_y = routine[i + 1][1];
     double g_yaw = routine[i + 1][2];
+    double g_type = routine[i + 1][5];
 
-    vector<vector<double>> traj_interpolate =
-        LinearInterpolate({s_x, s_y, s_yaw}, {g_x, g_y, g_yaw}, step_size);
+    vector<vector<double>> traj_interpolate = LinearInterpolate({s_x, s_y, s_yaw, s_type}, {g_x, g_y, g_yaw, g_type}, step_size);
 
     for (int j = 0; j < traj_interpolate.size() - 1; j++) {
       traj_pnt[0] = traj_interpolate[j][0];
       traj_pnt[1] = traj_interpolate[j][1];
       traj_pnt[2] = traj_interpolate[j][2];
 
-      if (j == 0) {
+      // 111的点档位要设置为1
+      if (j == 0 && traj_interpolate[j][3] != 111.0) {
         traj_pnt[3] = 2;
       } else {
         traj_pnt[3] = 1;
@@ -493,13 +481,13 @@ void assembleMultiMapPaths() {
       traj_.push_back(traj_pnt);
     }
   }
-  // 调整第一个点和最后一个点的值
+  // 调整第一个点和最后一个点的值，要先把这两个点档位设置为1，方便后面找到中间档位为2的点
   traj_[0][3] = 1;
   if (traj_[traj_.size() - 1][0] != routine[routine.size() - 1][0] &&
       traj_[traj_.size() - 1][1] != routine[routine.size() - 1][1]) {
     traj_.push_back({routine[routine.size() - 1][0],
                      routine[routine.size() - 1][1],
-                     routine[routine.size() - 1][2], 1, 0});
+                     routine[routine.size() - 1][2], 1, 0, 0});
   }
 
   /*将traj_中路径点的yaw限制在-pi到pi的范围之内*/
@@ -524,7 +512,7 @@ void assembleMultiMapPaths() {
   /*assign the velocity to the path section by section*/
   int num_gcp = gear_change_pnt_ind.size();
   if (num_gcp == 0) {
-    traj_ = velocityAssign(step_size, amax, vmax, traj_);
+    traj_ = velocityAssign(step_size, amax_, vmax_, traj_);
   }
   if (num_gcp >= 1) {
     ROS_WARN("the have %.2d turn point", num_gcp);
@@ -532,7 +520,7 @@ void assembleMultiMapPaths() {
       if (i == 0) {
         vector<vector<double>> subtraj(traj_.begin(),
                                        traj_.begin() + gear_change_pnt_ind[i]);
-        subtraj = velocityAssign(step_size, amax, vmax, subtraj);
+        subtraj = velocityAssign(step_size, amax_, vmax_, subtraj);
         for (int j = 0; j < subtraj.size(); j++) {
           traj_[j][4] = subtraj[j][4];
         }
@@ -541,7 +529,7 @@ void assembleMultiMapPaths() {
         vector<vector<double>> subtraj(traj_.begin() +
                                            gear_change_pnt_ind[i - 1],
                                        traj_.begin() + gear_change_pnt_ind[i]);
-        subtraj = velocityAssign(step_size, amax, vmax, subtraj);
+        subtraj = velocityAssign(step_size, amax_, vmax_, subtraj);
         for (int j = 0; j < subtraj.size(); j++) {
           traj_[j + gear_change_pnt_ind[i - 1]][4] = subtraj[j][4];
         }
@@ -550,19 +538,16 @@ void assembleMultiMapPaths() {
     if (gear_change_pnt_ind[num_gcp - 1] != traj_.size() - 1) {
       vector<vector<double>> subtraj(
           traj_.begin() + gear_change_pnt_ind[num_gcp - 1], traj_.end() - 1);
-      subtraj = velocityAssign(step_size, amax, vmax, subtraj);
+      subtraj = velocityAssign(step_size, amax_, vmax_, subtraj);
       for (int j = 0; j < subtraj.size(); j++) {
         traj_[j + gear_change_pnt_ind[num_gcp - 1]][4] = subtraj[j][4];
       }
     }
   }
-  for (int i = 0; i < traj_.size(); i++) // TODO
+  for (int i = 0; i < traj_.size(); i++)
   {
-    if (traj_[i][4] < 0.2 && traj_[i][4] > vmin) {
-      if (i != traj_.size() - 1) {
-        traj_[i][4] = vmin;
-      }
-    }
+    if (traj_[i][4] < vmin_)
+      traj_[i][4] = vmin_;
   }
 
   /* ofstream outFile1;
@@ -596,13 +581,6 @@ void assembleMultiMapPaths() {
   // 新增：标记waypoints已处理，并在多地图模式下发送反馈
   waypoints_processed_ = true;
   
-  // 注意：多地图模式的反馈已经在收集阶段发送，这里只处理单地图模式
-  // 如果是单地图模式或非收集模式，发送处理完成信号给location_map
-  if (!multi_map_mode_) {
-    // 单地图模式下发送反馈
-    ROS_INFO("Single map mode: waypoints processed");
-  }
-  
   // 发送所有地图处理完成的信号
   std_msgs::String ready_msg;
   ready_msg.data = "all_maps_processed";
@@ -634,9 +612,29 @@ void wplCallback(const geometry_msgs::PoseArray &msg) {
   geometry_msgs::PoseArray current_path; // 当前路径数据
   if (current_waypoints_count > 3)
   {
-    const auto& start_point = msg.poses[0].position;
-    const auto& second_point = msg.poses[1].position;
-    const auto& second_last_point = msg.poses[current_waypoints_count - 2].position;
+    geometry_msgs::Point start_point, second_point, second_last_point;
+    if (!multi_map_mode_) // 单地图下
+    {
+      start_point = msg.poses[0].position;
+      second_point = msg.poses[1].position;
+      second_last_point = msg.poses[current_waypoints_count - 2].position;
+
+    }
+    else
+    {
+      if (collected_map_paths_.empty()) // 多地图下第一片割草区域
+      {
+        start_point = msg.poses[0].position;
+        second_point = msg.poses[1].position;
+        second_last_point = msg.poses[current_waypoints_count - 2].position;
+      }
+      else  // 多地图下非第一片割草区域
+      {
+        start_point = msg.poses[0].position;
+        second_point = msg.poses[2].position;
+        second_last_point = msg.poses[current_waypoints_count - 3].position;
+      }
+    }
     ROS_INFO("start_point: (%.2f, %.2f), second_point: (%.2f, %.2f), second_last_point: (%.2f, %.2f)", start_point.x, start_point.y, second_point.x, second_point.y, second_last_point.x, second_last_point.y);
     
     double dist_to_second = sqrt(pow(start_point.x - second_point.x, 2) + 
@@ -668,9 +666,7 @@ void wplCallback(const geometry_msgs::PoseArray &msg) {
   ROS_INFO("=== Received waypoints callback ===");
   ROS_INFO("Current waypoints count: %d", current_waypoints_count);
   ROS_INFO("Last waypoints count: %d", last_waypoints_count_);
-  ROS_INFO("Multi-map mode: %s, Collecting: %s", 
-           multi_map_mode_ ? "YES" : "NO", 
-           is_collecting_paths_ ? "YES" : "NO");
+  ROS_INFO("Multi-map mode: %s", multi_map_mode_ ? "YES" : "NO");
            
   // 打印第一个和最后一个点的坐标来区分路径
   /* if (current_waypoints_count > 0) {
@@ -695,30 +691,8 @@ void wplCallback(const geometry_msgs::PoseArray &msg) {
     waypoints_processed_ = false;
   }
   
-  // 新增：检查起始点是否不同（如果有数据的话）
-  // if (current_waypoints_count > 0) {
-  //   const auto& current_start_point = current_path.poses[0].position;
-    
-  //   if (!has_last_start_point_) {
-  //     // 第一次收到数据
-  //     is_new_data = true;
-  //     last_start_point_ = current_start_point;
-  //     has_last_start_point_ = true;
-  //     ROS_INFO("First waypoints data received, treating as new");
-  //   } else {
-  //     // 比较起始点坐标（使用小的容差）
-  //     double distance = sqrt(pow(current_start_point.x - last_start_point_.x, 2) + 
-  //                           pow(current_start_point.y - last_start_point_.y, 2));
-  //     if (distance > 0.1) {  // 起始点距离超过0.1米认为是新路径
-  //       is_new_data = true;
-  //       last_start_point_ = current_start_point;
-  //       ROS_INFO("Start point changed (distance: %.3f), treating as new data", distance);
-  //     }
-  //   }
-  // }
-  
   // 在多地图收集模式下，总是认为是新数据
-  if (multi_map_mode_ && is_collecting_paths_) {
+  if (multi_map_mode_) {
     is_new_data = true;
     waypoints_processed_ = false;
     ROS_INFO("Multi-map collection mode: treating as new data regardless of count");
@@ -732,9 +706,54 @@ void wplCallback(const geometry_msgs::PoseArray &msg) {
   
   ROS_INFO("Processing new waypoints data with %d points", current_waypoints_count);
   
-  // TODO: 多地图路径拼接功能 - 多地图模式下的路径收集处理 cnk 0805
-  if (multi_map_mode_ && is_collecting_paths_)
+  if (collected_map_paths_.empty())
   {
+    if (multi_map_mode_)
+      current_path.poses.pop_back(); // 第一幅地图删除终点，因为多地图割完一片区域不用回到起点
+  }
+  else
+  {
+    // 不是第一幅地图，删除借用的第一幅地图的起点和终点，删除自动生成的起点和终点
+    current_path.poses.erase(current_path.poses.begin());
+    current_path.poses.pop_back();
+    current_path.poses.erase(current_path.poses.begin());
+    current_path.poses.pop_back();
+  }
+  if (multi_map_mode_)
+  {
+    if (fine_mode_.load())
+    {
+      std::cout << getLogTime() << "多地图精细割草模式" << std::endl;
+      geometry_msgs::PoseArray reverse_path = current_path;
+      std::reverse(reverse_path.poses.begin(), reverse_path.poses.end());
+      // 找到距离最远的两个点并求其法向量
+      float max_dis_2 = 0;
+      int max_index = 0;
+      for (int i = 0; i < reverse_path.poses.size() - 1; i++)
+      {
+        float dist_2 = pow(reverse_path.poses[i].position.x - reverse_path.poses[i + 1].position.x, 2) +
+                        pow(reverse_path.poses[i].position.y - reverse_path.poses[i + 1].position.y, 2);
+        if (dist_2 > max_dis_2)
+        {
+          max_dis_2 = dist_2;
+          max_index = i;
+        }
+      }
+      float dx = reverse_path.poses[max_index + 1].position.x - reverse_path.poses[max_index].position.x;
+      float dy = reverse_path.poses[max_index + 1].position.y - reverse_path.poses[max_index].position.y;
+      // 左法向量
+      float nx = -dy/std::sqrt(max_dis_2);
+      float ny = dx/std::sqrt(max_dis_2);
+      float offset = 0.234;
+      for (int i = 0; i < reverse_path.poses.size(); i++)
+      {
+        reverse_path.poses[i].position.x += offset * nx;
+        reverse_path.poses[i].position.y += offset * ny;
+      }
+      // 将反向路径拼接到正向路径后面
+      current_path.poses.insert(current_path.poses.end(), reverse_path.poses.begin(), reverse_path.poses.end());
+      current_waypoints_count = current_path.poses.size();
+    }
     // 在多地图模式下，收集各个地图的路径
     collected_map_paths_.push_back(current_path);
     received_map_count_++;
@@ -756,22 +775,7 @@ void wplCallback(const geometry_msgs::PoseArray &msg) {
       ROS_INFO("Map %d - First: (%.6f, %.6f), Last: (%.6f, %.6f)", 
                received_map_count_, first_point.x, first_point.y, last_point.x, last_point.y);
     }
-    
-    // 打印已收集的所有地图路径统计
-    ROS_INFO("--- Summary of collected maps ---");
-    int total_points = 0;
-    for (int i = 0; i < collected_map_paths_.size(); i++) {
-      int points = collected_map_paths_[i].poses.size();
-      total_points += points;
-      if (points > 0) {
-        const auto& first = collected_map_paths_[i].poses[0].position;
-        const auto& last = collected_map_paths_[i].poses[points-1].position;
-        ROS_INFO("  Map %d: %d points, First:(%.3f,%.3f) Last:(%.3f,%.3f)", 
-                 i + 1, points, first.x, first.y, last.x, last.y);
-      }
-    }
-    ROS_INFO("Total waypoints collected: %d points", total_points);
-             
+
     // 标记当前waypoints已处理，并发送反馈信号
     waypoints_processed_ = true;
     std_msgs::String ready_msg;
@@ -788,7 +792,40 @@ void wplCallback(const geometry_msgs::PoseArray &msg) {
     std::cout << getLogTime() << "断点复割，无需全局规划" << std::endl;
     return;
   }
-  current_path.poses.pop_back(); // 删除最后一个点
+  if (fine_mode_.load())
+  {
+    std::cout << getLogTime() << "单地图精细割草模式" << std::endl;
+    current_path.poses.pop_back(); // 删除最后一个点,这是起点，精细割草模式会原路错开返回，所以这里要删除
+    geometry_msgs::PoseArray reverse_path = current_path;
+    std::reverse(reverse_path.poses.begin(), reverse_path.poses.end());
+    // 找到距离最远的两个点并求其法向量
+    float max_dis_2 = 0;
+    int max_index = 0;
+    for (int i = 0; i < reverse_path.poses.size() - 1; i++)
+    {
+      float dist_2 = pow(reverse_path.poses[i].position.x - reverse_path.poses[i + 1].position.x, 2) +
+                      pow(reverse_path.poses[i].position.y - reverse_path.poses[i + 1].position.y, 2);
+      if (dist_2 > max_dis_2)
+      {
+        max_dis_2 = dist_2;
+        max_index = i;
+      }
+    }
+    float dx = reverse_path.poses[max_index + 1].position.x - reverse_path.poses[max_index].position.x;
+    float dy = reverse_path.poses[max_index + 1].position.y - reverse_path.poses[max_index].position.y;
+    // 左法向量
+    float nx = -dy/std::sqrt(max_dis_2);
+    float ny = dx/std::sqrt(max_dis_2);
+    float offset = 0.234;
+    for (int i = 0; i < reverse_path.poses.size(); i++)
+    {
+      reverse_path.poses[i].position.x += offset * nx;
+      reverse_path.poses[i].position.y += offset * ny;
+    }
+    // 将反向路径拼接到正向路径后面
+    current_path.poses.insert(current_path.poses.end(), reverse_path.poses.begin(), reverse_path.poses.end());
+    current_waypoints_count = current_path.poses.size();
+  }
 	new_waypoints_pub.publish(current_path);
 	std::cout << getLogTime() << "单地图路径已发布, 路径点数" << current_waypoints_count << std::endl;
   
@@ -826,8 +863,7 @@ void wplCallback(const geometry_msgs::PoseArray &msg) {
   }
 
   // 调用LinearInterpolate针对两点之间进行线性插值
-  vector<double> traj_pnt = {0.0, 0.0, 0.0, 0.0,
-                             0.0}; // define the format of the trajectory point;
+  vector<double> traj_pnt = {0.0, 0.0, 0.0, 0.0, 0.0}; // define the format of the trajectory point;
   for (int i = 0; i < routine.size() - 1; i++) {
     double s_x = routine[i][0];
     double s_y = routine[i][1];
@@ -837,7 +873,7 @@ void wplCallback(const geometry_msgs::PoseArray &msg) {
     double g_yaw = routine[i + 1][2];
 
     vector<vector<double>> traj_interpolate =
-        LinearInterpolate({s_x, s_y, s_yaw}, {g_x, g_y, g_yaw}, step_size);
+        LinearInterpolate({s_x, s_y, s_yaw, 0}, {g_x, g_y, g_yaw, 0}, step_size);
 
     for (int j = 0; j < traj_interpolate.size() - 1; j++) {
       traj_pnt[0] = traj_interpolate[j][0];
@@ -854,12 +890,12 @@ void wplCallback(const geometry_msgs::PoseArray &msg) {
     }
   }
   // 调整第一个点和最后一个点的值
-  traj_[0][3] = 1; // 把轨迹起点设置为正常档位
+  traj_[0][3] = 1; // 把轨迹起点设置为正常档位,方便后面找中间档位为2的点可以自动排除第一个点
   if (traj_[traj_.size() - 1][0] != routine[routine.size() - 1][0] &&
       traj_[traj_.size() - 1][1] != routine[routine.size() - 1][1]) {
     traj_.push_back({routine[routine.size() - 1][0],
                      routine[routine.size() - 1][1],
-                     routine[routine.size() - 1][2], 1, 0});
+                     routine[routine.size() - 1][2], 1, 0, 0});
   } // 轨迹终点设置为正常行驶档位，速度设置为0
 
   // 将traj_中路径点的yaw限制在-pi到pi的范围之内
@@ -884,7 +920,7 @@ void wplCallback(const geometry_msgs::PoseArray &msg) {
   /*assign the velocity to the path section by section*/
   int num_gcp = gear_change_pnt_ind.size();
   if (num_gcp == 0) {
-    traj_ = velocityAssign(step_size, amax, vmax, traj_);
+    traj_ = velocityAssign(step_size, amax_, vmax_, traj_);
   }
   if (num_gcp >= 1) {
     ROS_WARN("the have %.2d turn point", num_gcp);
@@ -892,7 +928,7 @@ void wplCallback(const geometry_msgs::PoseArray &msg) {
       if (i == 0) {
         vector<vector<double>> subtraj(traj_.begin(),
                                        traj_.begin() + gear_change_pnt_ind[i]);
-        subtraj = velocityAssign(step_size, amax, vmax, subtraj);
+        subtraj = velocityAssign(step_size, amax_, vmax_, subtraj);
         for (int j = 0; j < subtraj.size(); j++) {
           traj_[j][4] = subtraj[j][4];
         }
@@ -901,7 +937,7 @@ void wplCallback(const geometry_msgs::PoseArray &msg) {
         vector<vector<double>> subtraj(traj_.begin() +
                                            gear_change_pnt_ind[i - 1],
                                        traj_.begin() + gear_change_pnt_ind[i]);
-        subtraj = velocityAssign(step_size, amax, vmax, subtraj);
+        subtraj = velocityAssign(step_size, amax_, vmax_, subtraj);
         for (int j = 0; j < subtraj.size(); j++) {
           traj_[j + gear_change_pnt_ind[i - 1]][4] = subtraj[j][4];
         }
@@ -910,20 +946,16 @@ void wplCallback(const geometry_msgs::PoseArray &msg) {
     if (gear_change_pnt_ind[num_gcp - 1] != traj_.size() - 1) {
       vector<vector<double>> subtraj(
           traj_.begin() + gear_change_pnt_ind[num_gcp - 1], traj_.end() - 1);
-      subtraj = velocityAssign(step_size, amax, vmax, subtraj);
+      subtraj = velocityAssign(step_size, amax_, vmax_, subtraj);
       for (int j = 0; j < subtraj.size(); j++) {
         traj_[j + gear_change_pnt_ind[num_gcp - 1]][4] = subtraj[j][4];
       }
     }
   }
-  // (vmin, 0.2) 区间是低速点，会调整为最小速度，不清楚意义在哪里？**********************
-  for (int i = 0; i < traj_.size(); i++) // TODO
+  for (int i = 0; i < traj_.size(); i++)
   {
-    if (traj_[i][4] < 0.2 && traj_[i][4] > vmin) {
-      if (i != traj_.size() - 1) {
-        traj_[i][4] = vmin;
-      }
-    }
+    if (traj_[i][4] < vmin_) 
+      traj_[i][4] = vmin_;
   }
 
   RS_curve_gen_flag = 1;
@@ -990,14 +1022,14 @@ void ChannelPathSubCallback(const util::MapPath &msg) {
   /*assign the velocity to the path section by section */
   int num_gcp = gear_change_pnt_ind.size();
   if (num_gcp == 0)
-    traj_ = velocityAssign(step_size, amax, vmax, traj_);
+    traj_ = velocityAssign(step_size, amax_, vmax_, traj_);
 
   if (num_gcp > 0) {
     for (int i = 0; i < gear_change_pnt_ind.size(); i++) {
       if (i == 0) {
         vector<vector<double>> subtraj(traj_.begin(),
                                        traj_.begin() + gear_change_pnt_ind[i]);
-        subtraj = velocityAssign(step_size, amax, vmax, subtraj);
+        subtraj = velocityAssign(step_size, amax_, vmax_, subtraj);
         for (int j = 0; j < subtraj.size(); j++) {
           traj_[j][4] = subtraj[j][4];
         }
@@ -1006,7 +1038,7 @@ void ChannelPathSubCallback(const util::MapPath &msg) {
         vector<vector<double>> subtraj(traj_.begin() +
                                            gear_change_pnt_ind[i - 1],
                                        traj_.begin() + gear_change_pnt_ind[i]);
-        subtraj = velocityAssign(step_size, amax, vmax, subtraj);
+        subtraj = velocityAssign(step_size, amax_, vmax_, subtraj);
         for (int j = 0; j < subtraj.size(); j++) {
           traj_[j + gear_change_pnt_ind[i - 1]][4] = subtraj[j][4];
         }
@@ -1015,18 +1047,15 @@ void ChannelPathSubCallback(const util::MapPath &msg) {
     if (gear_change_pnt_ind[num_gcp - 1] != traj_.size() - 1) {
       vector<vector<double>> subtraj(
           traj_.begin() + gear_change_pnt_ind[num_gcp - 1], traj_.end() - 1);
-      subtraj = velocityAssign(step_size, amax, vmax, subtraj);
+      subtraj = velocityAssign(step_size, amax_, vmax_, subtraj);
       for (int j = 0; j < subtraj.size(); j++) {
         traj_[j + gear_change_pnt_ind[num_gcp - 1]][4] = subtraj[j][4];
       }
     }
   }
   for (int i = 0; i < traj_.size(); i++) {
-    if (traj_[i][4] <= 0.2 && traj_[i][4] > vmin) {
-      if (i != traj_.size() - 1) {
-        traj_[i][4] = vmin;
-      }
-    }
+    if (traj_[i][4] < vmin_)
+      traj_[i][4] = vmin_;
   }
 
   channel_path_gen_flag = 1;
@@ -1062,19 +1091,9 @@ void vehPoseFisrtSubCallback(const util::Position &Loc_msg) {
     double veh_pose_y = Loc_msg.position_y;
     double veh_pose_yaw = Loc_msg.yaw; // 本地特别定义，与标准消息格式不同
 
-    // double distance =
-    //     sqrt((veh_pose_x - traj_[0][0]) * (veh_pose_x - traj_[0][0]) +
-    //          (veh_pose_y - traj_[0][1]) * (veh_pose_y - traj_[0][1]));
-    // if (distance - 1.0 < 1e-3 || abs(traj_[0][2] - veh_pose_yaw) < PI / 2.0)
-    // {
-    //     traj_guide_ = {};
-    //     cout << "distance is too small ,no neccesary to generate a path!" <<
-    //     endl; validFlag = 0;
-    // }
-
     vector<vector<double>> traj_guide =
-        LinearInterpolate({veh_pose_x, veh_pose_y, veh_pose_yaw},
-                          {traj_[0][0], traj_[0][1], traj_[0][2]}, step_size);
+        LinearInterpolate({veh_pose_x, veh_pose_y, veh_pose_yaw, 111.0},
+                          {traj_[0][0], traj_[0][1], traj_[0][2], 111.0}, step_size);
     if (traj_guide.empty() || traj_guide.size() < 3) {
       cout << "no link path is generated! OR Too FEW points" << endl;
       validFlag = 0;
@@ -1082,9 +1101,7 @@ void vehPoseFisrtSubCallback(const util::Position &Loc_msg) {
 
     // 小车位置和轨迹起点相距太远，中间再插入一条轨迹
     if (validFlag) {
-      vector<double> traj_pnt2 = {
-          0.0, 0.0, 0.0, 0.0,
-          0.0}; // define the format of the trajectory point;
+      vector<double> traj_pnt2 = {0.0, 0.0, 0.0, 0.0, 0.0}; // define the format of the trajectory point;
       for (int i = 0; i < traj_guide.size() - 1; i++) {
         traj_pnt2[0] = traj_guide[i][0];
         traj_pnt2[1] = traj_guide[i][1];
@@ -1103,8 +1120,8 @@ void vehPoseFisrtSubCallback(const util::Position &Loc_msg) {
       // "traj_guide[traj_guide.size() - 1][1] " << traj_guide[traj_guide.size()
       // - 1][1] << std::endl;
 
-      // 如果插值轨迹的倒数第二个点和原轨迹的起点角度不同，则将原轨迹起点的档位设置为2，表示小车到达该轨迹起点之前不能加速，要先调整好角度
-      if (traj_guide[traj_guide.size() - 2][2] != traj_[0][2]) // 不等号是不是写得过于绝对了,影响运动的流畅性********************************************
+      // 如果插值轨迹的倒数第二个点和原轨迹的起点角度相差过大，则将原轨迹起点的档位设置为2，表示小车到达该轨迹起点之前不能加速，要先调整好角度
+      if (fabs(traj_guide[traj_guide.size() - 2][2] - traj_[0][2]) > 0.1)
         traj_[0][3] = 2;
 
       /*调整角度值-pi到pi之间*/
@@ -1119,21 +1136,18 @@ void vehPoseFisrtSubCallback(const util::Position &Loc_msg) {
       }
 
       /*assign the velocity to the path*/
-      traj_guide_ = velocityAssign(step_size, amax, vmax, traj_guide_);
+      traj_guide_ = velocityAssign(step_size, amax_, vmax_, traj_guide_);
 
       for (int i = 0; i < traj_guide_.size(); i++) {
-        if (traj_guide_[i][4] <= 0.2) {
-          traj_guide_[i][4] = vmin;
-        }
+        if (traj_guide_[i][4] <= vmin_)
+          traj_guide_[i][4] = vmin_;
       }
     }
-    /********************************************/
     else {
       traj_guide_ = {};
     }
 
-    traj_global_.insert(traj_global_.end(), traj_guide_.begin(),
-                        traj_guide_.end());
+    traj_global_.insert(traj_global_.end(), traj_guide_.begin(), traj_guide_.end());
     traj_global_.insert(traj_global_.end(), traj_.begin(), traj_.end());
     
     //  查找traj_global_中所有变档点(gear=2)的位置
@@ -1152,8 +1166,8 @@ void vehPoseFisrtSubCallback(const util::Position &Loc_msg) {
         //   traj_global_[curr_idx][3] = 1; // 把前一个变档点设为普通点
         //   continue; // 跳过当前变档点的速度调整
         // }
-        // 把变档点前5个点速度调整为0.25
-        for (int j = max(1, curr_idx - 5); j < curr_idx; j++) {
+        // 把变档点前3个点速度调整为0.25
+        for (int j = max(1, curr_idx - 3); j < curr_idx; j++) {
           if (traj_global_[j][3] == 1) // 只调整普通点的速度，变档点的速度保持不变
             traj_global_[j][4] = 0.25;
         }
@@ -1223,7 +1237,6 @@ void SignalCallBack(const std_msgs::String &string) {
   // TODO: 多地图路径拼接功能 - 检测多地图模式信号 cnk 0805
   if (data == "multi_map") {
       multi_map_mode_ = true;
-      is_collecting_paths_ = true;
       repeat_mode_.store(false);
       collected_map_paths_.clear();
       received_map_count_ = 0;
@@ -1258,6 +1271,21 @@ void SignalCallBack(const std_msgs::String &string) {
     reset();
     std::cout << getLogTime() << "割草任务完成" << std::endl;
   }
+  else if(data == "fine_mode_true")
+  {
+      fine_mode_=true;
+      std::cout << getLogTime() << "精细割草模式已开启" << std::endl;
+  }
+  else if(data == "fine_mode_false")
+  {
+      fine_mode_=false;
+      std::cout << getLogTime() << "精细割草模式已关闭" << std::endl;
+  }
+  else if (prefix == "set_velocity")
+  {
+    vmax_= std::stod(name);
+    std::cout << getLogTime() << "设置速度为：" << vmax_ << std::endl;
+  }
   else if (data == "reset") {
     reset();
   }
@@ -1273,7 +1301,6 @@ void reset()
   traj_.clear();
   // 重置多地图相关状态
   multi_map_mode_ = false;
-  is_collecting_paths_ = false;
   collected_map_paths_.clear();
   received_map_count_ = 0;
   expected_map_count_ = 0;
@@ -1288,17 +1315,16 @@ void reset()
   // 重置起始点相关
   // last_start_point_ = geometry_msgs::Point();
   // 重置所有标志位到初始状态
-  vmax = 0.8;
-  vmin = 0.1;
-  amax = 0.1;
-  step_size = 0.25;
+  vmin_ = 0.25;
+  amax_ = 0.1;
+  step_size = 0.15;
   RS_curve_gen_flag = 0;
   veh_pose_fisrt_sub = 0;
   channel_path_gen_flag = 0;
   repeat_mode_.store(false);
   // 重置地图名称
   current_map_name_ = "default";
-  map_collection_timeout_ = 2.0;
+  map_collection_timeout_ = 2.5;
   std::cout << getLogTime() << "全局规划器重置成功！" << std::endl;
 }
 
@@ -1309,7 +1335,7 @@ int main(int argc, char **argv) {
 	// 创建消息发送节点句柄
 	ros::NodeHandle n;
 	// 创建publisher，发布消息
-	pub_path = n.advertise<util::LocalPath>("/lawn_mower/global_trajectory", 1); // 最终输出的全局路径，由read_watepoints节点订阅
+	pub_path = n.advertise<util::LocalPath>("/lawn_mower/global_trajectory", 1); // 最终输出的全局路径，由read_waypoints节点订阅
 	planning_ready_pub = n.advertise<std_msgs::String>("/planning_ready", 1);  // 新增：发布反馈信号
 	new_waypoints_pub = n.advertise<geometry_msgs::PoseArray>("/newwaypoints_list", 1,true);  // 发布路径给UI显示
 	map_hull_pub = n.advertise<geometry_msgs::Polygon>("/send_hull_info", 1, true);  // 发布边界多边形，由避障节点订阅来设置避障规划用的栅格地图
@@ -1331,7 +1357,7 @@ int main(int argc, char **argv) {
 		loop_rate.sleep();
 
 		// 超时检查：只在多地图收集模式下进行，每5秒处理一次多地图拼接逻辑，避免频繁检查导致性能问题
-		if (multi_map_mode_ && is_collecting_paths_ && collection_timeout_started_) {
+		if (multi_map_mode_ && collection_timeout_started_) {
 			double elapsed_time = (ros::Time::now() - last_map_received_time_).toSec();
 			if (elapsed_time > map_collection_timeout_) {
 			ROS_WARN("Map collection timeout (%.1f seconds)! Received %d maps. Starting assembly.", 

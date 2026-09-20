@@ -1,5 +1,3 @@
-#include "util/LocalPath.h"
-#include "util/Position.h"
 #include <fstream>
 #include <vector>
 #include <geometry_msgs/Point.h>
@@ -29,7 +27,6 @@ std::deque<std::pair<double, double>> waypoint_buffer;
 std::string current_csv_path = csv_path_pre_ + "dropped_waypoints.csv";
 util::LocalPath planned_path_; 
 std::string current_name_;
-bool use_multi_map_ = false;  // 新增：标识是否使用多地图模式
 
 std::string getLogTime()
 {
@@ -127,7 +124,8 @@ private:
   util::LocalPath avoid_path_;
   util::LocalPath current_path_segment_; // 当前发布的路径段
   util::LocalPath recovery_path_;        // 路径恢复用的路径
-  geometry_msgs::PoseArray pose_array_msg_;
+
+  bool use_multi_map_ = false;  // 是否使用多地图模式
 
   // 状态标志
   int min_pos_ = 0;                // 全局路径当前最近点索引
@@ -146,10 +144,6 @@ private:
   // 初始化标志
   bool first_loop_ = true;
   bool avoid_first_loop_ = false;
-
-  // // 避障路径终点
-  // double avoid_end_pos_x_ = 0.0;
-  // double avoid_end_pos_y_ = 0.0;
 
   // 断点复割模式
   bool repeat_mode_ = false;
@@ -195,14 +189,13 @@ public:
       ROS_ERROR("Could not read the mower SN!");
       return;
     }
-
     std::ostringstream buffer;
     buffer << input_file.rdbuf();
     std::string file_contents = buffer.str();
     ROS_INFO("Mower SN: %s", file_contents.c_str());
-
-    mower_num_.data = file_contents;
-    mower_num_pub_.publish(mower_num_);
+    std_msgs::String mower_num;
+    mower_num.data = file_contents;
+    mower_num_pub_.publish(mower_num);
   }
 
   void generateStraightLinePathToTarget(double target_x, double target_y)
@@ -432,14 +425,14 @@ public:
     }
 
     ROS_INFO("local_x: %.4f, local_y: %.4f, gear: %ld,  error_heading: %.4f", local_x, local_y, gear, error_heading);
-    // 当前点在车的前方1.5m或在后方3m外或横向偏差超过0.6m触发恢复
-    if (local_x > 2.5 || local_x < -3 || fabs(local_y) > 2.6)
+    // 当前点在车的前方3m或在后方3m外或横向偏差超过2.5m触发恢复
+    if (local_x > 3 || local_x < -3 || fabs(local_y) > 2.5)
     {
       need_recovery_path_ = true;
       std::cout << getLogTime() << "已偏离原来割草路线" << std::endl;
       return false;
     }
-    if (local_x <= 0.05 && gear == 1 && std::fabs(error_heading) < M_PI) 
+    if (local_x <= 0.1 && gear == 1 && std::fabs(error_heading) < M_PI) 
     {
       ROS_INFO("gear=1 points is droped, %.4f, %.4f", path_x, path_y);
       return true;
@@ -561,6 +554,7 @@ public:
     {
       // target1用于控制，提取到第一个转向点，target2用于避障检测，提取50个点
       target1.point_num = 0;
+      target2.point_num = 0;
       for (int i = start_index; i < source.x.size(); i++)
       {
         target1.x.emplace_back(source.x[i]);
@@ -572,7 +566,7 @@ public:
         if (source.gear[i] == 2)
           break; // 遇到转向点就停止提取
       }
-      for (int i = start_index; i < std::min(start_index + 50, (int)source.x.size()); i++)
+      for (int i = start_index; i < std::min(start_index + 200, (int)source.x.size()); i++)
       {
         target2.x.emplace_back(source.x[i]);
         target2.y.emplace_back(source.y[i]);
@@ -627,7 +621,7 @@ public:
       tmp_path.gear.front() = 2;  // 起点设置为停止点，gear=2
       tmp_path.speed.front() = 0;
       // 低速起步
-      for (int i = 0; i < std::min(4, (int)tmp_path.speed.size()); ++i)
+      for (int i = 0; i < std::min(3, (int)tmp_path.speed.size()); ++i)
       {
         if (tmp_path.speed[i] != 0)
           tmp_path.speed[i] = 0.25;
@@ -641,7 +635,7 @@ public:
       min_pos_ = findNearestWaypoint(global_path_, current_position);
       std::cout << getLogTime() << "进入割草跟踪轨迹模式，最近点索引为：" << min_pos_ << std::endl;
       // 断点复割模式，低速起步
-      for (int i = 0; i < std::min(4, (int)global_path_.speed.size()); ++i)
+      for (int i = 0; i < std::min(3, (int)global_path_.speed.size()); ++i)
       {
         if (global_path_.speed[i] != 0)
           global_path_.speed[i] = 0.25;
@@ -730,7 +724,7 @@ public:
   void trajectoryCallback(const util::LocalPath &trajectory_msgs) {
     if (repeat_mode_)
     {
-      std::cout << getLogTime() << "测试模式，使用本地轨迹，不接收规划的轨迹" << std::endl;
+      std::cout << getLogTime() << "断点复割模式，使用本地轨迹，不接收规划的轨迹" << std::endl;
       return;
     }
 	  ROS_INFO("%s接收到全局轨迹，轨迹点数为%d", getLogTime().c_str(), trajectory_msgs.x.size());
@@ -818,6 +812,9 @@ public:
     //          << current_position.point.y << " " << current_position.point.z
     //          << std::endl;
     // 根据当前模式处理不同路径
+    if (avoid_status_copy.data == 3 || avoid_status_copy.data == 4)
+      return;
+
     if (avoid_status_copy.data == 1) {
       processAvoidPath(current_position);
     } else {
@@ -976,11 +973,6 @@ public:
     clearLocalPath(recovery_path_);
     clearLocalPath(planned_path_);
     
-    // 重置pose_array_msg_
-    pose_array_msg_.poses.clear();
-    pose_array_msg_.header.stamp = ros::Time(0);
-    pose_array_msg_.header.frame_id = "";
-    
     // 重置所有位置索引
     min_pos_ = 0;
     avoid_min_pos_ = 0;
@@ -1008,7 +1000,6 @@ public:
     // 重置字符串变量
     current_name_ = "";
     current_csv_path = csv_path_pre_ + "dropped_waypoints.csv";
-    mower_num_.data = "";
     
     // 清空waypoint缓冲区
     waypoint_buffer.clear();

@@ -79,6 +79,45 @@
 2. 云平台确认场地安全后下发 `confirm`，车辆才开始走 8 字形。
 3. 初始化过程中可随时下发 `cancel` 取消。
 
+### 1.5 建图控制 `mower/{id}/cmd/mapping`
+
+建图 = 遥控车辆（`cmd/move`）沿区域边界/障碍物/路径行驶，车端按距离阈值采点，最终保存为矢量地图（YAML）。
+
+```json
+{"action": "enter"}
+{"action": "start_boundary"}
+{"action": "stop_boundary"}
+{"action": "start_obstacle"}
+{"action": "stop_obstacle"}
+{"action": "start_parking"}
+{"action": "stop_parking"}
+{"action": "start_path"}
+{"action": "stop_path"}
+{"action": "save", "map_name": "map_0701"}
+{"action": "delete", "map_name": "map_0701"}
+{"action": "list"}
+{"action": "reset"}
+```
+
+| action | 说明 |
+|---|---|
+| enter | 进入建图模式（车端发 `/signal = m_mode`）。雷达/RTK 收到后自行准备，随后 `/Mower/position` 坐标会被外部定位系统归零为 (0,0,0)，**必须等坐标归零后才能开始录边界** |
+| start_boundary / stop_boundary | 开始 / 停止录制割草区域边界（每 1m 采一个点） |
+| start_obstacle / stop_obstacle | 开始 / 停止录制障碍物（洞，每 0.1m 采一个点），需先录过边界 |
+| start_parking / stop_parking | 开始 / 停止录制停车位（单点，取当前车位置） |
+| start_path / stop_path | 开始 / 停止录制区域间连接路径（每 0.5m 采一个点） |
+| save | 把已录制内容保存为 `map_name.yaml`（map_name 不能含 `/` 和 `..`），保存后本次建图会话结束 |
+| delete | 删除指定地图文件 |
+| list | 请求地图列表，结果通过 `state/map_list` 回传 |
+| reset | 放弃当前录制内容并结束建图会话 |
+
+典型建图流程：
+1. 下发 `enter` 进入建图模式。
+2. 观察 `state/mapping`（或 `state/location`），等定位状态有效（state 为 1/2/5）且 x、y 归零到 (0,0) 附近。
+3. 下发 `start_boundary`，用 `cmd/move` 遥控车沿边界行驶——云平台用 `state/mapping` 的轨迹流实时描边。
+4. 到终点后下发 `stop_boundary`；如有障碍物/停车位/连接路径，按需重复 start/stop。
+5. 下发 `save` 保存地图。
+
 ## 二、上行：割草机 → 云平台（MQTT）
 
 ### 2.1 定位上报 `mower/{id}/state/location`
@@ -105,6 +144,24 @@
 {"battery_soc": 85, "warning_state_one": 0, "warning_state_two": 0, "mower_height": 6, "stamp": 1751356800.5}
 ```
 
+### 2.3 建图轨迹 `mower/{id}/state/mapping`
+
+仅在**建图会话期间**（收到 `cmd/mapping enter` 起，到 `save` 或 `reset` 止）上报，频率与 `state/location` 相同（默认 10Hz），内容就是建图期间车辆走过的 `/Mower/position` 轨迹。云平台建图页面用它实时描出行驶轨迹（即正在录制的边界走向），并据此观察 enter 之后坐标是否已归零。
+
+```json
+{"x": 0.0, "y": 0.0, "z": 0.0, "roll": 0.01, "pitch": -0.02, "yaw": 1.57, "state": 4, "stamp": 1751356800.6}
+```
+
+字段含义与 `state/location` 完全一致。
+
+### 2.4 地图列表 `mower/{id}/state/map_list`
+
+收到 `cmd/mapping {"action":"list"}` 后回传。
+
+```json
+{"maps": ["map_0630", "map_0701"], "stamp": 1751356800.8}
+```
+
 ## 三、联调示例（mosquitto 客户端模拟云平台）
 
 ```bash
@@ -127,6 +184,13 @@ mosquitto_pub -h <broker> -t 'mower/mower_001/cmd/init_location' -m '{"action":"
 mosquitto_pub -h <broker> -t 'mower/mower_001/cmd/init_location' -m '{"action":"confirm"}'
 # 取消定位初始化
 mosquitto_pub -h <broker> -t 'mower/mower_001/cmd/init_location' -m '{"action":"cancel"}'
+# 进入建图模式（等坐标归零后）开始录边界 → 遥控走边界 → 停止录边界 → 保存地图
+mosquitto_pub -h <broker> -t 'mower/mower_001/cmd/mapping' -m '{"action":"enter"}'
+mosquitto_pub -h <broker> -t 'mower/mower_001/cmd/mapping' -m '{"action":"start_boundary"}'
+mosquitto_pub -h <broker> -t 'mower/mower_001/cmd/mapping' -m '{"action":"stop_boundary"}'
+mosquitto_pub -h <broker> -t 'mower/mower_001/cmd/mapping' -m '{"action":"save","map_name":"map_0701"}'
+# 请求地图列表
+mosquitto_pub -h <broker> -t 'mower/mower_001/cmd/mapping' -m '{"action":"list"}'
 ```
 
 ## 四、安全约定

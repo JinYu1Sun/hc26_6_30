@@ -16,6 +16,7 @@ CN_FONT = "宋体"
 EN_FONT = "Times New Roman"
 SIZE = Pt(12)  # 小四
 RED = RGBColor(0xC0, 0x00, 0x00)
+BLUE = RGBColor(0x00, 0x70, 0xC0)
 
 HEADER_FILL = PatternFill("solid", fgColor="4472C4")
 HEADER_FONT = Font(name="微软雅黑", size=11, bold=True, color="FFFFFF")
@@ -132,6 +133,35 @@ DOWN_CMDS = [
         "notes": "start：车端依次执行 启动路径跟踪→复位→加载地图→选模式→开工(约2~3秒)；"
                  "stop：停止任务并复位，随后关闭路径跟踪节点",
     },
+    {
+        "name": "定位初始化", "topic": PREFIX + "/cmd/init_location", "new": True,
+        "example": '{"action": "request"}',
+        "fields": [
+            ["action", "string", "request/confirm/cancel",
+             "request=请求定位初始化；confirm=确认（车辆开始走8字形动作）；cancel=取消"],
+        ],
+        "notes": "云平台下发request并确认场地安全后再下发confirm，车辆才开始走8字形；"
+                 "初始化过程中可随时cancel",
+    },
+    {
+        "name": "建图控制", "topic": PREFIX + "/cmd/mapping", "new": True,
+        "example": '{"action": "enter"}',
+        "fields": [
+            ["action", "string",
+             "enter/start_boundary/stop_boundary/start_obstacle/stop_obstacle/"
+             "start_parking/stop_parking/start_path/stop_path/save/delete/list/reset",
+             "建图操作，详见下方说明"],
+            ["map_name", "string(save/delete时)", "不能含 / 和 ..", "要保存或删除的地图名"],
+        ],
+        "notes": "建图过程中车辆完全由云平台遥控（cmd/move），建图页面需集成遥控功能。"
+                 "建图流程：① 下发 enter 进入建图模式（车端发 m_mode 通知雷达/RTK准备，"
+                 "随后定位坐标会被外部系统归零为(0,0,0)）；"
+                 "② 观察 state/mapping，等定位状态有效(state为1/2/5)且 x、y 归零到(0,0)附近后，"
+                 "下发 start_boundary；③ 遥控车沿边界行驶，云平台用 state/mapping 轨迹流实时描边；"
+                 "④ 到终点下发 stop_boundary，如需障碍物/停车位/连接路径按需重复 start/stop；"
+                 "⑤ 下发 save 保存地图，保存后本次建图会话结束。"
+                 "注意：录制过程中请勿下发 blade/task 等其他指令，否则车端会中断当前录制",
+    },
 ]
 
 UP_DATA = [
@@ -159,6 +189,31 @@ UP_DATA = [
         ],
         "notes": "",
     },
+    {
+        "name": "建图轨迹", "topic": PREFIX + "/state/mapping", "new": True,
+        "freq": "与 state/location 相同(默认10Hz)，仅建图会话期间上报",
+        "example": '{"x":0.0,"y":0.0,"z":0.0,"roll":0.01,"pitch":-0.02,"yaw":1.57,'
+                   '"state":4,"stamp":1751356800.6}',
+        "fields": [
+            ["x / y / z", "number", "局部平面坐标(米)，即建图期间车辆走过的轨迹"],
+            ["roll / pitch / yaw", "number", "姿态(弧度)"],
+            ["state", "int", "定位状态字：0=无定位；1/2/5=有效融合定位"],
+            ["stamp", "number", "Unix秒(double)"],
+        ],
+        "notes": "从收到 cmd/mapping enter 起，到 save 或 reset 止；字段含义与 state/location "
+                 "完全一致。云平台建图页面用它实时描出行驶轨迹（即正在录制的边界走向），"
+                 "并据此观察 enter 之后坐标是否已归零",
+    },
+    {
+        "name": "地图列表", "topic": PREFIX + "/state/map_list", "new": True,
+        "freq": "收到 cmd/mapping list 后回传一次",
+        "example": '{"maps":["map_0630","map_0701"],"stamp":1751356800.8}',
+        "fields": [
+            ["maps", "array<string>", "车端已保存的地图名列表"],
+            ["stamp", "number", "Unix秒(double)"],
+        ],
+        "notes": "",
+    },
 ]
 
 ROS_MAP = [
@@ -173,6 +228,16 @@ ROS_MAP = [
     ["定位上报", "订阅 /Mower/position (mower_msgs/Position)，2Hz节流后上报", "外部定位模块发布"],
     ["车辆状态", "订阅 /vehicle/status、/vehicle/mower_height_to_app",
      "udp_com_main 节点发布"],
+    ["cmd/init_location", "/signal = init_location / true / false",
+     "task_node 定位初始化流程（8字动作），外部定位系统重启定位"],
+    ["cmd/mapping enter", "/signal = m_mode", "雷达/RTK进入建图准备，定位坐标由外部系统归零"],
+    ["cmd/mapping start/stop_boundary等", "/signal = start_brd/cease_brd/start_obs/cease_obs 等",
+     "location_map 录制边界/障碍物/停车位/连接路径"],
+    ["cmd/mapping save/delete", "/signal = save_map|delete_name/地图名", "location_map 保存/删除地图文件"],
+    ["cmd/mapping list", "/signal = p_mode", "location_map 发布 /map_name"],
+    ["建图轨迹上报", "建图会话期间（enter→save/reset）转发 /Mower/position 到 state/mapping",
+     "外部定位模块发布"],
+    ["地图列表", "订阅 /map_name，解析后转发 state/map_list", "location_map 发布"],
 ]
 
 SAFETY = [
@@ -182,12 +247,17 @@ SAFETY = [
 ]
 
 MOSQ_EXAMPLES = [
-    ("订阅全部MQTT上行", "mosquitto_sub -h <broker> -t 'mower/mower_001/#' -v"),
-    ("前进半速", "mosquitto_pub -h <broker> -t 'mower/mower_001/cmd/move' -m '{\"linear\":0.5,\"angular\":0}'"),
-    ("停车", "mosquitto_pub -h <broker> -t 'mower/mower_001/cmd/move' -m '{\"linear\":0,\"angular\":0}'"),
-    ("开刀盘", "mosquitto_pub -h <broker> -t 'mower/mower_001/cmd/blade' -m '{\"state\":1,\"height\":6}'"),
-    ("启动自动任务", "mosquitto_pub -h <broker> -t 'mower/mower_001/cmd/task' -m '{\"action\":\"start\",\"map_name\":\"map_0630\",\"map_mode\":\"single_map\"}'"),
-    ("停止任务", "mosquitto_pub -h <broker> -t 'mower/mower_001/cmd/task' -m '{\"action\":\"stop\"}'"),
+    ("订阅全部MQTT上行", "mosquitto_sub -h <broker> -t 'mower/mower_001/#' -v", False),
+    ("前进半速", "mosquitto_pub -h <broker> -t 'mower/mower_001/cmd/move' -m '{\"linear\":0.5,\"angular\":0}'", False),
+    ("停车", "mosquitto_pub -h <broker> -t 'mower/mower_001/cmd/move' -m '{\"linear\":0,\"angular\":0}'", False),
+    ("开刀盘", "mosquitto_pub -h <broker> -t 'mower/mower_001/cmd/blade' -m '{\"state\":1,\"height\":6}'", False),
+    ("启动自动任务", "mosquitto_pub -h <broker> -t 'mower/mower_001/cmd/task' -m '{\"action\":\"start\",\"map_name\":\"map_0630\",\"map_mode\":\"single_map\"}'", False),
+    ("停止任务", "mosquitto_pub -h <broker> -t 'mower/mower_001/cmd/task' -m '{\"action\":\"stop\"}'", False),
+    ("进入建图模式", "mosquitto_pub -h <broker> -t 'mower/mower_001/cmd/mapping' -m '{\"action\":\"enter\"}'", True),
+    ("开始录制边界", "mosquitto_pub -h <broker> -t 'mower/mower_001/cmd/mapping' -m '{\"action\":\"start_boundary\"}'", True),
+    ("停止录制边界", "mosquitto_pub -h <broker> -t 'mower/mower_001/cmd/mapping' -m '{\"action\":\"stop_boundary\"}'", True),
+    ("保存地图", "mosquitto_pub -h <broker> -t 'mower/mower_001/cmd/mapping' -m '{\"action\":\"save\",\"map_name\":\"map_0701\"}'", True),
+    ("请求地图列表", "mosquitto_pub -h <broker> -t 'mower/mower_001/cmd/mapping' -m '{\"action\":\"list\"}'", True),
 ]
 
 # 2026-09-11 起删除的接口（不再支持，仅存档备查）
@@ -220,7 +290,10 @@ def build_docx(path):
     r = title.add_run("割草机云平台远程连接接口文档")
     set_run_font(r, bold=True, size=Pt(22))
     title.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    add_para(doc, "版本 V1.0    适用：车端 cloud_bridge 节点（ROS1）与云平台对接", size=Pt(10.5))
+    add_para(doc, "版本 V1.1    适用：车端 cloud_bridge 节点（ROS1）与云平台对接", size=Pt(10.5))
+    add_para(doc, "2026-09-20 更新：新增建图相关接口（cmd/mapping、state/mapping、state/map_list）"
+                  "及定位初始化接口（cmd/init_location），蓝色字体为新增协议，红色字体为已删除协议。",
+             size=Pt(10.5), color=BLUE)
 
     add_heading(doc, "1. 概述", 1)
     add_para(doc, "车端与云平台之间通过一条 MQTT 通道通信，明文传输、无加密无认证。设备ID默认为 "
@@ -230,24 +303,26 @@ def build_docx(path):
     add_heading(doc, "2. 下行指令（云平台 → 割草机，MQTT）", 1)
     add_para(doc, "payload 均为 UTF-8 JSON，QoS 1。")
     for i, cmd in enumerate(DOWN_CMDS, 1):
+        color = BLUE if cmd.get("new") else None
         add_heading(doc, f"2.{i} {cmd['name']}", 2)
-        add_para(doc, "MQTT主题：" + cmd["topic"], bold=True)
-        add_para(doc, "示例：")
-        add_code(doc, cmd["example"])
-        add_table(doc, ["字段", "类型", "取值范围", "说明"], cmd["fields"])
+        add_para(doc, "MQTT主题：" + cmd["topic"], bold=True, color=color)
+        add_para(doc, "示例：", color=color)
+        add_code(doc, cmd["example"], color=color)
+        add_table(doc, ["字段", "类型", "取值范围", "说明"], cmd["fields"], color=color)
         if cmd["notes"]:
-            add_para(doc, "说明：" + cmd["notes"])
+            add_para(doc, "说明：" + cmd["notes"], color=color)
 
     add_heading(doc, "3. 上行数据（割草机 → 云平台，MQTT）", 1)
     add_para(doc, "payload 均为 UTF-8 JSON，QoS 0。")
     for i, up in enumerate(UP_DATA, 1):
+        color = BLUE if up.get("new") else None
         add_heading(doc, f"3.{i} {up['name']}", 2)
-        add_para(doc, "MQTT主题：" + up["topic"] + "    频率：" + up["freq"], bold=True)
-        add_para(doc, "示例：")
-        add_code(doc, up["example"])
-        add_table(doc, ["字段", "类型", "说明"], up["fields"])
+        add_para(doc, "MQTT主题：" + up["topic"] + "    频率：" + up["freq"], bold=True, color=color)
+        add_para(doc, "示例：", color=color)
+        add_code(doc, up["example"], color=color)
+        add_table(doc, ["字段", "类型", "说明"], up["fields"], color=color)
         if up["notes"]:
-            add_para(doc, "说明：" + up["notes"])
+            add_para(doc, "说明：" + up["notes"], color=color)
 
     add_heading(doc, "4. 车端 ROS 接口映射（参考）", 1)
     add_para(doc, "云平台无需关心，仅供双方联调排障时对照：")
@@ -258,9 +333,10 @@ def build_docx(path):
         add_para(doc, "• " + s)
 
     add_heading(doc, "6. 联调示例（mosquitto 客户端模拟云平台）", 1)
-    for name, cmd in MOSQ_EXAMPLES:
-        add_para(doc, name + "：")
-        add_code(doc, cmd)
+    for name, cmd, is_new in MOSQ_EXAMPLES:
+        color = BLUE if is_new else None
+        add_para(doc, name + "：", color=color)
+        add_code(doc, cmd, color=color)
 
     add_heading(doc, "7. 已删除接口（2026-09-11 起不再支持）", 1)
     add_para(doc, DELETED_NOTE, bold=True, color=RED)
@@ -282,6 +358,7 @@ def build_docx(path):
 
 def build_xlsx(path):
     wb = Workbook()
+    BLUE_FONT = Font(name="微软雅黑", size=10, color="0070C0")
 
     ws = wb.active
     ws.title = "1-协议总览"
@@ -302,6 +379,7 @@ def build_xlsx(path):
 
     ws = wb.create_sheet("2-MQTT下行指令")
     ws.append(["接口", "MQTT主题", "方向", "payload示例", "字段", "类型", "取值范围", "说明", "备注"])
+    new_rows = []
     for cmd in DOWN_CMDS:
         first = True
         for f in cmd["fields"]:
@@ -313,11 +391,17 @@ def build_xlsx(path):
                 f[0], f[1], f[2], f[3],
                 cmd["notes"] if first else "",
             ])
+            if cmd.get("new"):
+                new_rows.append(ws.max_row)
             first = False
     style_sheet(ws, [12, 30, 14, 52, 14, 14, 20, 40, 44])
+    for r in new_rows:
+        for cell in ws[r]:
+            cell.font = BLUE_FONT
 
     ws = wb.create_sheet("3-MQTT上行数据")
     ws.append(["接口", "MQTT主题", "方向", "频率", "payload示例", "字段", "类型", "说明", "备注"])
+    new_rows = []
     for up in UP_DATA:
         first = True
         for f in up["fields"]:
@@ -330,8 +414,13 @@ def build_xlsx(path):
                 f[0], f[1], f[2],
                 up["notes"] if first else "",
             ])
+            if up.get("new"):
+                new_rows.append(ws.max_row)
             first = False
     style_sheet(ws, [12, 30, 14, 20, 56, 32, 10, 44, 40])
+    for r in new_rows:
+        for cell in ws[r]:
+            cell.font = BLUE_FONT
 
     ws = wb.create_sheet("4-车端ROS映射")
     ws.append(["云端接口", "车端ROS动作", "下游环节"])
@@ -343,7 +432,7 @@ def build_xlsx(path):
     ws.append(["类别", "内容"])
     for s in SAFETY:
         ws.append(["安全约定", s])
-    for name, cmd in MOSQ_EXAMPLES:
+    for name, cmd, is_new in MOSQ_EXAMPLES:
         ws.append(["联调示例-" + name, cmd])
     style_sheet(ws, [20, 110])
 

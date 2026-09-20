@@ -67,7 +67,7 @@ Visualization Manager:
       Marker Topic: /lawn_mower/obstacle_polygon
       Name: 障碍物
       Namespaces:
-        {}
+        obstacles: true
       Queue Size: 100
       Value: true
     - Alpha: 0.30000001192092896
@@ -210,6 +210,14 @@ Visualization Manager:
       Reference Frame: base_link
       Show Trail: false
       Value: true
+    - Class: rviz/Marker
+      Enabled: true
+      Marker Topic: /lawn_mower/view_polygon
+      Name: Marker
+      Namespaces:
+        costmap_corners: true
+      Queue Size: 100
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 136; 138; 133
@@ -238,7 +246,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 32.43303680419922
+      Distance: 50.87834930419922
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -246,17 +254,17 @@ Visualization Manager:
         Value: false
       Field of View: 0.7853981852531433
       Focal Point:
-        X: 13.371179580688477
-        Y: 2.7828824520111084
-        Z: -0.3000292479991913
+        X: 1.7762314081192017
+        Y: 6.1549482345581055
+        Z: 0.05583798885345459
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 1.5697963237762451
+      Pitch: 1.4647964239120483
       Target Frame: <Fixed Frame>
-      Yaw: 0.0103995893150568
+      Yaw: 4.678592205047607
     Saved: ~
 Window Geometry:
   Displays:
@@ -274,5 +282,5 @@ Window Geometry:
   Views:
     collapsed: true
   Width: 1144
-  X: 73
-  Y: 147
+  X: 149
+  Y: 139

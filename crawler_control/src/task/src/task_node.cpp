@@ -40,7 +40,7 @@ ros::Subscriber sub_imu;
 ros::Subscriber sub_mower_dynamicflag_;
 ros::Subscriber sub_lio_static_initialized_;
 ros::Time init_start_time;    // 初始化开始时间
-
+ros::Time init_end_time;    // 初始化结束时间
 ros::Time figure8_phase_start; // 当前8字形阶段的开始时间
 ros::Time figure8_phase_end; // 当前8字形阶段的开始时间
 int figure8_last_count = -1;   // 上一次处理的阶段序号，用于检测阶段切换
@@ -51,7 +51,7 @@ std_msgs::Bool stop_car;
 // 初始化程序相关变量
 bool init_mode = false;       // 初始化模式标志
 bool has_position = false;    // 是否有定位数据
-bool last_has_position = false;    // 是否有定位数据
+// bool last_has_position = false;    // 是否有定位数据
 // 初始化确认相关变量
 bool init_requested = false;     // 是否请求初始化
 bool init_confirmed = false;     // 是否确认初始化
@@ -170,6 +170,7 @@ void SingalCallBack(const std_msgs::String &singal_msgs)
             init_confirmed = true;
             init_mode = true;
             init_start_time = ros::Time::now();
+            
             init_finish = false;
             ROS_INFO("Initialization confirmed - starting Figure8 pattern");
         }else
@@ -295,20 +296,9 @@ void FusionMapCallBack(const mower_msgs::Position &msgs)
         init_confirmed = false;
         ROS_INFO("Position acquired! Exiting initialization mode.");
         ROS_INFO("Stopping vehicle after acquiring position");
+        init_end_time = ros::Time::now();
     }
 
-    if (has_position && !init_finish && !last_has_position)
-    {
-        int has_position_cnt = 100;
-        while (has_position_cnt--)
-        {
-            ROS_INFO("Position acquired! Exiting initialization mode.");
-            ROS_INFO("Stopping vehicle after acquiring position");
-            goStraight()
-        }
-        init_finish = true;
-    }
-    last_has_position=has_position;
 }
 void ImuCallBack(const std_msgs::Bool &imu_msgs)
 {
@@ -437,6 +427,17 @@ int main(int argc, char **argv)
                 ROS_INFO("Finished phase, figure8_count=%d", figure8_count);
             }
             
+        }else if(has_position && !init_finish)
+        {
+            if(ros::Time::now().toSec() - init_end_time.toSec() < 5.0)
+            {
+                ROS_INFO("Position acquired! Exiting initialization mode.");
+                ROS_INFO("Stopping vehicle after acquiring position");
+                goStraight();
+            }else{
+                ROS_INFO("Timeout reached. Exiting initialization mode.");
+                init_finish = true;
+            }
         }else
         {
             figure8_count = 0;

@@ -1,0 +1,3 @@
+uint8 drive_mode
+float64 speed_max
+uint8 mow_height

@@ -21,13 +21,8 @@ add_compile_options(-std=c++17)
 # 添加自定义消息
 add_message_files(
   FILES
-  # Obstacle.msg
-  # ObstacleArray.msg
-  # PathPoint.msg
   Point2DArray.msg
   Point2D.msg
-  # Position.msg
-  # LocalPath.msg
 )
 
 generate_messages(

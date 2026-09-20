@@ -348,17 +348,6 @@ void PurePursuit::state_machine_run()
 			running_state_.store(RunStateValue::Stop);
 			goto STATEMACHINE;
 		}
-		if (ros::Time::now() - last_local_path_time_ > ros::Duration(3.0))
-		{
-			ROS_WARN("五维路径信息丢失");
-			running_state_.store(RunStateValue::Stop);
-			goto STATEMACHINE;
-		}
-		if (stop_car_.load())
-		{
-			running_state_.store(RunStateValue::Stop);
-			goto STATEMACHINE;
-		}
 		{
 			std::lock_guard<std::mutex> lock1(avoid_state_mutex_);
 			std::lock_guard<std::mutex> lock2(outboundary_mutex_);
@@ -368,7 +357,7 @@ void PurePursuit::state_machine_run()
 				running_state_.store(RunStateValue::Reverse);
 				goto STATEMACHINE;
 			}
-			if (avoid_state_ == 3&&PC_or_Remote_==1&&PC_or_Remote_==2)
+			if (avoid_state_ == 3||PC_or_Remote_==1||PC_or_Remote_==2)
 			{
 				ROS_WARN("紧急预警，需停车");
 				running_state_.store(RunStateValue::Stop);
@@ -381,6 +370,19 @@ void PurePursuit::state_machine_run()
 			}
 		}
 
+		
+		if (ros::Time::now() - last_local_path_time_ > ros::Duration(3.0))
+		{
+			ROS_WARN("五维路径信息丢失");
+			running_state_.store(RunStateValue::Stop);
+			goto STATEMACHINE;
+		}
+		if (stop_car_.load())
+		{
+			running_state_.store(RunStateValue::Stop);
+			goto STATEMACHINE;
+		}
+		
 		{
 			std::lock_guard<std::mutex> lock_local_waypoints(local_waypoints_mutex_);
 			local_waypoints = local_waypoints_;
@@ -481,7 +483,7 @@ void PurePursuit::state_machine_run()
 		case RunStateValue::Follow:
 			lookahead_distance_=hypot(lookahead_waypoint_.local_x, lookahead_waypoint_.local_y);
 			// 如果小车位置与预瞄点距离小于0.05或小车已经超过预瞄点，则小车已到达预瞄点，切换为转向状态
-			if (lookahead_distance_ < 0.2)
+			if (lookahead_distance_ < 0.2&&abs(lookahead_waypoint_.local_x)<0.07)
 			{
 				twist_cmd.linear = 0.0;
 				twist_cmd.angular = 0.0;
@@ -498,7 +500,7 @@ void PurePursuit::state_machine_run()
 
 			// pp算法计算和速度
 			twist_cmd = calculate_PurePursuit(v_expect, lookahead_waypoint_);
-			if (lookahead_waypoint_.global_x== last_lookahead_waypoint_.global_x &&lookahead_waypoint_.global_y== last_lookahead_waypoint_.global_y&&(last_lookahead_distance_-lookahead_distance_)<0.05&&abs(last_lookahead_waypoint_.local_yaw-lookahead_waypoint_.local_yaw)<0.1)
+			if (lookahead_waypoint_.global_x== last_lookahead_waypoint_.global_x &&lookahead_waypoint_.global_y== last_lookahead_waypoint_.global_y&&hypot(last_car_position_.position_x-car_position_.position_x,last_car_position_.position_y-car_position_.position_y)<0.05&&abs(last_lookahead_waypoint_.local_yaw-lookahead_waypoint_.local_yaw)<0.05)
 			{	
 				follow_count_++;
 				ROS_WARN("小车可能卡住了, follow_count_ = %d", follow_count_);
@@ -521,8 +523,9 @@ void PurePursuit::state_machine_run()
 			{
 				follow_count_=0;
 			}
-				last_lookahead_waypoint_ = lookahead_waypoint_;
-				last_lookahead_distance_= lookahead_distance_;
+			last_car_position_ = car_position_;
+			last_lookahead_waypoint_ = lookahead_waypoint_;
+			last_lookahead_distance_= lookahead_distance_;
 			publishCommand(twist_cmd);
 			break;
 		case RunStateValue::Turn:

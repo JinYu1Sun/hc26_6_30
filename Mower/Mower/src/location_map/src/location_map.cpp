@@ -113,7 +113,7 @@ LocationMap::LocationMap()
     localization_sub = nh->subscribe<util::Position>(localization_topic, 1, &LocationMap::StatusCallback, this);
     planning_ready_sub = nh->subscribe<std_msgs::String>(planning_ready_topic, 1, &LocationMap::PlanningReadyCallback, this); // 新增：订阅planning准备就绪信号
 
-    map_hull_pub = nh->advertise<geometry_msgs::Polygon>(map_hull_topic, 1, true);  // 发布边界多边形，由避障节点订阅来设置避障规划用的栅格地图，UI节点订阅显示
+    map_hull_pub = nh->advertise<geometry_msgs::Polygon>(map_hull_topic, 10, true);  // 发布边界多边形，由避障节点订阅来设置避障规划用的栅格地图，UI节点订阅显示
     map_hole_pub = nh->advertise<geometry_msgs::Polygon>(map_hole_topic, 1, true);  // 发布录制的洞多边形，是Android端需要用到
     map_path_pub = nh->advertise<util::MapPath>(map_path_topic, 1, true);           // 发布录制的路线，是Android端需要用到
     map_point_pub = nh->advertise<geometry_msgs::Point32>(map_point_topic, 1, true);// 发布录制的停车点数据，是Android端需要用到
@@ -145,6 +145,7 @@ void LocationMap::reset()
 {
     geometry_msgs::Polygon empty_hull;
     map_hull_pub.publish(empty_hull);
+    map_hole_pub.publish(empty_hull);
     planning_status = false;
     single_map = false;
     multi_map = false;
@@ -587,7 +588,6 @@ void LocationMap::GetSignalCallback(const std_msgs::StringConstPtr &string)
     }
     if (string->data == "single_map")
     {
-
         ROS_INFO("single_map!");
         single_map = true;
         multi_map = false;
@@ -616,9 +616,6 @@ void LocationMap::GetSignalCallback(const std_msgs::StringConstPtr &string)
         signal.set(signal_brd, 1);
         lastPoint.x = 0, lastPoint.y = 0;
         hull_tag++;
-        geometry_msgs::Polygon empty_hull;
-        map_hull_pub.publish(empty_hull);   // 发布一个空的多边形消息，清除之前的边界显示
-        ROS_INFO("%s已清空当前界面!", getLogTime().c_str());
     }
     // 开始录制障碍物
     else if (string->data == "start_obs")
@@ -912,6 +909,13 @@ void LocationMap::handleWorkSignal(const geometry_msgs::Point32 &point)
                         // std::cout<<"The BRD of the map is  "<<map_hull.polygon_with_holes.hull<<std::endl;
                         map_hull.iscomplete = true;
                         map_hull_pub.publish(poylgon.polygon.hull);
+                        for (auto &hole : poylgon.polygon.holes)
+                        {
+                            ros::Duration(0.1).sleep();
+                            map_hole_pub.publish(hole);
+                            hole.points[0].z = 999.0; // 设置z为999，表示障碍物
+                            map_hull_pub.publish(hole);
+                        }
                         std::cout << getLogTime() << "发布割草区域给UI显示, 地图编号: " << map_hull.name << std::endl;
                         hulls.push_back(map_hull);
                         break;
@@ -979,21 +983,8 @@ void LocationMap::handleWorkSignal(const geometry_msgs::Point32 &point)
                 is_multi_map_processing_ = true;
 
                 // 3. 开始处理第一个地图
-                current_start_point_ = point; // 起点是当前位置
-
-                // 找到第一个地图对应的path路径作为终点
-                if (!yaml_hulls[start_map_id].connection_path.empty())
-                {
-                    current_end_point_ = yaml_hulls[start_map_id].connection_path[0]; // path的第一个点作为终点
-                    ROS_INFO("First map end point set to: (%.3f, %.3f, %.3f)",
-                             current_end_point_.x, current_end_point_.y, current_end_point_.z);
-                }
-                else
-                {
-                    // 如果第一个地图就没有path，说明只有一个地图，终点就是起点
-                    current_end_point_ = current_start_point_;
-                    std::cout << getLogTime() << "没有找到连接路径，终点设置为起点" << std::endl;
-                }
+                current_start_point_ = point;
+                current_end_point_ = current_start_point_;
 
                 // 4. 推送第一个地图
                 processNextMapInSequence();
@@ -1008,6 +999,7 @@ void LocationMap::handleWorkSignal(const geometry_msgs::Point32 &point)
                 planning_point_pub.publish(plan_point); // 当前位置作为规划起点
                 planning_point_pub.publish(plan_point); // 当前位置作为规划终点
             }
+            signal.set(signal_work, 0);
         }
         catch (const std::exception &e)
         {
@@ -1064,7 +1056,6 @@ void LocationMap::StatusCallback(const util::PositionConstPtr &position_msg)
     if (signal[signal_work])
     {
         handleWorkSignal(point);
-        signal.set(signal_work, 0);
     }
 }
 
@@ -1093,6 +1084,13 @@ void LocationMap::processNextMapInSequence()
 
     // 发布地图边界（与single_map模式保持一致）给UI显示正在工作的地图
     map_hull_pub.publish(yaml_hulls[current_map_index_].polygon_with_holes.hull);
+    for (auto &hole : yaml_hulls[current_map_index_].polygon_with_holes.holes)
+    {
+        ros::Duration(0.1).sleep();
+        map_hole_pub.publish(hole);
+        hole.points[0].z = 999.0; // 设置z为999，表示障碍物
+        map_hull_pub.publish(hole);
+    }
     std::cout << getLogTime() << "发布地图" << yaml_hulls[current_map_index_].name << "给UI显示"<< std::endl;
 
     // 发布规划起点
@@ -1117,43 +1115,6 @@ void LocationMap::processNextMapInSequence()
     current_map_index_++;
     if (current_map_index_ < yaml_hulls.size())
     {
-        // 设置下一个地图的起点和终点
-        // 获取前一个地图的连接路径作为下一个地图的起点
-        if (!yaml_hulls[current_map_index_ - 1].connection_path.empty())
-        {
-            current_start_point_ = yaml_hulls[current_map_index_ - 1].connection_path.back(); // path的最后一个点作为起点
-            ROS_INFO("Next map start point from previous path: (%.3f, %.3f, %.3f)",
-                     current_start_point_.x, current_start_point_.y, current_start_point_.z);
-        }
-        else
-        {
-            std::cout << getLogTime() << "上一个地图没有连接路径，不设置起点，上一个地图编号为：" << yaml_hulls[current_map_index_ - 1].name << std::endl;
-            return;
-        }
-
-        if (current_map_index_ < yaml_hulls.size() - 1)
-        {
-            // 不是最后一个地图，设置终点为当前地图的path第一个点
-            if (!yaml_hulls[current_map_index_].connection_path.empty())
-            {
-                current_end_point_ = yaml_hulls[current_map_index_].connection_path[0];
-                ROS_INFO("Next map end point set to: (%.3f, %.3f, %.3f)",
-                         current_end_point_.x, current_end_point_.y, current_end_point_.z);
-            }
-            else
-            {
-                ROS_ERROR("Map %d has no connection path! Cannot set end point.", yaml_hulls[current_map_index_].name);
-                return;
-            }
-        }
-        else
-        {
-            // 最后一个地图，没有path参数，终点与起点一致（闭环）
-            current_end_point_ = current_start_point_;
-            ROS_INFO("Last map: end point same as start point (closed loop)");
-        }
-
-        // 等待global_planning的反馈信号，不再自动递归
         ROS_INFO("Waiting for global_planning feedback before sending next map...");
     }
     else

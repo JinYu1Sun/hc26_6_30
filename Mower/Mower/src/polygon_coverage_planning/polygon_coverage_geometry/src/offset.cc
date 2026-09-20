@@ -30,46 +30,134 @@
 
 namespace polygon_coverage_planning {
 
-void computeOffsetPolygon(const PolygonWithHoles& pwh, FT max_offset,
-                          PolygonWithHoles* offset_polygon) {
+// void computeOffsetPolygon(const PolygonWithHoles& pwh, FT max_offset,
+//                           PolygonWithHoles* offset_polygon) {
+//   ROS_ASSERT(offset_polygon);
+
+//   PolygonWithHoles sorted_pwh = pwh;
+//   sortVertices(&sorted_pwh);
+
+//   // TODO(rikba): Check weak simplicity.
+
+//   // Try maximum offsetting.
+//   std::vector<boost::shared_ptr<PolygonWithHoles>> result =
+//       CGAL::create_interior_skeleton_and_offset_polygons_with_holes_2(
+//           max_offset, sorted_pwh);
+//   ROS_WARN("OFFSET = %.3f, result.size = %zu",
+//          CGAL::to_double(max_offset),
+//          result.size());
+
+//   for (size_t i = 0; i < result.size(); ++i)
+//   {
+//       double area =
+//           std::abs(CGAL::to_double(
+//               result[i]->outer_boundary().area()));
+
+//       ROS_WARN("result[%zu] area = %.3f",
+//               i, area);
+//   }
+//   if (checkValidOffset(sorted_pwh, result)) {
+//     *offset_polygon = *result.front();
+//     return;
+//   } else {
+//     ROS_WARN(
+//         "Polygon offsetting changes topology. Reducing offsetting distance.");
+//     result = {boost::make_shared<PolygonWithHoles>(sorted_pwh)};
+//   }
+
+//   // Binary search for smaller valid offset.
+//   FT min = 0.0;
+//   FT max = max_offset;
+//   const FT kBinarySearchResolution = 0.1;
+//   while (max - min > kBinarySearchResolution) {
+//     const FT mid = (min + max) / 2.0;
+//     std::vector<boost::shared_ptr<PolygonWithHoles>> temp_result =
+//         CGAL::create_interior_skeleton_and_offset_polygons_with_holes_2(
+//             mid, sorted_pwh);
+//     if (checkValidOffset(sorted_pwh, temp_result)) {
+//       min = mid;
+//       result = temp_result;
+//     } else {
+//       max = mid;
+//     }
+//   }
+
+//   *offset_polygon = *result.front();
+// }
+void computeOffsetPolygon(const PolygonWithHoles& pwh,
+                          FT max_offset,
+                          PolygonWithHoles* offset_polygon)
+{
   ROS_ASSERT(offset_polygon);
 
   PolygonWithHoles sorted_pwh = pwh;
   sortVertices(&sorted_pwh);
 
-  // TODO(rikba): Check weak simplicity.
-
-  // Try maximum offsetting.
+  // 始终按照用户要求的最大距离进行 offset
   std::vector<boost::shared_ptr<PolygonWithHoles>> result =
       CGAL::create_interior_skeleton_and_offset_polygons_with_holes_2(
           max_offset, sorted_pwh);
-  if (checkValidOffset(sorted_pwh, result)) {
-    *offset_polygon = *result.front();
-    return;
-  } else {
+
+  if (result.empty())
+  {
     ROS_WARN(
-        "Polygon offsetting changes topology. Reducing offsetting distance.");
-    result = {boost::make_shared<PolygonWithHoles>(sorted_pwh)};
+        "No valid polygon after offsetting %.3f m.",
+        CGAL::to_double(max_offset));
+
+    *offset_polygon = PolygonWithHoles();
+    return;
   }
 
-  // Binary search for smaller valid offset.
-  FT min = 0.0;
-  FT max = max_offset;
-  const FT kBinarySearchResolution = 0.1;
-  while (max - min > kBinarySearchResolution) {
-    const FT mid = (min + max) / 2.0;
-    std::vector<boost::shared_ptr<PolygonWithHoles>> temp_result =
-        CGAL::create_interior_skeleton_and_offset_polygons_with_holes_2(
-            mid, sorted_pwh);
-    if (checkValidOffset(sorted_pwh, temp_result)) {
-      min = mid;
-      result = temp_result;
-    } else {
-      max = mid;
-    }
+  // 打印所有结果
+  ROS_INFO(
+      "Offset %.3f m generated %zu polygon(s).",
+      CGAL::to_double(max_offset),
+      result.size());
+
+  for (size_t i = 0; i < result.size(); ++i)
+  {
+    if (!result[i])
+      continue;
+
+    double area = std::abs(
+        CGAL::to_double(result[i]->outer_boundary().area()));
+
+    ROS_INFO(
+        "Offset polygon[%zu]: area = %.3f m^2",
+        i, area);
   }
 
-  *offset_polygon = *result.front();
+  // 找面积最大的 polygon
+  auto largest_it = std::max_element(
+      result.begin(), result.end(),
+      [](const boost::shared_ptr<PolygonWithHoles>& a,
+         const boost::shared_ptr<PolygonWithHoles>& b)
+      {
+        double area_a = std::abs(
+            CGAL::to_double(a->outer_boundary().area()));
+
+        double area_b = std::abs(
+            CGAL::to_double(b->outer_boundary().area()));
+
+        return area_a < area_b;
+      });
+
+  if (largest_it == result.end() || !(*largest_it))
+  {
+    ROS_WARN("No valid offset polygon found.");
+    *offset_polygon = PolygonWithHoles();
+    return;
+  }
+
+  double largest_area = std::abs(
+      CGAL::to_double(
+          (*largest_it)->outer_boundary().area()));
+
+  ROS_INFO(
+      "Using largest offset polygon, area = %.3f m^2.",
+      largest_area);
+
+  *offset_polygon = **largest_it;
 }
 
 bool checkValidOffset(
