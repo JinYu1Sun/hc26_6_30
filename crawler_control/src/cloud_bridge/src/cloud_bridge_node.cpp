@@ -348,8 +348,8 @@ private:
     cmd.ad_control_enable = 1;
     cmd.gear_model = 3;
     // uint16 字段赋负值会按二进制补码回绕，task_node 拷进 int16 后还原为负
-    cmd.drive_value = static_cast<int>(linear * drive_max_);
-    cmd.turn_value = static_cast<int>(-angular * turn_max_);
+    cmd.drive_value = static_cast<int>(linear * 10000);
+    cmd.turn_value = static_cast<int>(-angular * 10000);
     cmd.mover_bool = blade_on_.load() ? 1 : 0;
     cmd.mow_height = mow_height_.load();
     pub_manual_.publish(cmd);
