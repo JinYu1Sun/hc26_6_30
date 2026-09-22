@@ -1,0 +1,2 @@
+set(util_MESSAGE_FILES "/home/nvidia/libo/lidar-slam-v2/src/util/msg/GpsPosition.msg;/home/nvidia/libo/lidar-slam-v2/src/util/msg/Vslam.msg;/home/nvidia/libo/lidar-slam-v2/src/util/msg/GPS.msg;/home/nvidia/libo/lidar-slam-v2/src/util/msg/LIOPose.msg;/home/nvidia/libo/lidar-slam-v2/src/util/msg/Pose6D.msg;/home/nvidia/libo/lidar-slam-v2/src/util/msg/Position.msg;/home/nvidia/libo/lidar-slam-v2/src/util/msg/err.msg;/home/nvidia/libo/lidar-slam-v2/src/util/msg/LocalPose.msg")
+set(util_SERVICE_FILES "/home/nvidia/libo/lidar-slam-v2/src/util/srv/Intervene.srv")

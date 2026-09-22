@@ -1,0 +1,8 @@
+prefix=/home/nvidia/libo/slam/devel
+
+Name: util
+Description: Description of util
+Version: 0.0.0
+Cflags: -I/home/nvidia/libo/slam/devel/include -I/home/nvidia/libo/slam/src/util/include
+Libs: -L${prefix}/lib -lutil
+Requires: roscpp std_msgs

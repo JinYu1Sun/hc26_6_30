@@ -1,0 +1,8 @@
+prefix=/home/nvidia/libo/comp_rtk/devel
+
+Name: comp_rtk
+Description: Description of comp_rtk
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

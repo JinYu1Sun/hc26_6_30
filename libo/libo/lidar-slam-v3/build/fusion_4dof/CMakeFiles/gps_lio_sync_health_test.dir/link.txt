@@ -1,0 +1,1 @@
+/usr/bin/c++    -rdynamic CMakeFiles/gps_lio_sync_health_test.dir/test/gps_lio_sync_health_test.cpp.o  -o /home/nvidia/libo/lidar-slam-v3/devel/lib/fusion_4dof/gps_lio_sync_health_test 

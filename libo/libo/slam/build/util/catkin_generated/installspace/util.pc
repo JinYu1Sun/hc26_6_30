@@ -1,0 +1,8 @@
+prefix=/home/nvidia/libo/slam/install
+
+Name: util
+Description: Description of util
+Version: 0.0.0
+Cflags: -I${prefix}/include
+Libs: -L${prefix}/lib -lutil
+Requires: roscpp std_msgs

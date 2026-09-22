@@ -17,6 +17,7 @@ EN_FONT = "Times New Roman"
 SIZE = Pt(12)  # 小四
 RED = RGBColor(0xC0, 0x00, 0x00)
 BLUE = RGBColor(0x00, 0x70, 0xC0)
+GREEN = RGBColor(0x00, 0xB0, 0x50)
 
 HEADER_FILL = PatternFill("solid", fgColor="4472C4")
 HEADER_FONT = Font(name="微软雅黑", size=11, bold=True, color="FFFFFF")
@@ -214,6 +215,24 @@ UP_DATA = [
         ],
         "notes": "",
     },
+    {
+        "name": "地图原点", "topic": PREFIX + "/state/map_origin", "color": GREEN,
+        "freq": "收到 /signal 选图信号 use_map/编号 时回传一次",
+        "example": '{"map_name":"map_0630","found":true,"map_index":0,'
+                   '"latitude":28.236557,"longitude":112.876617,"height":86.60,'
+                   '"gauss_yaw":73.89,"stamp":1751356800.9}',
+        "fields": [
+            ["map_name", "string", "请求的地图编号"],
+            ["found", "bool", "是否找到并解析成功；文件缺失时为false（此时无以下字段）"],
+            ["map_index", "int", "地图内部索引"],
+            ["latitude / longitude / height", "number", "地图原点 WGS84 纬度/经度/椭球高(米)"],
+            ["gauss_yaw", "number", "建图时的高斯坐标系偏航角(度)"],
+            ["stamp", "number", "Unix秒(double)"],
+        ],
+        "notes": "车端订阅 /signal，匹配 use_map/编号 时从 map_dir(launch可配) 读取 "
+                 "<编号>.mp 原点文件并上发；cmd/task start 带 map_name、安卓端选图均会触发。"
+                 "云平台可据此把 state/location 的局部坐标换算成经纬度",
+    },
 ]
 
 ROS_MAP = [
@@ -238,6 +257,8 @@ ROS_MAP = [
     ["建图轨迹上报", "建图会话期间（enter→save/reset）转发 /Mower/position 到 state/mapping",
      "外部定位模块发布"],
     ["地图列表", "订阅 /map_name，解析后转发 state/map_list", "location_map 发布"],
+    ["地图原点", "订阅 /signal，匹配 use_map/编号 时读取 map_dir/<编号>.mp，回传 state/map_origin",
+     "cloud_bridge 直接读 fusion 的 .mp 原点文件"],
 ]
 
 SAFETY = [
@@ -282,6 +303,14 @@ DELETED_VEHICLE_FIELDS = [
 ]
 
 
+def entry_color(entry):
+    # "color" 优先（用于区分不同批次的更新），否则 "new" 为蓝色
+    color = entry.get("color")
+    if color is None and entry.get("new"):
+        color = BLUE
+    return color
+
+
 # ==================== Word ====================
 
 def build_docx(path):
@@ -294,6 +323,8 @@ def build_docx(path):
     add_para(doc, "2026-09-20 更新：新增建图相关接口（cmd/mapping、state/mapping、state/map_list）"
                   "及定位初始化接口（cmd/init_location），蓝色字体为新增协议，红色字体为已删除协议。",
              size=Pt(10.5), color=BLUE)
+    add_para(doc, "2026-09-22 更新：新增地图原点上发接口（state/map_origin），绿色字体为本次新增协议。",
+             size=Pt(10.5), color=GREEN)
 
     add_heading(doc, "1. 概述", 1)
     add_para(doc, "车端与云平台之间通过一条 MQTT 通道通信，明文传输、无加密无认证。设备ID默认为 "
@@ -303,7 +334,7 @@ def build_docx(path):
     add_heading(doc, "2. 下行指令（云平台 → 割草机，MQTT）", 1)
     add_para(doc, "payload 均为 UTF-8 JSON，QoS 1。")
     for i, cmd in enumerate(DOWN_CMDS, 1):
-        color = BLUE if cmd.get("new") else None
+        color = entry_color(cmd)
         add_heading(doc, f"2.{i} {cmd['name']}", 2)
         add_para(doc, "MQTT主题：" + cmd["topic"], bold=True, color=color)
         add_para(doc, "示例：", color=color)
@@ -315,7 +346,7 @@ def build_docx(path):
     add_heading(doc, "3. 上行数据（割草机 → 云平台，MQTT）", 1)
     add_para(doc, "payload 均为 UTF-8 JSON，QoS 0。")
     for i, up in enumerate(UP_DATA, 1):
-        color = BLUE if up.get("new") else None
+        color = entry_color(up)
         add_heading(doc, f"3.{i} {up['name']}", 2)
         add_para(doc, "MQTT主题：" + up["topic"] + "    频率：" + up["freq"], bold=True, color=color)
         add_para(doc, "示例：", color=color)
@@ -359,6 +390,10 @@ def build_docx(path):
 def build_xlsx(path):
     wb = Workbook()
     BLUE_FONT = Font(name="微软雅黑", size=10, color="0070C0")
+    GREEN_FONT = Font(name="微软雅黑", size=10, color="00B050")
+
+    def font_for(entry):
+        return GREEN_FONT if entry.get("color") is GREEN else BLUE_FONT
 
     ws = wb.active
     ws.title = "1-协议总览"
@@ -391,13 +426,13 @@ def build_xlsx(path):
                 f[0], f[1], f[2], f[3],
                 cmd["notes"] if first else "",
             ])
-            if cmd.get("new"):
-                new_rows.append(ws.max_row)
+            if cmd.get("new") or cmd.get("color") is not None:
+                new_rows.append((ws.max_row, font_for(cmd)))
             first = False
     style_sheet(ws, [12, 30, 14, 52, 14, 14, 20, 40, 44])
-    for r in new_rows:
+    for r, font in new_rows:
         for cell in ws[r]:
-            cell.font = BLUE_FONT
+            cell.font = font
 
     ws = wb.create_sheet("3-MQTT上行数据")
     ws.append(["接口", "MQTT主题", "方向", "频率", "payload示例", "字段", "类型", "说明", "备注"])
@@ -414,13 +449,13 @@ def build_xlsx(path):
                 f[0], f[1], f[2],
                 up["notes"] if first else "",
             ])
-            if up.get("new"):
-                new_rows.append(ws.max_row)
+            if up.get("new") or up.get("color") is not None:
+                new_rows.append((ws.max_row, font_for(up)))
             first = False
     style_sheet(ws, [12, 30, 14, 20, 56, 32, 10, 44, 40])
-    for r in new_rows:
+    for r, font in new_rows:
         for cell in ws[r]:
-            cell.font = BLUE_FONT
+            cell.font = font
 
     ws = wb.create_sheet("4-车端ROS映射")
     ws.append(["云端接口", "车端ROS动作", "下游环节"])

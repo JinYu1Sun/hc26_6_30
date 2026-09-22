@@ -1,0 +1,2 @@
+- setup-file:
+    local-name: /home/nvidia/libo/lidar-slam-v2/install/setup.sh

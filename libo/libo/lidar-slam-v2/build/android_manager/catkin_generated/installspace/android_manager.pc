@@ -1,0 +1,8 @@
+prefix=/home/nvidia/libo/lidar-slam-v2/install
+
+Name: android_manager
+Description: Description of android_manager
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

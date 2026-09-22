@@ -1,0 +1,8 @@
+prefix=/home/nvidia/libo/lidar-slam-v3/install
+
+Name: android_manager_4dof
+Description: Description of android_manager_4dof
+Version: 0.0.1
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

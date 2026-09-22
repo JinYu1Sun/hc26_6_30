@@ -1,0 +1,197 @@
+# ============================================================================
+# fusion_4dof 单次定位运行参数（唯一来源）
+#
+# 由各 launch 用 <rosparam command="load" file=".../fusion_4dof_params.yaml"/>
+# 载入 /fusion_4dof 节点私有命名空间 → 参数名变为
+# /fusion_4dof/se2_max_window 等，与节点内的读取键一致。
+#
+# 三种 launch（location_mode_4dof / create_mode_4dof / fusion_only）共用本文件，
+# 不在各 launch 重复，避免多处不一致。改这里、重启节点即生效，无需重编译。
+#
+# 缺省以【精度为主】：更长滑窗多平均、拐弯清晰才锁定旋转；冷启动由 RTK/INS
+# 航向种子兜底（详见 README §4）。
+# ============================================================================
+
+# ===== 实测诊断日志 =====
+# 每个周期输出同stamp的[4DOF-SYNC]/[4DOF-INS]/[4DOF-STATE]，
+# 包含同步原始数据、外参补偿后H系base_link、4DoF质量和最终输出。
+diagnostic_log_enable: false
+diagnostic_log_period_sec: 1.0 # 1Hz；降低rosout/磁盘I/O对单线程LIO回调的干扰
+
+# ===== SE(2) 在线对齐（估计 LIO 坐标系 -> ENU 坐标系 的二维刚体变换）=====
+# SE(2)=平面刚体变换=一个旋转角+一个平移(x,y)。
+se2_max_window: 400          # 配对滑窗最大帧数；约 = se2_window_span_sec × GPS频率
+se2_window_span_sec: 45.0    # 滑窗时间跨度(s)：越大越平滑、越能跨长直线保住上次锁定
+se2_match_tol_sec: 0.08      # 0915实测50ms会周期性漏配；恢复历史使用的±80ms
+se2_seed_along_std: 0.50     # 沿行进方向的展布(标准差,m)达此值才用“窗口平均方向”
+se2_lock_cross_std: 0.10     # 垂直行进方向的展布(标准差,m)，需清晰拐弯才“锁定”旋转。
+                              # 原默认 0.35 对本机牛耕式作业(掉头前后两条直线间距
+                              # 0.4m)过高：常规掉头能达到的 cross_std 理论上限约为
+                              # 行距的一半(≈0.2m)，07062.log 实测常规掉头众数仅
+                              # 0.135m，从未摸到 0.35——导致锁定只能靠罕见的大转弯
+                              # 触发（该次实测等了 15.6 分钟）。现改为 0.10：低于
+                              # 实测常规掉头众数 0.135m 留足余量，同时明显高于直线
+                              # 段噪声地板(实测 0.003-0.04m)，让常规掉头也能可靠
+                              # 触发/巩固锁定（详见 README §13）。
+
+# ===== “锁定”稳健性 + 异常值鲁棒拟合（防小样本/单帧噪声误锁、防 GPS 野点污染整窗）=====
+se2_lock_min_samples: 15         # 至少这么多鲁棒内点才允许提交“锁定”
+se2_lock_confirm_frames: 3       # 需要3组满足时间+位移间隔的新观测，非3个相邻回调
+se2_lock_min_inlier_ratio: 0.70  # 锁定必须至少70%鲁棒内点；恰好半数不再允许
+se2_lock_min_along_std_m: 0.50   # 除横向激励外还必须有足够沿迹运动
+se2_lock_max_condition_number: 50.0 # 协方差特征值λmax/λmin上限（非标准差轴比）
+se2_lock_min_accumulated_turn_deg: 30.0 # 内点LIO解缠航向覆盖范围，不累加静止小抖动
+se2_lock_confirmation_min_interval_sec: 1.0 # 三次确认必须有新的时间证据
+se2_lock_confirmation_min_displacement_m: 0.30 # 且有新的空间位移，非相邻重叠窗重复计数
+se2_outlier_residual_thresh: 0.5 # 鲁棒重拟合的残差剔除阈值(m)：先用全窗口拟合作参考，
+                                  # 剔除残差超此值的点，内点占多数时用内点重新拟合，
+                                  # 抵御单次 GPS 多径/野值把整窗估计带偏
+
+# ===== RTK入窗前安全门 =====
+# 1ant可追溯原始字段：GNGGA quality/卫星数/差分龄期，IMUATTA INS状态/
+# 位置类型，DRPVA标准差。gps_confidence当前固定为10，VehicleAlign固定为0，
+# INS_GpsFlag_Heading是推导值，三者不参与质量裁决。
+rtk_required_ins_status: 3          # INS_SOLUTION_GOOD
+rtk_required_ins_position_type: 56 # INS_RTKFIXED（1ant原始枚举映射）
+rtk_min_satellites: 8
+rtk_required_gps_flag: 4
+# 0915实测4~10s的GPS-LIO一致性不劣于<=3s；先采用INS厂商建议的最低10s。
+# 该值是差分改正龄期，不是GPS测量延迟，禁止用它平移消息时间戳。
+rtk_max_differential_age_sec: 10
+rtk_max_horizontal_std_m: 0.30
+rtk_max_height_std_m: 0.50
+rtk_max_heading_std_deg: 5.0
+# 相邻已选中GPS时间戳的绝对间隔门限；适配实际GPS/LIO发布频率及抖动。
+gps_motion_min_dt_sec: 0.01 # 仅排除近重复时间戳；15/20 Hz 均可；倒序单独拒绝
+gps_motion_max_dt_sec: 0.45 # 正常选中间隔约0.1s；容纳10Hz下连续3个空洞后的约0.4s，并覆盖6-7Hz抖动
+gps_motion_max_speed_mps: 2.0
+gps_motion_margin_m: 0.08 # 位移上限=max_speed*测量间隔+噪声余量
+# 按测量时间而非回调周期检查 LIO；0.60s 为约2Hz留调度余量。
+# 超过此值视为证据断裂，不可按“时间无效但健康”放行。
+lio_motion_max_dt_sec: 0.60
+lio_motion_max_speed_mps: 2.0
+lio_motion_margin_m: 0.08
+lio_yaw_warning_min_speed_mps: 0.50 # 以下两项仅控制诊断警告，不参与LIO拒绝
+lio_yaw_warning_max_error_rad: 0.70
+lio_time_alignment_max_pair_dt_sec: 0.60
+lio_time_alignment_max_extrapolation_sec: 0.05 # 无法等待未来 LIO 时最多线性延拓50ms
+lio_restart_after_bad_frames: 20 # 帧数与真实时间双上限，避免低LIO帧率下恢复迟滞
+lio_bad_max_duration_sec: 2.0
+gps_lio_sync_restart_after_frames: 50
+gps_lio_sync_bad_max_duration_sec: 5.0
+lio_drift_hold_after_bad_frames: 3
+lio_drift_hold_frames: 30
+lio_drift_hold_max_duration_sec: 3.0 # 低帧率下不让30帧扩大成十几秒
+lio_fallback_max_bad_frames: 5
+stop_car_resume_frames: 5
+# 仅在可信 INS 航向、足够位移且独立 LIO 角速度较低的时间窗内比较位移与车身轴线；
+# 1ant rot_z 是约1Hz IMUATTA陀螺数据在约20Hz DRPVA中反复携带，消息无其独立
+# 测量时间戳；不能当每帧实时角速度无条件豁免方向门。
+# 0/180 度分别与前进/倒车相容；需 3 次异常且每次有新的空间进展才判冲突，
+# 重叠时间窗内重复报告的同一处侧向跳点不算 3 次独立证据。
+gps_axis_min_window_sec: 0.30
+gps_axis_max_window_sec: 0.65
+gps_axis_min_displacement_m: 0.25
+gps_axis_max_turn_rate_radps: 0.20
+gps_axis_max_error_deg: 40.0
+gps_axis_reject_after_windows: 3
+# 已有提交4DoF后，RTK先与同时刻 T_committed(LIO) 比较，通过才能入窗。
+rtk_innovation_unlocked_xy_m: 0.75
+rtk_innovation_locked_xy_m: 0.40
+rtk_innovation_yaw_deg: 15.0
+rtk_innovation_z_m: 0.75
+
+# ===== 最终发布连续性门 =====
+# 基准只在真正发布成功后前移；拒绝帧不得“毒化”下一帧的比较基准。
+output_max_speed_mps: 3.0
+output_xy_margin_m: 0.15
+output_max_xy_jump_m: 0.75
+output_max_source_switch_xy_jump_m: 0.25 # 扣除同代 LIO 相对运动后的坐标修正上限
+output_max_yaw_rate_radps: 2.0
+output_yaw_margin_deg: 11.5
+output_max_z_jump_m: 0.50
+output_max_dt_for_motion_sec: 1.0
+output_max_measurement_age_sec: 0.50
+output_max_future_stamp_sec: 0.05
+gps_queue_max_size: 200 # 有界同步队列；超限丢最旧帧，禁止积压无限增长
+
+# ===== GPS 失效/恢复迟滞 =====
+# 冷启动从0开始累计50个合格样本；建立基线、时间间隔超窗或短暂缺帧保持已有计数，
+# 只有明确的质量/运动拒绝才清零。已建立可信变换后，失效恢复计数从28开始，
+# 是为了不要求重新累计完整 50 帧；恢复仍需
+# 50-28=22 个“连续且被 RTK质量+运动+创新门控接受”的同步样本。恢复确认期间 GPS 只进入
+# 候选配对窗，不修改生产 SE(2)；第 22 个样本到达时才提交并同步切到状态 1。
+gps_initial_stable_count: 0  # 冷启动从0开始，不伪造已有45帧稳定历史
+gps_recovery_floor: 28       # 失效后的计数下限（保持原设计意图）
+gps_stable_threshold: 50     # GPS 恢复可用门限
+gps_missing_grace_frames: 3  # 任意不可用RTK（缺帧/质量/运动/创新/基线）前3帧均隔离坏样本；是否输出延拓由下一项控制
+gps_grace_coast_output_enabled: true # true=宽限期发布“可信RTK锚点+同代LIO增量”；false=宽限期不发布定位
+gps_coast_max_duration_sec: 0.75 # 约5Hz可保留三帧；更慢时优先受真实时间安全上限约束
+gps_heading_suspect_coast_max_duration_sec: 1.50 # 方向嫌疑/硬方向冲突的最长延拓时间；嫌疑不占通用帧计数，超时仍安全回退LIO
+gps_transient_reacquire_frames: 3 # 已进入瞬态回退（如baseline-only）后连续3帧合格才回RTK
+
+# ===== 对外 roll/pitch =====
+# GpsPosition.msg: roll绕前向y轴、pitch绕右向x轴，单位0.01度。
+# ROS base_link: x前、y左、z上，因此默认映射为 roll=+INS.roll,
+# pitch=-INS.pitch。INS超时/无效时当帧自动回退到重力扶正后的LIO姿态。
+roll_pitch_source: "ins"                 # "ins" or "lio"
+ins_roll_scale_rad: 0.000174532925199433  # +0.01 deg -> rad
+ins_pitch_scale_rad: -0.000174532925199433 # right-axis -> ROS left-axis
+ins_attitude_max_age_sec: 0.30
+ins_attitude_max_abs_deg: 45.0
+ins_lio_max_disagreement_deg: 15.0 # 超限则拒绝INS姿态并回退LIO
+# positionStatus是1ant的运动航向匹配结果，不是roll/pitch有效标志；停车时也允许
+# 使用通过新鲜度、幅值和INS/LIO一致性检查的DRPVA roll/pitch。
+# 4DoF航向种子同样不要求positionStatus；它仍须通过全部RTK位置质量门限和
+# max_heading_std_deg，避免停车等待定位与运动航向确认形成循环依赖。
+ins_attitude_require_position_status: false
+
+# ===== 4DoF竖直对齐：z_map = z_lio_H + tz =====
+# GPS高程只用于稳健估计tz；对外z连续使用LIO相对高程+tz，
+# 避免每帧跟随GNSS高程噪声。任一门限不满足时冻结已提交tz。
+vertical_min_samples: 10
+vertical_max_std: 0.30              # m, 内点dz标准差
+vertical_outlier_threshold: 0.80    # m, 相对dz中位数的剔除阈值
+vertical_max_abs_offset: 1000.0     # m, 拒绝单位/高程基准明显错误
+vertical_require_ins_height_std: true  # 1ant直接发布DRPVA原始高程标准差(m)
+vertical_max_ins_height_std: 0.50       # m, 仅在上项=true时生效
+
+# ===== LIO 帧代际检测（识别 /laserMapping 重启，从而做节点内局部复位）=====
+require_gravity_level_lio_frame: true # 拒绝误接回原始倾斜 /Mower/lio_slam
+lio_static_status_topic: "/Mower/lio_static_initialized" # latched; false时禁止正常融合输出
+lio_generation_topic: "/Mower/lio_level_transform" # latched stamp作为LIO代际标识
+lio_epoch_near_thresh: 0.5   # 判“回到原点附近”的距离阈值(m)
+lio_epoch_far_thresh: 3.0    # 判“已远离原点”的距离阈值(m)
+lio_epoch_jump_thresh: 2.0   # 判“单帧瞬时大跳变(非物理)”的位移阈值(m)
+
+# ===== MID360 IMU 受限积分里程计 =====
+# 无车轮速度时以三轴角速度+比力作捷联积分。纯IMU双积分会快速漂移，因此
+# 只在停车锁存状态下兜底，并要求启动静止标定、可信全局锚点、IMU连续且新鲜。
+imu_odom_enable: true
+# 特殊测试开关：复用FAST-LIO启动静止窗口，首个可信主定位到达后只锚定一次并持续自由积分；
+# 对比话题为/Mower/imu_odometry/test。生产兜底积分器与它完全隔离。
+imu_odom_test_from_startup: false
+mid360_imu_topic: "/livox/imu"
+mid360_imu_acc_scale: 9.81  # /livox/imu acceleration is in g; fusion integrates SI m/s^2
+# FAST-LIO锁存发布的唯一权威静止窗口统计；fusion不再独立做第二次静止检测。
+lio_static_calibration_topic: "/Mower/lio_static_calibration"
+imu_odom_gravity_mps2: 9.80665
+imu_odom_max_age_sec: 0.10
+imu_odom_max_integration_gap_sec: 0.10
+imu_odom_max_gyro_radps: 3.0
+imu_odom_max_accel_mps2: 30.0
+imu_odom_max_velocity_mps: 2.0
+# 受限IMU只是GPS和LIO同时不可用的极端制动兜底。主位姿断流不再单独触发；
+# 还必须两个独立源都不可用并持续到本门限。
+imu_odom_main_pose_timeout_sec: 10.0
+# LIO-only重启从发起到“新generation+静态初始化+4DoF+首帧生产位姿”的显式宽限。
+# 宽限期内禁止state 6和位置看门狗级联重启；真实超时后才允许full recovery。
+lio_recovery_grace_timeout_sec: 60.0
+# 低速割草机采用更有意义但仍受限的默认边界；任一先到即停车联合重启。
+imu_odom_fallback_max_duration_sec: 10.0
+imu_odom_fallback_max_distance_m: 3.0
+# 仅在制动兜底 state 6 生效：连续静止确认后执行 ZUPT/ZARU，阻断残余
+# 零偏被二次积分成虚假位移。退出阈值内部采用 2 倍滞回。
+imu_odom_stationary_gyro_threshold_radps: 0.03
+imu_odom_stationary_accel_threshold_mps2: 0.20
+imu_odom_stationary_confirmation_sec: 0.50

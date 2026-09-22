@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>android_manager_4dof</name>
+  <version>0.0.1</version>
+  <description>
+    fusion_4dof 的配套定位管理包。对外话题与旧版一致，因此不得与旧
+    android_manager 同时运行。地图通过 fusion 事务服务热切换并保留
+    FAST-LIO；切模式、reboot 和低频看门狗由统一状态机决定重启范围。
+    仅定位输出断流而 LIO 健在时使用
+    fusion_only.launch 只重启 /fusion_4dof。所有模式、切图、算法恢复请求与
+    看门狗事件由本节点的显式生命周期状态机统一处理。
+  </description>
+
+  <maintainer email="dev@example.com">libo</maintainer>
+  <license>TODO</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <depend>roscpp</depend>
+  <depend>std_msgs</depend>
+  <depend>util</depend>
+  <!-- Runtime restart commands launch the paired localization package. -->
+  <exec_depend>fusion_4dof</exec_depend>
+  <exec_depend>fast_lio</exec_depend>
+  <exec_depend>rosbash</exec_depend>
+  <exec_depend>roslaunch</exec_depend>
+
+  <export>
+  </export>
+</package>

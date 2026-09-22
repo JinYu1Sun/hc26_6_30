@@ -10,6 +10,9 @@
 
 #include <algorithm>
 #include <atomic>
+#include <cstdint>
+#include <cstring>
+#include <fstream>
 #include <memory>
 #include <mutex>
 #include <string>
@@ -42,6 +45,8 @@ public:
                                       &CloudBridgeNode::mowerHeightCb, this);
     sub_map_name_ = nh_.subscribe("/map_name", 1,
                                   &CloudBridgeNode::mapNameCb, this);
+    sub_signal_ = nh_.subscribe("/signal", 10,
+                                &CloudBridgeNode::signalCb, this);
 
     const std::string prefix = topic_prefix_ + "/" + device_id_;
     topic_cmd_move_ = prefix + "/cmd/move";
@@ -53,6 +58,7 @@ public:
     topic_state_vehicle_ = prefix + "/state/vehicle";
     topic_state_mapping_ = prefix + "/state/mapping";
     topic_state_map_list_ = prefix + "/state/map_list";
+    topic_state_map_origin_ = prefix + "/state/map_origin";
 
     mqtt_ = std::unique_ptr<MqttClient>(new MqttClient(mqtt_cfg_));
     mqtt_->setMessageCallback(
@@ -74,6 +80,8 @@ public:
         ros::Duration(1.0 / status_hz_), &CloudBridgeNode::statusTimerCb, this);
     watchdog_timer_ = nh_.createTimer(
         ros::Duration(0.1), &CloudBridgeNode::watchdogTimerCb, this);
+    map_origin_timer_ = nh_.createTimer(
+        ros::Duration(1.0 / map_origin_hz_), &CloudBridgeNode::mapOriginTimerCb, this);
 
     ROS_INFO("cloud_bridge started, broker=%s:%d device_id=%s",
              mqtt_cfg_.host.c_str(), mqtt_cfg_.port, device_id_.c_str());
@@ -97,6 +105,7 @@ private:
 
     pnh_.param("location_hz", location_hz_, 2.0);
     pnh_.param("status_hz", status_hz_, 1.0);
+    pnh_.param("map_origin_hz", map_origin_hz_, 1.0);
 
     pnh_.param("cmd_timeout", cmd_timeout_, 0.5);
     pnh_.param("drive_max", drive_max_, 10000);
@@ -104,6 +113,9 @@ private:
     pnh_.param("auto_pause_on_manual", auto_pause_on_manual_, true);
     pnh_.param("task_step_delay", task_step_delay_, 0.5);
     pnh_.param("task_stop_delay", task_stop_delay_, 2.0);
+    pnh_.param<std::string>(
+        "map_dir", map_dir_,
+        "/home/nvidia/libo/lidar-slam-v2/src/fast-lio/Map");
     int mow_height = mow_height_.load();
     pnh_.param("mow_height", mow_height, 6);
     mow_height_ = mow_height;
@@ -253,6 +265,80 @@ private:
   {
     return !name.empty() && name.find('/') == std::string::npos &&
            name.find("..") == std::string::npos;
+  }
+
+  // /signal 是选图的统一入口（云平台 cmd/task start 与安卓端选图都会发），
+  // 匹配 use_map/<编号> 时读取该地图的 .mp 原点并上发 state/map_origin；
+  // 同时记下当前地图，由 map_origin_timer_ 按固定频率持续重发，直到选中新地图
+  void signalCb(const std_msgs::String::ConstPtr& msg)
+  {
+    const std::string::size_type slash = msg->data.find('/');
+    if (slash == std::string::npos ||
+        msg->data.substr(0, slash) != "use_map")
+      return;
+    {
+      std::lock_guard<std::mutex> lock(map_origin_mutex_);
+      current_map_name_ = msg->data.substr(slash + 1);
+    }
+    publishMapOrigin(msg->data.substr(slash + 1));
+  }
+
+  // 定时重发当前地图原点；还没选过地图则不发
+  void mapOriginTimerCb(const ros::TimerEvent&)
+  {
+    std::string map_name;
+    {
+      std::lock_guard<std::mutex> lock(map_origin_mutex_);
+      map_name = current_map_name_;
+    }
+    if (map_name.empty())
+      return;
+    publishMapOrigin(map_name);
+  }
+
+  // 读取 map_dir/<map_name>.mp（fusion SaveMap 写的 36 字节原点文件），
+  // 把地图原点通过 state/map_origin 上发云平台；文件缺失时回传 found=false
+  void publishMapOrigin(const std::string& map_name)
+  {
+    nlohmann::json j = {{"map_name", map_name},
+                        {"stamp", ros::Time::now().toSec()}};
+    if (!validMapName(map_name))
+    {
+      j["found"] = false;
+      mqtt_->publish(topic_state_map_origin_, j.dump(), 0);
+      ROS_WARN("map origin rejected, bad map_name: %s", map_name.c_str());
+      return;
+    }
+
+    const std::string path = map_dir_ + "/" + map_name + ".mp";
+    std::ifstream file(path, std::ios::binary);
+    char data[36] = {0};
+    file.read(data, sizeof(data));
+    if (!file || file.gcount() != static_cast<std::streamsize>(sizeof(data)))
+    {
+      j["found"] = false;
+      mqtt_->publish(topic_state_map_origin_, j.dump(), 0);
+      ROS_WARN("map origin file missing/short: %s", path.c_str());
+      return;
+    }
+
+    int32_t map_index;
+    double latitude, longitude, height, gauss_yaw;
+    std::memcpy(&map_index, data, 4);
+    std::memcpy(&latitude, data + 4, 8);
+    std::memcpy(&longitude, data + 12, 8);
+    std::memcpy(&height, data + 20, 8);
+    std::memcpy(&gauss_yaw, data + 28, 8);
+
+    j["found"] = true;
+    j["map_index"] = map_index;
+    j["latitude"] = latitude;
+    j["longitude"] = longitude;
+    j["height"] = height;
+    j["gauss_yaw"] = gauss_yaw;
+    mqtt_->publish(topic_state_map_origin_, j.dump(), 0);
+    ROS_INFO_THROTTLE(5, "map origin uploaded: %s (lat %.6f, lon %.6f, h %.2f, yaw %.2f)",
+                      map_name.c_str(), latitude, longitude, height, gauss_yaw);
   }
 
   void handleMappingCmd(const nlohmann::json& j)
@@ -465,8 +551,9 @@ private:
   ros::Publisher pub_manual_;
   ros::Publisher pub_signal_;
   ros::Subscriber sub_position_, sub_vehicle_status_, sub_mower_height_;
-  ros::Subscriber sub_map_name_;
+  ros::Subscriber sub_map_name_, sub_signal_;
   ros::Timer location_timer_, status_timer_, watchdog_timer_;
+  ros::Timer map_origin_timer_;
 
   MqttConfig mqtt_cfg_;
   std::unique_ptr<MqttClient> mqtt_;
@@ -475,12 +562,19 @@ private:
       topic_cmd_init_location_, topic_cmd_mapping_;
   std::string topic_state_location_, topic_state_vehicle_;
   std::string topic_state_mapping_, topic_state_map_list_;
+  std::string topic_state_map_origin_;
+  std::string map_dir_;
 
   // 建图会话标志：收到 cmd/mapping enter 置位，save/reset 清除；
   // MQTT 回调线程写，ROS 定时器线程读
   std::atomic<bool> mapping_active_{false};
 
   double location_hz_ = 2.0, status_hz_ = 1.0;
+  double map_origin_hz_ = 1.0;
+
+  // 当前选中的地图名：signalCb 写，map_origin_timer_ 定时器读
+  std::mutex map_origin_mutex_;
+  std::string current_map_name_;
 
   double cmd_timeout_ = 0.5;
   int drive_max_ = 10000, turn_max_ = 12566;

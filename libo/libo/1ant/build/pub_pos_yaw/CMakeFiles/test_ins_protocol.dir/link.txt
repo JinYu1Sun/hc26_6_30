@@ -1,0 +1,1 @@
+/usr/bin/c++    -rdynamic CMakeFiles/test_ins_protocol.dir/test/test_ins_protocol.cpp.o  -o /home/nvidia/libo/1ant/devel/lib/serial_reader/test_ins_protocol   -L/home/nvidia/libo/1ant/build/gtest  -Wl,-rpath,/home/nvidia/libo/1ant/build/gtest:/home/nvidia/libo/1ant/build/gtest/lib ../gtest/lib/libgtest.so -lpthread 

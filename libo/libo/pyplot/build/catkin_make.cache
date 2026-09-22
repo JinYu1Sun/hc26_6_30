@@ -1,0 +1,2 @@
+pyplot
+-DCATKIN_DEVEL_PREFIX=/home/nvidia/libo/pyplot/devel -DCMAKE_INSTALL_PREFIX=/home/nvidia/libo/pyplot/install -G Unix Makefiles

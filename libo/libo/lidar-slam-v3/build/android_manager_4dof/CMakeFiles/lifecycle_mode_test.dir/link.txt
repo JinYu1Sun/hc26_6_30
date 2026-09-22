@@ -1,0 +1,1 @@
+/usr/bin/c++  -std=c++17 -O3 -O3 -DNDEBUG  -rdynamic CMakeFiles/lifecycle_mode_test.dir/test/lifecycle_mode_test.cpp.o  -o /home/nvidia/libo/lidar-slam-v3/devel/lib/android_manager_4dof/lifecycle_mode_test 

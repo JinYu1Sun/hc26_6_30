@@ -1,0 +1,1493 @@
+#include "LocalCartesian.hpp"
+#include "fusion/global_fusion.h"
+#include "util/GpsPosition.h"
+#include "util/LIOPose.h"
+#include "util/Position.h"
+#include <Eigen/Dense>
+#include <chrono>
+#include <cmath>
+#include <cstdlib>
+#include <fstream>
+#include <iostream>
+#include <geometry_msgs/PoseStamped.h>
+#include <limits.h>
+#include <mutex>
+#include <nav_msgs/Odometry.h>
+#include <nav_msgs/Path.h>
+#include <queue>
+#include <ros/ros.h>
+#include <std_msgs/Bool.h>
+#include <tf/transform_broadcaster.h>
+#include <tf/transform_datatypes.h>
+#include <thread>
+#include <unistd.h>
+#include <vector>
+#include <yaml-cpp/yaml.h>
+
+constexpr auto DEG2RAD = M_PI / 180.0;
+
+#define DEBUG
+
+// =========== [辅助函数] ============================================
+struct Vector {
+  double x;
+  double y;
+};
+
+bool isValidarray(const double *arr, const int size) {
+  for (int i = 0; i < size; i++) {
+    if (arr[i] == 0.0)
+      return false;
+  }
+  return true;
+}
+
+// 计算两个点之间的欧氏距离
+double computeDistance(const double *p1, const double *p2) {
+  return std::sqrt((p1[0] - p2[0]) * (p1[0] - p2[0]) +
+                   (p1[1] - p2[1]) * (p1[1] - p2[1]));
+}
+
+// ===================================================================
+
+// =========== [RViz 可视化] =========================================
+// 每一种位姿来源(纯GPS / 纯LIO / ceres融合 / 实际输出)对应一条 RvizTrack：
+//   - odom_pub  : nav_msgs/Odometry，显示“当前位姿”（带朝向箭头），RViz 用
+//                 Odometry 显示项即可看到位置 + 航向。
+//   - path_pub  : nav_msgs/Path，累积历史轨迹，RViz 用 Path 显示项查看走过的线。
+//   - child_frame_id : Odometry 的子坐标系名，便于区分。
+// 所有轨迹统一发布在 viz_frame_id_(默认 "map") 下，RViz 把 Fixed Frame 设为该值
+// 即可同时叠加对比各来源，无需额外 TF。
+struct RvizTrack {
+  ros::Publisher odom_pub;
+  ros::Publisher path_pub;
+  nav_msgs::Path path;
+  std::string child_frame_id;
+};
+// ===================================================================
+
+class FusionNode {
+public:
+  FusionNode() : nh_("~") {
+    std::string node_name = ros::this_node::getName();
+    std::string gps_topic, lio_slam_topic, fusion_topic, android_topic;
+    ParameterInit();
+    nh_.param<bool>(node_name + "/location_mode", location_mode_, false);
+    nh_.param<std::string>(node_name + "/map_path", map_path_, "./my_map.mp");
+    // +++++++++++
+    nh_.param<std::string>(
+        node_name + "/last_pub_pos_path", last_pub_pos_path,
+        "/home/nvidia/libo/lidar-slam-v2/src/fast-lio/Pos/last_pub_pos.txt");
+    nh_.param<std::string>(node_name + "/gps_topic", gps_topic,
+                           "/nanobot/gpsposition");
+    nh_.param<std::string>(node_name + "/lio_slam_topic", lio_slam_topic,
+                           "/Mower/lio_slam");
+    nh_.param<std::string>(node_name + "/fusion_topic", fusion_topic,
+                           "/Mower/position");
+    // +++++++++++
+    nh_.param<std::string>(node_name + "/android_topic", android_topic,
+                           "/signal");
+    nh_.param<int>(node_name + "/map_index", map_index_, 0);
+    nh_.param<int>(node_name + "/pub_fusion", pub_fusion, 0);
+    // RViz 可视化参数（纯增量功能，默认开启，可在 launch 中关闭）
+    nh_.param<bool>(node_name + "/enable_viz", enable_viz_, true);
+    nh_.param<std::string>(node_name + "/viz_frame_id", viz_frame_id_, "map");
+    nh_.param<int>(node_name + "/viz_path_max", viz_path_max_, 3000);
+
+    // ===== SE(2) 在线对齐 + LIO 帧代际检测 运行时参数（实地免重编译调参）=====
+    // 缺省值与代码内置一致；在 launch 中覆盖即可现场调，无需重编译。
+    // 缺省值以精度为主（更长窗口多平均、拐弯清晰才锁定；冷启动由 RTK 航向种子兜底）。
+    int se2_max_window;
+    double se2_window_span, se2_match_tol, se2_seed_along_std, se2_lock_cross_std;
+    nh_.param<int>(node_name + "/se2_max_window", se2_max_window, 400);
+    nh_.param<double>(node_name + "/se2_window_span_sec", se2_window_span, 45.0);
+    nh_.param<double>(node_name + "/se2_match_tol_sec", se2_match_tol, 0.05);
+    nh_.param<double>(node_name + "/se2_seed_along_std", se2_seed_along_std, 0.50);
+    nh_.param<double>(node_name + "/se2_lock_cross_std", se2_lock_cross_std, 0.35);
+    globalEstimator_.SetParams(se2_max_window, se2_window_span, se2_match_tol,
+                               se2_seed_along_std, se2_lock_cross_std);
+    // LIO 帧代际检测阈值（默认由 ParameterInit 设定，这里允许 launch 覆盖）。
+    nh_.param<double>(node_name + "/lio_epoch_near_thresh", lio_epoch_near_thresh_,
+                      lio_epoch_near_thresh_);
+    nh_.param<double>(node_name + "/lio_epoch_far_thresh", lio_epoch_far_thresh_,
+                      lio_epoch_far_thresh_);
+    nh_.param<double>(node_name + "/lio_epoch_jump_thresh", lio_epoch_jump_thresh_,
+                      lio_epoch_jump_thresh_);
+    ROS_INFO("[SE2] window=%d span=%.1fs match_tol=%.3fs seed_along=%.2fm "
+             "lock_cross=%.2fm | epoch near=%.2f far=%.2f jump=%.2f",
+             se2_max_window, se2_window_span, se2_match_tol, se2_seed_along_std,
+             se2_lock_cross_std, lio_epoch_near_thresh_, lio_epoch_far_thresh_,
+             lio_epoch_jump_thresh_);
+
+    LoadLioExtrinsic(node_name);
+    if (location_mode_)
+      ReadMap();
+    // +++++++++++
+    subGps_ =
+        nh_.subscribe(gps_topic, 5, &FusionNode::GPSCallBack, this); // 0822
+    subLio_ = nh_.subscribe(lio_slam_topic, 1, &FusionNode::LioCallBack, this);
+
+    pubPosition_ = nh_.advertise<util::Position>(fusion_topic, 1);
+    pub_fusion_Reboot_ = nh_.advertise<std_msgs::Bool>("/Mower/reboot", 1);
+    pub_gps_Reboot_ = nh_.advertise<std_msgs::Bool>("/nanobot/reboot", 1);
+    nh_.param<std::string>(node_name + "/stop_car_topic", stop_car_topic_,
+                           "/mower/stop_car");
+    pub_stop_car_ = nh_.advertise<std_msgs::Bool>(stop_car_topic_, 1);
+#ifdef DEBUG
+    pubDebugGPS_ = nh_.advertise<util::Position>("/Mower/debug/gps", 1);
+    pubDebugLIO_ = nh_.advertise<util::Position>("/Mower/debug/lio", 1);
+    pubDebugFusion_ = nh_.advertise<util::Position>("/Mower/fusion", 1);
+#endif
+    SetupVizTracks();
+  }
+
+private:
+  void LoadLioExtrinsic(const std::string &node_name) {
+    // 这里的外参含义是 /Mower/lio_slam 输出位姿坐标系 -> base_link，
+    // 不是 mid360_config.yaml 中的 LiDAR-IMU 外参。
+    // 平移参数按 base_link/车体轴填写，代码内部再换算到 lio 轴。
+    std::vector<double> lio_to_base_trans_baseframe{0.0, 0.0, 0.0};
+    std::vector<double> lio_to_base_rpy_deg{0.0, 0.0, 0.0};
+
+    bool has_baseframe_trans =
+        nh_.getParam(node_name + "/lio_to_base_trans_baseframe",
+                     lio_to_base_trans_baseframe);
+    if (!has_baseframe_trans) {
+      nh_.param<std::vector<double>>(node_name + "/lio_to_base_trans",
+                                     lio_to_base_trans_baseframe,
+                                     lio_to_base_trans_baseframe);
+    }
+    nh_.param<std::vector<double>>(node_name + "/lio_to_base_rpy_deg",
+                                   lio_to_base_rpy_deg, lio_to_base_rpy_deg);
+
+    if (lio_to_base_trans_baseframe.size() != 3) {
+      ROS_WARN("Invalid param %s/lio_to_base_trans_baseframe, expected 3 "
+               "elements. Using [0, 0, 0].",
+               node_name.c_str());
+      lio_to_base_trans_baseframe = {0.0, 0.0, 0.0};
+    }
+
+    if (lio_to_base_rpy_deg.size() != 3) {
+      ROS_WARN("Invalid param %s/lio_to_base_rpy_deg, expected 3 elements. "
+               "Using [0, 0, 0].",
+               node_name.c_str());
+      lio_to_base_rpy_deg = {0.0, 0.0, 0.0};
+    }
+
+    // lio_to_base_translation_baseframe_:
+    //   向量“从 /Mower/lio_slam 输出坐标系原点 指向 base_link 原点”，
+    //   但分量是按 base_link 轴表达的。
+    lio_to_base_translation_baseframe_ = Eigen::Vector3d(
+        lio_to_base_trans_baseframe[0], lio_to_base_trans_baseframe[1],
+        lio_to_base_trans_baseframe[2]);
+
+    tf::Quaternion tf_extrinsic_q;
+    tf_extrinsic_q.setRPY(lio_to_base_rpy_deg[0] * DEG2RAD,
+                          lio_to_base_rpy_deg[1] * DEG2RAD,
+                          lio_to_base_rpy_deg[2] * DEG2RAD);
+    // lio_to_base_rotation_:
+    //   用于把 base_link 轴表达的向量转换到 lio 对齐后的轴表达；
+    //   同时在位姿合成时满足 q_w_base = q_w_lio * q_lio_base。
+    lio_to_base_rotation_ =
+        Eigen::Quaterniond(tf_extrinsic_q.w(), tf_extrinsic_q.x(),
+                           tf_extrinsic_q.y(), tf_extrinsic_q.z())
+            .normalized();
+
+    // 将“按 base_link 轴表达的杆臂”换算成“按 lio 轴表达的杆臂”。
+    lio_to_base_translation_ =
+        lio_to_base_rotation_ * lio_to_base_translation_baseframe_;
+
+    ROS_INFO(
+        "Loaded lio_to_base extrinsic(base frame): t = [%.4f, %.4f, %.4f], "
+        "rpy_deg = [%.2f, %.2f, %.2f]",
+        lio_to_base_translation_baseframe_.x(),
+        lio_to_base_translation_baseframe_.y(),
+        lio_to_base_translation_baseframe_.z(), lio_to_base_rpy_deg[0],
+        lio_to_base_rpy_deg[1], lio_to_base_rpy_deg[2]);
+    ROS_INFO(
+        "Converted lio_to_base translation(in lio frame): [%.4f, %.4f, %.4f]",
+        lio_to_base_translation_.x(), lio_to_base_translation_.y(),
+        lio_to_base_translation_.z());
+  }
+
+  // 建立 4 条可视化轨迹：纯GPS / 纯LIO / ceres融合 / 实际输出位姿。
+  // 话题统一前缀 /Mower/viz/<name>/{odom,path}，便于在 RViz 中按需添加。
+  void SetupVizTracks() {
+    if (!enable_viz_)
+      return;
+    SetupOneVizTrack(viz_gps_, "gps", "gps");
+    SetupOneVizTrack(viz_lio_, "lio", "lio");
+    SetupOneVizTrack(viz_fusion_, "fusion", "fusion");
+    SetupOneVizTrack(viz_output_, "output", "base_link");
+    ROS_INFO("[viz] RViz visualization enabled. Fixed Frame = '%s'. Topics: "
+             "/Mower/viz/{gps,lio,fusion,output}/{odom,path}",
+             viz_frame_id_.c_str());
+  }
+
+  void SetupOneVizTrack(RvizTrack &track, const std::string &name,
+                        const std::string &child_frame) {
+    const std::string base = "/Mower/viz/" + name;
+    track.odom_pub = nh_.advertise<nav_msgs::Odometry>(base + "/odom", 10);
+    track.path_pub = nh_.advertise<nav_msgs::Path>(base + "/path", 1);
+    track.path.header.frame_id = viz_frame_id_;
+    track.child_frame_id = child_frame;
+  }
+
+  // 发布一帧位姿到对应轨迹：同时刷新 Odometry(当前位姿) 与 Path(累积轨迹)。
+  // x,y,z 单位米，roll/pitch/yaw 单位弧度，均在 viz_frame_id_ 坐标系下。
+  void PublishVizPose(RvizTrack &track, const ros::Time &stamp, double x,
+                      double y, double z, double roll, double pitch,
+                      double yaw) {
+    if (!enable_viz_)
+      return;
+
+    geometry_msgs::Quaternion q =
+        tf::createQuaternionMsgFromRollPitchYaw(roll, pitch, yaw);
+
+    nav_msgs::Odometry odom;
+    odom.header.stamp = stamp;
+    odom.header.frame_id = viz_frame_id_;
+    odom.child_frame_id = track.child_frame_id;
+    odom.pose.pose.position.x = x;
+    odom.pose.pose.position.y = y;
+    odom.pose.pose.position.z = z;
+    odom.pose.pose.orientation = q;
+    track.odom_pub.publish(odom);
+
+    geometry_msgs::PoseStamped ps;
+    ps.header = odom.header;
+    ps.pose = odom.pose.pose;
+    track.path.header.stamp = stamp;
+    track.path.poses.push_back(ps);
+    // 限制轨迹长度，避免长时间运行内存无界增长。
+    if (viz_path_max_ > 0 &&
+        static_cast<int>(track.path.poses.size()) > viz_path_max_) {
+      track.path.poses.erase(track.path.poses.begin(),
+                             track.path.poses.begin() +
+                                 (track.path.poses.size() - viz_path_max_));
+    }
+    track.path_pub.publish(track.path);
+  }
+
+  // 把“实际输出位姿”广播为 viz_frame_id_ -> base_link 的 TF，
+  // 方便在 RViz 中以 base_link 关联车体模型/点云。
+  void BroadcastBaseLinkTF(const ros::Time &stamp, double x, double y, double z,
+                           double yaw) {
+    if (!enable_viz_)
+      return;
+    tf::Transform transform;
+    transform.setOrigin(tf::Vector3(x, y, z));
+    tf::Quaternion q;
+    q.setRPY(0, 0, yaw);
+    transform.setRotation(q);
+    viz_tf_broadcaster_.sendTransform(
+        tf::StampedTransform(transform, stamp, viz_frame_id_, "base_link"));
+  }
+
+  void GPSCallBack(const util::GpsPositionConstPtr &msg) {
+    if (msg == nullptr)
+      return;
+    {
+      std::unique_lock<std::mutex> lock(gps_mutex_);
+      gps_queue_.push(msg);
+    }
+
+    double time_diff = msg->header.stamp.toSec() - lio_stamp_;
+
+    if (pub_fusion == 2) //! reboot && (system_init_ && time_diff > 1) ||
+    {
+      double location_gps[4]; // [0]x [1]y [2]高程 [3]航向
+      memset(location_gps, 0, sizeof(double) * 4);
+      double latitude = msg->latitude;
+      double longitude = msg->longitude;
+      double altitude = msg->height;
+      // +++++++++++
+      double gauss_yaw = msg->azimuth - 9000;
+      if (gauss_yaw < 0) {
+        gauss_yaw += 36000;
+      }
+      gauss_yaw *= 0.01;
+
+      GPS2Local(latitude, longitude, altitude, gauss_yaw, location_gps);
+
+      util::Position gps_position;
+      gps_position.header.stamp = msg->header.stamp;
+      gps_position.header.frame_id = "base_link";
+      gps_position.position_x = location_gps[0];
+      gps_position.position_y = location_gps[1];
+      gps_position.position_z = location_gps[2];
+      gps_position.roll = 0;
+      gps_position.pitch = 0;
+      gps_position.yaw = location_gps[3];
+      gps_position.position_state = 3;
+      pubPosition_.publish(gps_position);
+      // [viz] 纯 GPS 模式：画 GPS 轨迹与输出轨迹 + TF。
+      PublishVizPose(viz_gps_, msg->header.stamp, location_gps[0],
+                     location_gps[1], location_gps[2], 0.0, 0.0,
+                     location_gps[3]);
+      PublishVizPose(viz_output_, msg->header.stamp, location_gps[0],
+                     location_gps[1], location_gps[2], 0.0, 0.0,
+                     location_gps[3]);
+      BroadcastBaseLinkTF(msg->header.stamp, location_gps[0], location_gps[1],
+                          location_gps[2], location_gps[3]);
+    }
+  }
+
+  void LioCallBack(const util::LIOPoseConstPtr &msg) {
+    // Is_rate_ok();
+
+    if (!Is_LIO_USABLE(msg) || pub_fusion == 2) {
+      return;
+    }
+
+    Eigen::Vector3d lio_t(msg->position_x, msg->position_y, msg->position_z);
+    Eigen::Quaterniond lio_q;
+
+    lio_q.w() = msg->q_w;
+    lio_q.x() = msg->q_x;
+    lio_q.y() = msg->q_y;
+    lio_q.z() = msg->q_z;
+    bool lio_state_ = msg->lio_state;
+
+    // ===== [RESET 状态] LIO 帧代际变化检测（/laserMapping 重启）=====
+    // 三重判据，任一命中即判定 LIO 帧已重置，对 LIO↔map 对齐做外科手术式局部
+    // 复位（清滑窗/对齐、保留 GPS 原点、重锚 LIOPrecess、重置 LIO 速度/漂移基准）：
+    //   (1) 自触发标志 lio_restart_pending_：本节点(/fusion)自己发起的 LIO 重启，
+    //       重启前置位，重启后首帧 LIO 到来即确定性命中（最可靠）；
+    //   (2) header.seq 回退：/laserMapping 重启后是新 publisher，seq 从 0 重新
+    //       计数，故 cur_seq < last_seq 即代际变化（无需改消息/laserMapping）；
+    //   (3) 位姿瞬时大跳变且回到原点附近：外部重启或 seq 不可用时的兜底，
+    //       要求非物理单帧跳变以避免牛耕式正常驶回原点被误判。
+    // 判定用原始 lio_t（LIOPrecess 之前）。
+    {
+      uint32_t cur_seq = msg->header.seq;
+      double lio_norm = lio_t.norm();
+      double lio_jump =
+          has_prev_raw_lio_ ? (lio_t - prev_raw_lio_t_).norm() : 0.0;
+
+      bool by_flag = lio_restart_pending_;
+      bool by_seq = has_last_lio_seq_ && cur_seq < last_lio_seq_;
+      bool by_jump = lio_seen_far_ && lio_norm < lio_epoch_near_thresh_ &&
+                     lio_jump > lio_epoch_jump_thresh_;
+
+      if (by_flag || by_seq || by_jump) {
+        ROS_WARN("Detected LIO frame reset (flag=%d seq=%d jump=%d, jump=%.2fm): "
+                 "surgical reset of LIO->map alignment.",
+                 by_flag, by_seq, by_jump, lio_jump);
+        globalEstimator_.ResetLioCoupled();
+        lio_restart_pending_ = false;
+        lio_seen_far_ = false;
+        lio_anchor_set_ = false; // 让 LIOPrecess 以新原点重锚
+        last_lio_stamp_ = 0.0;   // 重置速度检测基准，避免本帧误判漂移
+        lio_drift_detected_ = false;
+        lio_drift_count_ = 0;
+        lio_failed_cnt_ = 0;
+      }
+
+      if (lio_norm > lio_epoch_far_thresh_)
+        lio_seen_far_ = true;
+      prev_raw_lio_t_ = lio_t; // 记录“原始” LIO 位置（LIOPrecess 修改前）
+      has_prev_raw_lio_ = true;
+      last_lio_seq_ = cur_seq;
+      has_last_lio_seq_ = true;
+    }
+
+    // [停车解除] 为重启 /laserMapping 而停车后，待新 LIO 回来(代际复位完成)且连续
+    // 健康若干帧，再发布 /mower/stop_car=false 解除停车（“重启完成后停止发”）。
+    if (stop_car_active_) {
+      if (!lio_restart_pending_ && lio_state_) {
+        if (++stop_car_resume_cnt_ >= stop_car_resume_frames_) {
+          PublishStopCar(false);
+          stop_car_active_ = false;
+          ROS_WARN("LIO restart done & healthy -> release stop_car.");
+        }
+      } else {
+        stop_car_resume_cnt_ = 0; // LIO 尚未回来/未健康：保持停车
+      }
+    }
+
+    double xyy_lio[4]; // [0]x [1]y [2]高程 [3]航向
+    memset(xyy_lio, 0, sizeof(double) * 4);
+    lio_raw_x_ = 0;
+    lio_raw_y_ = 0;
+    lio_raw_yaw_ = 0;
+    LIOPrecess(lio_t, lio_q, xyy_lio);
+
+    // Publish LIO position.
+    if (!reboot && pub_fusion == 3 && lio_state_) {
+      util::Position lio_position;
+      lio_position.header.stamp = msg->header.stamp;
+      lio_position.header.frame_id = "base_link";
+      lio_position.position_x = xyy_lio[0];
+      lio_position.position_y = xyy_lio[1];
+      lio_position.position_z = xyy_lio[2];
+      lio_position.roll = lio_raw_roll_;
+      lio_position.pitch = lio_raw_pitch_;
+      lio_position.yaw = xyy_lio[3];
+      lio_position.position_state = 4;
+      pubPosition_.publish(lio_position);
+      // [viz] 纯 LIO 模式：同时画 LIO 轨迹与输出轨迹 + TF。
+      PublishVizPose(viz_lio_, msg->header.stamp, xyy_lio[0], xyy_lio[1],
+                     xyy_lio[2], lio_raw_roll_, lio_raw_pitch_, xyy_lio[3]);
+      PublishVizPose(viz_output_, msg->header.stamp, xyy_lio[0], xyy_lio[1],
+                     xyy_lio[2], lio_raw_roll_, lio_raw_pitch_, xyy_lio[3]);
+      BroadcastBaseLinkTF(msg->header.stamp, xyy_lio[0], xyy_lio[1], xyy_lio[2],
+                          xyy_lio[3]);
+      publish_count++;
+      return;
+    }
+
+    // LIO速度判断
+    double lio_speed = 0.0;
+    double lio_pos_yaw = 0.0;
+    // lio_speed_flag_：当前帧的LIO状态，lio_drift_detected_：当前帧或漂移期设置的LIO的状态
+    bool lio_speed_flag_ =
+        lio_state_ ? Is_LIO_GOOD(lio_t, last_lio_t_, lio_stamp_, &lio_speed,
+                                 lio_raw_yaw_, &lio_pos_yaw)
+                   : false;
+
+    lio_drift_detected_ = lio_drift_count_ > 0 ? true : lio_drift_detected_;
+    lio_drift_count_ =
+        lio_drift_count_ > 0 ? --lio_drift_count_ : lio_drift_count_;
+
+    if (system_init_) {
+      last_lio_t_ = lio_t;
+      last_lio_stamp_ = lio_stamp_;
+    }
+
+    // LIO数据输入
+    bool inputLIO_flag_ = false;
+    if (lio_state_ && lio_speed_flag_) {
+      if (system_init_ && !lio_drift_detected_) {
+        globalEstimator_.InputOdom(lio_stamp_, lio_t, lio_q);
+        inputLIO_flag_ = true;
+      }
+      lio_failed_cnt_ = 0;
+    } else {
+      lio_failed_cnt_++;
+      if (lio_failed_cnt_ >=
+          20) // 可能导致当RTK数据较差时只能重启节点但由于无法得到RTK定位而无法得到定位结果，仅重启/lasermapping？？？
+      {
+        // [死角判定] RTK 也处于失效状态(gps_failed_flag_)：LIO 重启后无 RTK 可
+        // 重锚 LIO->map，重启无意义。直接停车报障(FAULT)，等待 RTK 恢复或人工介入。
+        if (gps_failed_flag_) {
+          reboot = true;
+          ROS_ERROR("LIO bad AND RTK unavailable (dead corner): stop the car, "
+                    "no restart.");
+          return;
+        }
+        // [RECOVER] RTK 尚可用：主动恢复，重启 LIO（当前仍走整体重启脚本；
+        // 拆分为仅重启 /laserMapping 需协同改 launch，见自检说明）。
+        lio_restart_pending_ = true; // 自触发：重启后首帧新 LIO 即确定性复位
+        PublishStopCar(true);        // 重启 /laserMapping 前请求停车，避免移动中重启 LIO
+        stop_car_active_ = true;
+        stop_car_resume_cnt_ = 0;
+        ROS_WARN("LIO data are not good, restart the node /lasermapping !");
+        if (std::system(
+                "restart_ros_nodes.sh /laserMapping -- bash -c 'source "
+                "/home/nvidia/libo/lidar-slam-v2/devel/setup.bash && roslaunch "
+                "fusion_se2 laserMapping_only.launch'") != 0) {
+          ROS_ERROR("Failed to restart nodes /lasermapping.");
+        }
+        globalEstimator_.clear_data = true;
+        // 重置lio相关状态！！！
+        lio_drift_detected_ = false;
+        lio_drift_count_ = 0;
+        lio_failed_cnt_ = 0;
+        sync_failed_cnt_ = 0;
+        fusion_failed_cnt_ = 0;
+        return;
+      }
+
+      // if (lio_failed_cnt_ >= 20) //
+      // 可能导致当RTK数据较差时只能重启节点但由于无法得到RTK定位而无法得到定位结果，仅重启/lasermapping？？？
+      // {
+      //     lio_bad_flag_ = true;
+      // }
+
+      // if (location_mode_ && lio_failed_cnt_ >= 20)
+      // {
+      //     reboot = true;
+      //     ROS_WARN("LIO raw data are not good, restart the node!");
+      //     return;
+      // }
+    }
+
+    lio_drift_count_ = lio_failed_cnt_ >= 3 ? 30 : lio_drift_count_;
+    //------------------------------LIO数据处理----------------------------------//
+
+    //------------------------------GPS数据处理----------------------------------//
+    double latitude = 0., longitude = 0., altitude = 0., gps_flag = 0.,
+           gauss_yaw = 0., gps_stamp = 0.;
+    ros::Time gps_msg_stamp;
+
+    gps_mutex_.lock();
+    while (!gps_queue_.empty()) {
+      util::GpsPositionConstPtr gps_msg = gps_queue_.front();
+      if (!heading_flag_) {
+        heading_flag_ = gps_msg->positionStatus;
+      }
+      gps_msg_stamp = gps_msg->header.stamp;
+      gps_stamp = gps_msg->header.stamp.toSec();
+
+      printf("now = %15.4f\n", ros::Time::now().toSec());
+      printf("lio_stamp = %15.4f\n", lio_stamp_);
+      printf("gps_stamp = %12.4f\n", gps_stamp);
+      printf("gps_stamp -lio_stamp = %12.4f\n", gps_stamp - lio_stamp_);
+      if (gps_stamp >= lio_stamp_ - 0.08 && gps_stamp <= lio_stamp_ + 0.08) {
+        latitude = gps_msg->latitude;
+        longitude = gps_msg->longitude;
+        altitude = gps_msg->height;
+        gps_flag = gps_msg->gps_flag;
+        gauss_yaw = gps_msg->azimuth - 9000;
+        if (gauss_yaw < 0) {
+          gauss_yaw += 36000;
+        }
+        gauss_yaw *= 0.01;
+        sync_failed_cnt_ > 0 ? sync_failed_cnt_ -= 2 : sync_failed_cnt_;
+        gps_queue_.pop();
+        break;
+      } else if (gps_stamp < lio_stamp_ - 0.08) {
+        sync_failed_cnt_++;
+        gps_queue_.pop();
+      } else if (gps_stamp > lio_stamp_ + 0.08) {
+        sync_failed_cnt_++;
+        break;
+      }
+    }
+    gps_mutex_.unlock();
+
+    std::cout << "sync_failed_cnt_ = " << sync_failed_cnt_ << std::endl;
+
+    if (sync_failed_cnt_ >= 50) {
+      // [死角判定] RTK 也失效：同步失败且无 RTK 可重锚，重启无意义 → 停车报障。
+      if (gps_failed_flag_) {
+        reboot = true;
+        ROS_ERROR("sync failed AND RTK unavailable (dead corner): stop the car, "
+                  "no restart.");
+        return;
+      }
+      // reboot = true;
+      // ROS_WARN("---sync failed, restart the node!");
+
+      // std_msgs::Bool gps_reboot_msg;
+      // gps_reboot_msg.data = true;
+      // pub_gps_Reboot_.publish(gps_reboot_msg);
+      // return;
+
+      lio_restart_pending_ = true; // 自触发：重启后首帧新 LIO 即确定性复位
+      PublishStopCar(true);        // 重启 /laserMapping 前请求停车，避免移动中重启 LIO
+      stop_car_active_ = true;
+      stop_car_resume_cnt_ = 0;
+      ROS_WARN("---sync failed, restart the node /lasermapping !");
+      if (std::system(
+              "restart_ros_nodes.sh /laserMapping -- bash -c 'source "
+              "/home/nvidia/libo/lidar-slam-v2/devel/setup.bash && roslaunch "
+              "fusion_se2 laserMapping_only.launch'") != 0) {
+        ROS_ERROR("Failed to restart nodes /lasermapping.");
+      }
+      globalEstimator_.clear_data = true;
+      // 重置lio相关状态！！！
+      lio_drift_detected_ = false;
+      lio_drift_count_ = 0;
+      lio_failed_cnt_ = 0;
+      sync_failed_cnt_ = 0;
+      fusion_failed_cnt_ = 0;
+      return;
+    }
+
+    // GPS状态检测和速度判断
+    bool gps_good_flag = false;
+    double gps_speed = 0.0;
+    double gps_pos_yaw = 0.0;
+    double location_gps[4]; // [0]x [1]y [2]高程 [3]航向
+    memset(location_gps, 0, sizeof(double) * 4);
+    // gps_stamp = gps_flag > 0 ? lio_stamp_ : 0;
+    // gps_good_flag：当前帧或漂移期设置的GPS的状态，不能代表当前帧的GPS状态
+    gps_good_flag = Is_GPS_GOOD(latitude, longitude, altitude, gps_flag,
+                                gauss_yaw, gps_stamp, location_gps, &gps_speed,
+                                lio_speed, &gps_pos_yaw);
+
+    // gps有数据且不是漂移期时，更新状态计数
+    if (gps_good_flag && latitude != 0. && longitude != 0. && altitude != 0. &&
+        gps_flag == 4) // gps 无数据时gps_failed_cnt_不更新，无法切为融合
+    {
+      gps_stable_cnt_ = gps_stable_cnt_ >= 50 ? 50 : ++gps_stable_cnt_;
+      gps_failed_cnt_ = 0;
+    } else {
+      gps_failed_cnt_++;
+      if (!(latitude != 0. && longitude != 0. && altitude != 0. &&
+            gps_flag == 4)) {
+        gps_stable_cnt_ =
+            gps_stable_cnt_ >= 30 ? gps_stable_cnt_ - 2 : gps_stable_cnt_;
+      }
+    }
+
+    // +++++++++++调整参数
+    if (gps_failed_cnt_ >= 5 && gps_drift_count_ == 0) // gps连续5帧异常
+    {
+      gps_drift_count_ = 30; // 漂移期为30帧
+      // gps_failed_cnt_ = 0;     // 重置异常计数
+      gps_failed_flag_ =
+          true; // 置GPS连续异常不可用标志，pub数据赋值时不使用gps，使用融合定位数据
+    }
+    //------------------------------GPS数据处理----------------------------------//
+
+    // 长时间无RTK信号，加载上次保存的定位数据作为当前位置
+    // if (location_mode_ && no_rtk_cnt_ == 40) //
+    // {
+    //     double last_pub_pos[3] = {0.0, 0.0, 0.0};
+    //     if (LoadFusionPositionFromFile(last_pub_pos))
+    //     {
+    //         ROS_INFO("load last published position: %f, %f, %f",
+    //         last_pub_pos[0], last_pub_pos[1], last_pub_pos[2]); no_rtk_cnt_ =
+    //         0; geoConverter_.Reverse(last_pub_pos[0], last_pub_pos[1], 0.0,
+    //         latitude, longitude, altitude); gps_flag = 4; gauss_yaw =
+    //         last_pub_pos[2]; gps_good_flag = true;
+    //     }
+    //     else
+    //     {
+    //         ROS_WARN("Failed to load last published position, using default
+    //         values.");
+    //     }
+    // }
+
+    // 初始化及GPS数据输入
+    bool inputGPS_flag_ = false;
+
+    if (gps_good_flag && !system_init_ && gps_stable_cnt_ >= 50) {
+      if (!location_mode_)
+        SaveMap(latitude, longitude, altitude, gauss_yaw);
+      system_init_ = true;
+      gps_init_ = false;
+      GPS2Local(latitude, longitude, altitude, gauss_yaw, location_gps);
+      gps_failed_cnt_ = 0;
+      gps_stable_cnt_ = 50;
+      gps_failed_flag_ = false;
+      no_rtk_cnt_ = 0;
+    } else {
+      if (!system_init_) {
+        no_rtk_cnt_++;
+        gps_drift_count_ = 0; //???
+        lio_drift_count_ = 0;
+        lio_drift_detected_ = false;
+        std::cout << "gps_good_flag = " << gps_good_flag << std::endl;
+        std::cout << "gps_stable_cnt_ = " << gps_stable_cnt_ << std::endl;
+        ROS_WARN("GPS data is not good, please check the GPS module!");
+        return;
+      }
+    }
+
+    if (gps_good_flag && system_init_) {
+      // 传入 GPS2Local 已算好的 ENU 平面位置（location_gps[0]=East,[1]=North）与
+      // ENU 航向 location_gps[3]，与 GPS 对外输出同一帧，保证 SE(2) 回退帧一致。
+      // 单天线 RTK/INS（卫星定位+惯导组合）在手动操控完成初始化后航向即持续可用；
+      // 本调用已在 GPS 好且 system_init 之后，故航向恒可信，yaw_valid 直接传 true。
+      // （冷启动时 SE(2) 尚未由轨迹估出旋转，估计器即用此 RTK 航向作种子定 LIO->ENU）
+      globalEstimator_.InputGPS(lio_stamp_, location_gps[0], location_gps[1],
+                                location_gps[3], true);
+      inputGPS_flag_ = true;
+    }
+
+    // 提取融合定位结果
+    double fusion_pos_[3];
+    memset(fusion_pos_, 0, sizeof(double) * 3);
+    if (inputLIO_flag_) {
+      GetPosition(fusion_pos_); // [2] = SE(2) 的 ENU 航向
+      // GPS 可用时优先用 GPS 的 ENU 航向；不可用时保留 SE(2) ENU 航向，
+      // 不再用 xyy_lio[3]（其走旧 xy_offset_ 路径，非 ENU 自洽，仅供调试）。
+      if (inputGPS_flag_)
+        fusion_pos_[2] = location_gps[3];
+    }
+
+    double pos_state = -1;
+    // gps恢复稳定可用时置gps为正常可用，pub赋值时使用gps
+    gps_failed_flag_ =
+        gps_stable_cnt_ >= gps_stable_threshold_ ? false : gps_failed_flag_;
+
+    double xyy_p[3];
+    memset(xyy_p, 0, sizeof(double) * 3);
+    // gps连续异常不到5帧时，不发布定位且不使用融合（gps_failed_flag_为false）；
+    // gps连续异常不可用时，gps_failed_flag_为true，gps_stable_cnt_肯定小于阈值，使用融合定位数据
+    // gps连续稳定可用，gps_stable_cnt_大于阈值，gps_failed_flag_被置为false，使用gps数据
+    // +++++++++++调整参数
+    if (gps_failed_cnt_ < 5 &&
+        (!gps_failed_flag_ ||
+         (gps_failed_flag_ && gps_stable_cnt_ >= gps_stable_threshold_))) {
+      if (inputGPS_flag_) // gps无数据时无法切换为融合定位
+      {
+        memcpy(xyy_p, location_gps, sizeof(double) * 2);
+        xyy_p[2] = location_gps[3]; // location_gps[2] 现为高程，航向在 [3]
+        pos_state = 1;
+        no_pos_cnt_ = 0;
+      } else {
+        ROS_WARN("inputGPS_flag_ = flase, no publish position!");
+        return;
+      }
+    } else if (lio_failed_cnt_ < 5 && gps_init_ &&
+               globalEstimator_.IsAligned()) {
+      // [N_LIO] 仅当 LIO->map 对齐已播种(IsAligned)才允许回退到融合位姿；
+      // 否则落入下面的 else→停车报障(FAULT)，不输出未对齐的 LIO 回退。
+      ROS_WARN("gps_failed_cnt_ >= 5 or gps is not stable!");
+      gps_failed_cnt_ = 0;
+      gps_failed_flag_ = true;
+      if (inputLIO_flag_) {
+        memcpy(xyy_p, fusion_pos_, sizeof(double) * 3);
+        pos_state = 2;
+        no_pos_cnt_ = 0;
+      } else {
+        return;
+      }
+    } else {
+      reboot = true;
+      ROS_WARN("GPS and LIO data are not good, stop the car!");
+      return;
+    }
+
+    // Publish position.
+    if (!reboot && pub_fusion == 1) {
+      double fusion_time =
+         ros::Time::now().toSec(); // msg->header.stamp.toSec();
+
+      double time_diff =
+         last_fusion_time_ != 0 ? fusion_time - last_fusion_time_ : 0;
+      double fusion_speed = 0;
+      // +++++++++++调整前后帧时间间隔的有效判断
+      if (0 < time_diff && time_diff < 0.15 && isValidarray(fusion_pos_, 2) &&
+          isValidarray(last_fusion_pos_, 2)) {
+        fusion_speed =
+           computeDistance(fusion_pos_, last_fusion_pos_) / time_diff;
+        std::cout << "fusion_speed = " << fusion_speed << std::endl;
+        std::cout << "time_diff = " << time_diff << std::endl;
+        last_fusion_time_ = fusion_time;
+        memcpy(last_fusion_pos_, fusion_pos_, sizeof(double) * 3);
+
+        if (fusion_failed_cnt_ >= 20) {
+          // // reboot = true;
+          // // ROS_WARN("fusion data are not good, stop the car!");
+          // // return;
+
+          // ROS_WARN(
+          //    "fusion data are not good, restart the node /lasermapping !");
+          // if (std::system(
+          //        "restart_ros_nodes.sh /fusion /laserMapping -- bash -c "
+          //        "'source /home/nvidia/libo/lidar-slam-v2/devel/setup.bash && "
+          //        "roslaunch fast_lio location_mode.launch'") != 0) {
+          //   ROS_ERROR("Failed to restart nodes /lasermapping.");
+          // }
+          // globalEstimator_.clear_data = true;
+          // // 重置lio相关状态！！！
+          // lio_drift_detected_ = false;
+          // lio_drift_count_ = 0;
+          // lio_failed_cnt_ = 0;
+          // sync_failed_cnt_ = 0;
+          // fusion_failed_cnt_ = 0;
+          // return;
+       }
+       // +++++++++++调整速度阈值
+       if (fusion_speed > 3) {
+         fusion_failed_cnt_++;
+         return;
+        } else {
+         fusion_failed_cnt_ = 0;
+        }
+      }
+      last_fusion_time_ = fusion_time;
+      memcpy(last_fusion_pos_, fusion_pos_, sizeof(double) * 3);
+
+      util::Position fusion_position;
+      fusion_position.header.stamp = msg->header.stamp;
+      fusion_position.header.frame_id = "base_link";
+      fusion_position.position_x = xyy_p[0];
+      fusion_position.position_y = xyy_p[1];
+      fusion_position.position_z = 0;
+      fusion_position.roll = 0;
+      fusion_position.pitch = 0;
+      fusion_position.yaw = xyy_p[2];
+      if (heading_flag_) {
+        fusion_position.position_state = pos_state;
+      } else {
+        fusion_position.position_state = 9;
+      }
+      pubPosition_.publish(fusion_position);
+      // 保存最后一个 fusion_position 数据到文件
+      // SaveFusionPositionToFile(xyy_p);
+      // [viz] 实际对外发布的定位结果（pos_state: 1=GPS, 2=融合回退）+ map->base_link TF。
+      PublishVizPose(viz_output_, msg->header.stamp, xyy_p[0], xyy_p[1], 0.0,
+                     0.0, 0.0, xyy_p[2]);
+      BroadcastBaseLinkTF(msg->header.stamp, xyy_p[0], xyy_p[1], 0.0, xyy_p[2]);
+
+      publish_count++;
+    }
+
+#ifdef DEBUG
+
+    double xyy_g[4]; // [0]x [1]y [2]高程 [3]航向
+    memset(xyy_g, 0, sizeof(double) * 4);
+    if (gps_good_flag) {
+      GPS2Local(latitude, longitude, altitude, gauss_yaw, xyy_g);
+    }
+    util::Position gps2xyz_msg;
+    gps2xyz_msg.header.frame_id = "map";
+    gps2xyz_msg.header.stamp = gps_msg_stamp;
+    gps2xyz_msg.position_x = xyy_g[0];
+    gps2xyz_msg.position_y = xyy_g[1];
+    gps2xyz_msg.position_z = xyy_g[2]; // 高程(相对原点)
+    gps2xyz_msg.position_state = gps_good_flag;
+    gps2xyz_msg.pitch = gps_pos_yaw * (M_PI / 180.0);
+    gps2xyz_msg.yaw = xyy_g[3];
+    pubDebugGPS_.publish(gps2xyz_msg);
+    // [viz] 纯 GPS 位姿：仅在 GPS 有效时绘制，避免把 (0,0) 画进轨迹。
+    if (gps_good_flag) {
+      PublishVizPose(viz_gps_, gps_msg_stamp, xyy_g[0], xyy_g[1], xyy_g[2], 0.0,
+                     0.0, xyy_g[3]);
+    }
+
+    if (lio_state_) {
+      util::Position LIO_msg;
+      LIO_msg.header.frame_id = "map";
+      LIO_msg.header.stamp = msg->header.stamp;
+      LIO_msg.position_x = xyy_lio[0];
+      LIO_msg.position_y = xyy_lio[1];
+      LIO_msg.position_z = xyy_lio[2]; // 高程(锚定后的 LIO z，相对起点)
+      LIO_msg.position_state = lio_drift_detected_;
+      LIO_msg.pitch = lio_pos_yaw;
+      LIO_msg.yaw = xyy_lio[3];
+      pubDebugLIO_.publish(LIO_msg);
+      // [viz] 纯 LIO 位姿（含 roll/pitch，能看出雷达下倾的姿态）。
+      PublishVizPose(viz_lio_, msg->header.stamp, xyy_lio[0], xyy_lio[1],
+                     xyy_lio[2], lio_raw_roll_, lio_raw_pitch_, xyy_lio[3]);
+
+      util::Position fusion_msg;
+      fusion_msg.header.frame_id = "map";
+      fusion_msg.header.stamp = msg->header.stamp;
+      fusion_msg.position_x = fusion_pos_[0];
+      fusion_msg.position_y = fusion_pos_[1];
+      fusion_msg.position_z = 0;
+      fusion_msg.yaw = fusion_pos_[2];
+      fusion_msg.position_state = inputGPS_flag_ ? 1 : 0;
+      pubDebugFusion_.publish(fusion_msg);
+      // [viz] ceres 融合位姿：仅在本帧确有融合输出时绘制。
+      if (inputLIO_flag_) {
+        PublishVizPose(viz_fusion_, msg->header.stamp, fusion_pos_[0],
+                       fusion_pos_[1], 0.0, 0.0, 0.0, fusion_pos_[2]);
+      }
+    }
+
+#endif
+  }
+
+  bool Is_LIO_GOOD(const Eigen::Vector3d &lio_t,
+                   const Eigen::Vector3d &last_lio_t_, const double lio_stamp_,
+                   double *lio_speed, double lio_yaw, double *lio_pos_yaw) {
+    if (last_lio_stamp_ == 0) {
+      lio_drift_detected_ = false;
+      return true;
+    }
+
+    double time_diff = lio_stamp_ - last_lio_stamp_;
+    // +++++++++++调整前后帧时间间隔的有效判断
+    if (time_diff <= 0.05 || time_diff > 0.15) {
+      ROS_WARN("Invalid time difference: %f", time_diff);
+      lio_drift_detected_ = false;
+      return true;
+    } else {
+      double distance = (lio_t - last_lio_t_).norm();
+      *lio_speed = distance / time_diff;
+
+      // 如果速度超过阈值，标记为漂移
+      if (*lio_speed >= lio_speed_threshold_) {
+        lio_drift_detected_ = true;
+        // lio_drift_count_ = *lio_speed > 2 ? 30 : 10; // 设置漂移计数器为 30
+        return false;
+      }
+      // +++++++++++调整参数
+      if (location_mode_ && *lio_speed > 0.7) {
+        // 计算前后两帧的位置航向角
+        double delta_x = lio_t.x() - last_lio_t_.x();
+        double delta_y = lio_t.y() - last_lio_t_.y();
+        *lio_pos_yaw = atan2(delta_y, delta_x); // 计算航向角（弧度）
+
+        // 将计算的航向角转换到 [-π, π] 范围
+        *lio_pos_yaw = ConvertYaw(*lio_pos_yaw);
+        while (*lio_pos_yaw >= 2 * M_PI) {
+          *lio_pos_yaw -= 2 * M_PI;
+        }
+
+        // 对比计算的航向角与 LIO 消息中的航向角
+        double yaw_diff = fabs(*lio_pos_yaw - lio_yaw);
+        if (yaw_diff > M_PI) {
+          yaw_diff = 2 * M_PI - yaw_diff;
+        }
+
+        // 如果航向角差值过大，标记为漂移
+        // +++++++++++调整参数
+        if (yaw_diff > 0.7) {
+          // lio_drift_detected_ = true;
+          // lio_drift_count_ = yaw_diff > 0.87 ? 30 : 10;
+          ROS_WARN("LIO drift detected due to yaw difference: *lio_pos_yaw = "
+                   "%.2f, lio_yaw = %.2f, yaw_diff = %.2f",
+                   *lio_pos_yaw, lio_yaw, yaw_diff);
+          // return false;
+        }
+      }
+      lio_drift_detected_ = false;
+      return true;
+    }
+  }
+
+private:
+  void ParameterInit() {
+    // +++++++++++调整参数
+    fail_cnt_ = 0;
+    origin_gauss_yaw_ = 0.;
+    map_index_ = 0;
+    origin_latitude_ = 0.;
+    origin_longitude_ = 0.;
+    origin_height_ = 0.;
+    gps_init_ = false;
+    system_init_ = false;
+    location_mode_ = false;
+    memset(xy_offset_, 0, sizeof(double) * 3);
+    memset(last_gps_, 0, sizeof(double) * 3);
+    last_gps_stamp_ = 0.0;
+    gps_drift_count_ = 0;
+    last_lio_t_ = Eigen::Vector3d(0, 0, 0);
+    last_lio_stamp_ = 0.0;
+    pub_fusion = 0;
+    lio_frame_align_rotation_ = Eigen::Quaterniond(
+        Eigen::AngleAxisd(M_PI / 2.0, Eigen::Vector3d::UnitZ()));
+    lio_to_base_translation_baseframe_ = Eigen::Vector3d::Zero();
+    lio_to_base_translation_ = Eigen::Vector3d::Zero();
+    lio_to_base_rotation_ = Eigen::Quaterniond::Identity();
+    lio_anchor_ = Eigen::Vector3d::Zero();
+    lio_anchor_set_ = false;
+    lio_seen_far_ = false;
+    lio_epoch_near_thresh_ = 0.5;
+    lio_epoch_far_thresh_ = 3.0;
+    lio_epoch_jump_thresh_ = 2.0; // 单帧 >2m 位移在割草机速度下非物理 → 视为重启跳变
+    prev_raw_lio_t_ = Eigen::Vector3d(0, 0, 0);
+    has_prev_raw_lio_ = false;
+    last_lio_seq_ = 0;
+    has_last_lio_seq_ = false;
+    lio_restart_pending_ = false;
+    stop_car_active_ = false;
+    stop_car_resume_cnt_ = 0;
+    stop_car_resume_frames_ = 5;
+    lio_speed_threshold_ = 2;
+    lio_stamp_ = 0;
+    lio_drift_count_ = 0;
+    lio_drift_detected_ = false;
+    lio_raw_x_ = 0.0;
+    lio_raw_y_ = 0.0;
+    lio_raw_yaw_ = 0.0;
+    lio_raw_roll_ = 0.0;
+    lio_raw_pitch_ = 0.0;
+    no_pos_cnt_ = 0;
+    reboot = false;
+    gps_failed_cnt_ = 5;
+    lio_failed_cnt_ = 0;
+    last_fusion_time_ = 0.0;
+    memset(last_fusion_pos_, 0, sizeof(double) * 3);
+    fusion_failed_cnt_ = 0;
+
+    pub_overtime_cnt_ = 0;
+
+    gps_stable_cnt_ = 45;
+    gps_stable_threshold_ = 50; // GPS稳定阈值
+    gps_failed_flag_ = false;
+
+    publish_window_start = 0;
+    publish_count = 0;
+
+    publish_error_cnt_ = 0;
+
+    heading_flag_ = 0;
+
+    sync_failed_cnt_ = 0;
+
+    lio_bad_flag_ = false;
+
+    reboot_pub_flag_ = false;
+  }
+  // TODO
+  bool Is_GPS_GOOD(double latitude, double longitude, double altitude,
+                   double gps_flag, double gauss_yaw, double gps_stamp,
+                   double *location_gps, double *gps_speed, double lio_speed,
+                   double *gps_pos_yaw) {
+    if (gps_drift_count_ > 0) {
+      gps_drift_count_--;
+      return false;
+    }
+    // 检查 GPS 数据是否有效
+    if (latitude != 0. && longitude != 0. && altitude != 0. && gps_flag == 4) {
+      GPS2Local(latitude, longitude, altitude, gauss_yaw, location_gps);
+      if (last_gps_stamp_ && gps_stamp) {
+        double gps_stamp_diff = gps_stamp - last_gps_stamp_;
+        // 检查时间间隔和位置有效性
+        // +++++++++++调整前后帧时间间隔的有效判断
+        // location_gps[2] 现为高程(平地处可能为 0，是合法值)，故仅校验 x,y(前 2 维)
+        if ((0.08 < gps_stamp_diff && gps_stamp_diff < 0.22) &&
+            isValidarray(location_gps, 2) && isValidarray(last_gps_, 2)) {
+          *gps_speed = computeDistance(location_gps, last_gps_);
+          *gps_speed = fabs(*gps_speed / gps_stamp_diff);
+          // std::cout << "GPS Speed: " << *gps_speed << std::endl;
+
+          // 检测 GPS 漂移
+          // +++++++++++调整GPS速度阈值
+          if (*gps_speed > 2) {
+            ROS_WARN("GPS drift detected due to high speed: %.2f m/s",
+                     *gps_speed);
+            return false;
+          }
+
+          // //
+          // LIO速度小于0.2m/s，则认为车辆为静止状态，如果GPS速度较大，认为GPS异常
+          // if (0 < lio_speed && lio_speed < 0.15 && *gps_speed > 1.5)
+          // {
+          //     ROS_WARN("GPS speed is too high while LIO speed is low: LIO
+          //     speed = %.2f, GPS speed = %.2f", lio_speed, *gps_speed); return
+          //     false;
+          // }
+
+          // GPS和LIO的速度同时大于0.4，则认为车辆在运动，此时若航向角差值过大，认为GPS异常
+          // +++++++++++调整参数
+          if (location_mode_ && *gps_speed > 0.5) //&& lio_speed > 0.7)
+          {
+            // 计算前后两帧的位置航向角
+            double delta_x = location_gps[0] - last_gps_[0];
+            double delta_y = location_gps[1] - last_gps_[1];
+            *gps_pos_yaw =
+                atan2(delta_y, delta_x) * (180.0 / M_PI); // 转换为角度
+
+            // 将计算的航向角转换到 [0, 360) 范围
+            if (*gps_pos_yaw < 0) {
+              *gps_pos_yaw += 360.0;
+            }
+            while (*gps_pos_yaw >= 360.0) {
+              *gps_pos_yaw -= 360.0;
+            }
+
+            // 对比计算的航向角与真实的 location_gps[3](航向)
+            double gps_yaw = location_gps[3] * (180 / M_PI);
+            gps_yaw = gps_yaw < 0 ? gps_yaw + 360 : gps_yaw;
+
+            double yaw_diff = fabs(*gps_pos_yaw - gps_yaw);
+            if (yaw_diff > 180.0) {
+              yaw_diff = 360.0 - yaw_diff; // 处理周期性角度差
+            }
+
+            // 如果航向角差值过大，认为 GPS 漂移
+            // +++++++++++调整参数
+            if (yaw_diff > 40.0) {
+              ROS_WARN("GPS drift detected due to yaw difference: *gps_pos_yaw "
+                       "= %.2f, gauss_yaw = %.2f, yaw_diff = %.2f",
+                       *gps_pos_yaw, gauss_yaw, yaw_diff);
+              return false;
+            }
+          }
+        }
+      }
+
+      // 如果没有检测到漂移，更新 GPS 数据
+
+      last_gps_stamp_ = gps_stamp;
+      memcpy(last_gps_, location_gps, sizeof(double) * 3);
+      return true;
+    }
+
+    // GPS 数据无效
+    ROS_WARN("GPS data is not valid.");
+    return false;
+  }
+
+  bool Is_LIO_USABLE(const util::LIOPoseConstPtr &msg) {
+    // 检查是否需要重启
+    if (reboot && !reboot_pub_flag_) {
+      // 发布 reboot 话题
+      std_msgs::Bool fusion_reboot_msg;
+      fusion_reboot_msg.data = true;
+      pub_fusion_Reboot_.publish(fusion_reboot_msg);
+
+      // std_msgs::Bool gps_reboot_msg;
+      // gps_reboot_msg.data = true;
+      // pub_gps_Reboot_.publish(gps_reboot_msg);
+
+      ROS_WARN("Reboot triggered, publishing reboot message and shutting down "
+               "the node.");
+
+      reboot_pub_flag_ = true;
+      return false;
+    }
+
+    // 检查 LIO 消息是否为空
+    if (!msg) {
+      ROS_ERROR("Received null LIO message.");
+      return false;
+    }
+
+    // 检查 LIO 时间戳是否有效
+    lio_stamp_ = msg->header.stamp.toSec();
+    if (lio_stamp_ <= 0) {
+      ROS_WARN("Invalid LIO timestamp: %f", lio_stamp_);
+      return false;
+    }
+
+    return true; // 检查通过
+  }
+
+  bool SaveMap(double latitude, double longitude, double height,
+               double gauss_yaw) {
+    std::ofstream fcout(map_path_, std::ios::binary);
+    if (!fcout.is_open()) {
+      std::cerr << "Error(Save map): Unable to open map file." << std::endl;
+      return false;
+    }
+
+    char map_data[36];
+    memset(map_data, 0, 36);
+    std::memcpy(map_data, &map_index_, 4);
+    std::memcpy(map_data + 4, &latitude, 8);
+    std::memcpy(map_data + 12, &longitude, 8);
+    std::memcpy(map_data + 20, &height, 8);
+    std::memcpy(map_data + 28, &gauss_yaw, 8);
+    fcout.write(map_data, 36);
+    fcout.close();
+
+    return true;
+  }
+
+  bool ReadMap() {
+    char data[36];
+    memset(data, 0, 36);
+
+    std::ifstream file(map_path_, std::ios::binary);
+    if (!file.is_open()) {
+      std::cerr << "Error(Read map): Unable to open file." << std::endl;
+      return false;
+    }
+
+    file.read(data, 36);
+    file.close();
+    std::memcpy(&map_index_, data, 4);
+    std::memcpy(&origin_latitude_, data + 4, 8);
+    std::memcpy(&origin_longitude_, data + 12, 8);
+    std::memcpy(&origin_height_, data + 20, 8);
+    std::memcpy(&origin_gauss_yaw_, data + 28, 8);
+
+    // 初始化参数.
+    // 估计器已不再持有 GPS 原点（改为接收 GPS2Local 的 ENU），故此处无需再向其
+    // 写入 location_mode/origin_*。地图原点仍由本节点的 GPS2Local 使用。
+
+    if (origin_gauss_yaw_ == 0 || origin_latitude_ == 0 ||
+        origin_height_ == 0 || origin_longitude_ == 0) {
+      std::cerr << "<--- Read map error! --->" << std::endl;
+      return false;
+    }
+    return true;
+  }
+
+  void GPS2Local(double latitude, double longitude, double height,
+                 double gauss_yaw, double *xyy) {
+    if (!gps_init_) {
+      if (!location_mode_) {
+        geoConverter_.Reset(latitude, longitude, height);
+        origin_gauss_yaw_ = gauss_yaw;
+      } else {
+        geoConverter_.Reset(origin_latitude_, origin_longitude_,
+                            origin_height_);
+        origin_gauss_yaw_ = origin_gauss_yaw_;
+        double u_xyz[3];
+        geoConverter_.Forward(latitude, longitude, height, u_xyz[0], u_xyz[1],
+                              u_xyz[2]);
+        if (system_init_) {
+          xy_offset_[0] = u_xyz[0] * cos(origin_gauss_yaw_ * DEG2RAD) +
+                          u_xyz[1] * sin(origin_gauss_yaw_ * DEG2RAD);
+          xy_offset_[1] = -u_xyz[0] * sin(origin_gauss_yaw_ * DEG2RAD) +
+                          u_xyz[1] * cos(origin_gauss_yaw_ * DEG2RAD);
+          xy_offset_[2] = gauss_yaw - origin_gauss_yaw_;
+        }
+      }
+      gps_init_ = true;
+    }
+    double xyz[3];
+    geoConverter_.Forward(latitude, longitude, height, xyz[0], xyz[1], xyz[2]);
+    // 纯 ENU：位置直接取 East/North，不再绕 origin_gauss_yaw_ 旋转 ——
+    // 从源头消除 RTK 航向杠杆 θ·d（origin_gauss_yaw_ 仅保留用于存储/调试）。
+    xyy[0] = xyz[0]; // East
+    xyy[1] = xyz[1]; // North
+    // ENU 航向：由 GpsPosition 的 gauss_yaw 换算到“从 East 起、逆时针”的 ENU yaw。
+    // 换算式由旧代码自身一致性导出：旧版 Is_GPS_GOOD 中 published_yaw == atan2(Δy,Δx)
+    // 恒成立，代入旧 published_yaw 与旧旋转关系可解得 yaw_enu = gauss_yaw*DEG2RAD + π/2，
+    // 不含 origin_gauss_yaw_（故航向亦无单点航向杠杆）。范围 (-π,π]（ConvertYaw）。
+    // 注意：gauss_yaw = azimuth - 90°，故 yaw_enu = azimuth（弧度）。这只有在 INS 的
+    // azimuth 本就是“正东=0、逆时针”(GpsPosition.msg 所述)时才是正确的绝对 ENU 航向。
+    // 旧版航向是“相对起点”(gauss_yaw - origin_gauss_yaw)，对 azimuth 约定的任何常量
+    // 偏差免疫(会抵消)；本版是绝对 ENU，不再抵消 —— 故务必实地核对约定：车头朝正东时
+    // 发布 yaw≈0、朝正北时≈+π/2。若实测为“正北=0、顺时针”，应改为 (π/2 - azimuth)。
+    double yaw = ConvertYaw(gauss_yaw * DEG2RAD + M_PI / 2);
+    // xyy[2] 存相对原点高程(ENU up)，航向在 xyy[3]。位置数组须为 4 维。
+    xyy[2] = xyz[2];
+    xyy[3] = yaw;
+  }
+
+  double inline ConvertYaw(double yaw) {
+    if (yaw > M_PI)
+      yaw -= M_PI * 2;
+    if (yaw < -M_PI)
+      yaw += M_PI * 2;
+    return yaw;
+  }
+
+  void LIOPrecess(Eigen::Vector3d &lio_t, Eigen::Quaterniond &lio_q,
+                  double *xyy_lio) {
+    // 第一步：复现旧代码中的平面轴变换
+    //   old: lio_x = -msg->position_y; lio_y = msg->position_x;
+    // 这里统一为 3D 固定旋转，位置和姿态同时处理。
+    lio_t = lio_frame_align_rotation_ * lio_t;
+    lio_q.normalize();
+    lio_q = (lio_frame_align_rotation_ * lio_q).normalized();
+
+    // 第二步：标准 6DoF 杆臂补偿
+    //   p_w_base = p_w_lio + R_w_lio * t_lio_base
+    //   q_w_base = q_w_lio * q_lio_base
+    lio_t += lio_q * lio_to_base_translation_;
+    lio_q = (lio_q * lio_to_base_rotation_).normalized();
+
+    // 第二步补充：原点锚定（参考原 LIOPrecess 的 "+0.74" 锚定项）
+    //   FAST-LIO odom 的原点是“初始雷达/IMU 位置”，而 GPS/map 系原点是“初始
+    //   base_link 位置”，二者相差初始航向处的杆臂 R(yaw0)*t_lio_base(≈0.9m)。
+    //   若不处理，杆臂补偿后 base 轨迹会从该 ~0.9m 处起算，使 /Mower/debug/lio
+    //   相对 /Mower/debug/gps 整体平移约 0.9m（实测恒定偏移，与航向无关）。
+    //   原代码在“初始航向恒为 90°”的前提下用常数 +0.74 抵消；这里改为记录首帧
+    //   变换后的位置作为锚点并逐帧减去，与航向、杆臂取值无关地把 LIO 轨迹平移到
+    //   与 GPS 同源——起点回到 (0,0,0)。锚点随节点生命周期，在 ParameterInit 复位。
+    if (!lio_anchor_set_) {
+      lio_anchor_ = lio_t;
+      lio_anchor_set_ = true;
+    }
+    lio_t -= lio_anchor_;
+
+    double rol_t = 0, pitch_t = 0, yaw_t = 0;
+    tf::Quaternion q_t(lio_q.x(), lio_q.y(), lio_q.z(), lio_q.w());
+    tf::Matrix3x3(q_t).getRPY(rol_t, pitch_t, yaw_t);
+    yaw_t = ConvertYaw(yaw_t);
+    lio_raw_x_ = lio_t.x();
+    lio_raw_y_ = lio_t.y();
+    lio_raw_yaw_ = yaw_t;
+    lio_raw_roll_ = rol_t;
+    lio_raw_pitch_ = pitch_t;
+
+    // 调试 LIO 位姿用与生产回退【完全相同】的 SE(2)(LIO->ENU) 变换映射到 ENU：
+    // 估计器输入的就是这里的 lio_t（杆臂补偿+锚定后的 base_link），故同源一致，
+    // viz/pub_fusion==3 调试与对外发布严格同帧（不再用旧 xy_offset_ 旋转帧）。
+    double se2_theta = 0.0, se2_tx = 0.0, se2_ty = 0.0;
+    if (globalEstimator_.GetTransform(se2_theta, se2_tx, se2_ty)) {
+      double cse = cos(se2_theta), sse = sin(se2_theta);
+      xyy_lio[0] = cse * lio_t.x() - sse * lio_t.y() + se2_tx;
+      xyy_lio[1] = sse * lio_t.x() + cse * lio_t.y() + se2_ty;
+      xyy_lio[3] = ConvertYaw(se2_theta + yaw_t);
+    } else {
+      // 尚未对齐（启动初期/复位后）：调试用恒等映射（锚定后 base_link 原值）。
+      xyy_lio[0] = lio_t.x();
+      xyy_lio[1] = lio_t.y();
+      xyy_lio[3] = yaw_t;
+    }
+    // [2] 存高程：SE(2) 绕 z 旋转不改变 z，直接取锚定后的 lio_t.z()。
+    xyy_lio[2] = lio_t.z();
+  }
+
+  void GetPosition(double *xyy_gps) {
+    Eigen::Vector3d global_t;
+    Eigen::Quaterniond global_q;
+    globalEstimator_.GetGlobalOdom(global_t, global_q);
+    double roll, pitch, yaw;
+    tf::Quaternion tf_q(global_q.x(), global_q.y(), global_q.z(), global_q.w());
+    tf::Matrix3x3(tf_q).getRPY(roll, pitch, yaw);
+    // global_q 已含 SE(2) 的 LIO->ENU 旋转 theta_，此处即 ENU 航向；
+    // 不再叠加 xy_offset_[2]（否则与 theta_ 重复计旋转）。
+    yaw = ConvertYaw(yaw);
+    xyy_gps[0] = global_t.x();
+    xyy_gps[1] = global_t.y();
+    xyy_gps[2] = yaw;
+  }
+
+  void Is_rate_ok() {
+    publish_window_start = (publish_window_start == 0)
+                               ? ros::Time::now().toSec()
+                               : publish_window_start;
+    double current_time = ros::Time::now().toSec();
+    double window_duration = current_time - publish_window_start;
+    // printf("current_time = %14.4f\n", current_time);
+    // printf("publish_window_start = %14.4f\n", publish_window_start);
+    // std::cout << "Duration: " << window_duration << std::endl;
+
+    if (system_init_ && heading_flag_ &&
+        window_duration >= 0.95) // 检查 1 秒内的发布频率
+    {
+      double publish_frequency = publish_count / window_duration;
+      if (publish_frequency < 8) {
+        publish_error_cnt_++;
+        reboot = publish_error_cnt_ >= 20 ? true : reboot;
+        if (reboot) {
+          ROS_WARN(
+              "Publish frequency is too low: %.2f Hz, restarting the node!",
+              publish_frequency);
+        }
+      } else {
+        publish_error_cnt_ = 0;
+      }
+      publish_window_start = current_time;
+      publish_count = 0; // 重置计数器
+    }
+  }
+
+  void SaveFusionPositionToFile(const double *fusion_pos) {
+    std::ofstream file(last_pub_pos_path, std::ios::out);
+    if (!file.is_open()) {
+      ROS_ERROR("Failed to open file for saving fusion position: %s",
+                last_pub_pos_path.c_str());
+      return;
+    }
+    file << fusion_pos[0] << " " << fusion_pos[1] << " " << fusion_pos[2]
+         << std::endl; // x, y, yaw
+    file.close();
+  }
+  bool LoadFusionPositionFromFile(double *fusion_pos) {
+    std::ifstream file(last_pub_pos_path, std::ios::in);
+    if (!file.is_open()) {
+      // ROS_WARN("No saved fusion position file found: %s",
+      // last_pub_pos_path.c_str());
+      return false;
+    }
+    file >> fusion_pos[0] >> fusion_pos[1] >> fusion_pos[2]; // x, y, yaw
+    file.close();
+    ROS_INFO("Loaded fusion position from file: %s", last_pub_pos_path.c_str());
+    return true;
+  }
+
+private:
+  ros::NodeHandle nh_;
+  ros::Publisher pubPosition_, pub_fusion_Reboot_, pub_gps_Reboot_;
+  ros::Subscriber subGps_, subLio_, subAndroid_;
+  bool location_mode_;
+  bool gps_init_;
+  bool system_init_;
+  int fail_cnt_;
+  int map_index_;
+
+  double origin_gauss_yaw_, origin_latitude_, origin_longitude_, origin_height_;
+  std::string map_path_;
+  std::string last_pub_pos_path;
+  std::queue<util::GpsPositionConstPtr> gps_queue_;
+  std::mutex gps_mutex_;
+
+  double xy_offset_[3];
+  double last_gps_[3];
+
+  GlobalOptimization globalEstimator_;
+  GeographicLib::LocalCartesian geoConverter_;
+
+  double last_gps_stamp_;
+  int gps_drift_count_;
+
+  double last_lio_stamp_;
+  Eigen::Vector3d last_lio_t_;
+
+  int pub_fusion;
+
+  Eigen::Quaterniond lio_frame_align_rotation_;
+  Eigen::Vector3d lio_to_base_translation_baseframe_;
+  Eigen::Vector3d lio_to_base_translation_;
+  Eigen::Quaterniond lio_to_base_rotation_;
+
+  Eigen::Vector3d lio_anchor_; // 杆臂补偿后首帧 base 位置，用于锚定 LIO 起点到 (0,0,0)
+  bool lio_anchor_set_;        // 锚点是否已记录
+
+  // LIO 帧代际变化检测（/laserMapping 重启回原点）
+  bool lio_seen_far_;            // LIO 是否已离开原点
+  double lio_epoch_near_thresh_; // 判“回到原点附近”的距离阈值(m)
+  double lio_epoch_far_thresh_;  // 判“已远离原点”的距离阈值(m)
+  double lio_epoch_jump_thresh_; // 判“瞬时大跳变”的单帧位移阈值(m)
+  Eigen::Vector3d prev_raw_lio_t_; // 上一帧原始 LIO 位置（LIOPrecess 修改前）
+  bool has_prev_raw_lio_;          // prev_raw_lio_t_ 是否已记录
+  uint32_t last_lio_seq_;          // 上一帧 LIO header.seq（代际检测）
+  bool has_last_lio_seq_;          // last_lio_seq_ 是否已记录
+  bool lio_restart_pending_;       // 本节点已发起 LIO 重启、待首帧新 LIO 确认
+
+  // 重启 /laserMapping 期间停车（RECOVER 时 /fusion 存活、仍发 GPS 位置，须显式停车）
+  ros::Publisher pub_stop_car_;
+  std::string stop_car_topic_;     // 默认 /mower/stop_car
+  bool stop_car_active_;           // 正处于“为重启 LIO 而停车”状态
+  int stop_car_resume_cnt_;        // 重启后 LIO 连续健康帧计数
+  int stop_car_resume_frames_;     // 达此连续健康帧数才解除停车
+
+  void PublishStopCar(bool stop) {
+    std_msgs::Bool m;
+    m.data = stop;
+    pub_stop_car_.publish(m);
+  }
+
+  double lio_speed_threshold_;
+  double lio_stamp_;
+  int lio_drift_count_;
+  bool lio_drift_detected_;
+
+  double lio_raw_x_;
+  double lio_raw_y_;
+  double lio_raw_yaw_;
+  double lio_raw_roll_;
+  double lio_raw_pitch_;
+
+  int no_pos_cnt_;
+  bool reboot;
+
+  int gps_failed_cnt_; // gps连续异常计数
+  int lio_failed_cnt_;
+
+  double last_fusion_time_;
+  double last_fusion_pos_[3];
+
+  int fusion_failed_cnt_;
+
+  int pub_overtime_cnt_;
+
+  int gps_stable_cnt_;
+  int gps_stable_threshold_;
+  bool gps_failed_flag_;
+
+  double publish_window_start;
+  int publish_count;
+
+  int no_rtk_cnt_;
+  int publish_error_cnt_;
+
+  int heading_flag_;
+
+  int sync_failed_cnt_;
+
+  bool lio_bad_flag_;
+
+  bool reboot_pub_flag_;
+
+#ifdef DEBUG
+  ros::Publisher pubDebugGPS_, pubDebugLIO_, pubDebugFusion_;
+#endif
+
+  // ===== RViz 可视化（纯增量，不影响融合算法逻辑）=====
+  bool enable_viz_;             // 是否发布可视化话题
+  std::string viz_frame_id_;    // 所有可视化的统一坐标系（默认 "map"）
+  int viz_path_max_;            // 单条 Path 最大点数，限制内存
+  RvizTrack viz_gps_;           // 纯 GPS 位姿
+  RvizTrack viz_lio_;           // 纯 LIO 位姿
+  RvizTrack viz_fusion_;        // ceres 融合位姿
+  RvizTrack viz_output_;        // 实际对外发布的定位结果
+  tf::TransformBroadcaster viz_tf_broadcaster_;
+};
+
+int main(int argc, char **argv) {
+  ros::init(argc, argv, "Fusion");
+  FusionNode node;
+  ros::spin();
+  return 0;
+}

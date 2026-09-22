@@ -1,0 +1,75 @@
+Multi thread started 
+p_pre->lidar_type 1
+~~~~/home/nvidia/libo/lidar-slam-v2/src/fast-lio/ file opened
+[33m[ WARN] [1749189172.867207017]: catch sig 2[0m
+[0m[ INFO] [1749189165.722216368]: IMU Initial Done[0m
+Rebuild thread terminated normally
+[31m[fusion-2] escalating to SIGTERM[0m
+... logging to /home/nvidia/.ros/log/5ac99afe-2ce8-11ef-ad30-48b02dd8d309/roslaunch-tegra-ubuntu-8589.log
+Checking log directory for disk usage. This may take a while.
+Press Ctrl-C to interrupt
+Done checking log file disk usage. Usage is <1GB.
+]2;/home/nvidia/libo/lidar-slam-v2/src/fast-lio/launch/create_mode.launch
+[1mstarted roslaunch server http://tegra-ubuntu:39117/[0m
+
+SUMMARY
+========
+
+PARAMETERS
+ * /common/imu_topic: /livox/imu
+ * /common/lid_topic: /livox/lidar
+ * /common/time_offset_lidar_to_imu: -0.003066
+ * /common/time_sync_en: False
+ * /cube_side_length: 1000.0
+ * /feature_extract_enable: False
+ * /filter_size_map: 0.5
+ * /filter_size_surf: 0.5
+ * /fusion/fusion_topic: /Mower/position
+ * /fusion/gps_mode: 0
+ * /fusion/gps_topic: /nanobot/gpsposition
+ * /fusion/init_threshold: 30
+ * /fusion/lio_slam_topic: /Mower/lio_slam
+ * /fusion/location_mode: False
+ * /fusion/map_index: 0
+ * /fusion/map_path: /home/nvidia/libo...
+ * /fusion/pub_fusion: 3
+ * /fusion/pub_gps: 0
+ * /mapping/acc_cov: 0.1
+ * /mapping/b_acc_cov: 0.0001
+ * /mapping/b_gyr_cov: 0.0001
+ * /mapping/det_range: 100.0
+ * /mapping/extrinsic_R: [1, 0, 0, 0, 1, 0...
+ * /mapping/extrinsic_T: [-0.011, -0.02329...
+ * /mapping/extrinsic_est_en: False
+ * /mapping/fov_degree: 360
+ * /mapping/gyr_cov: 0.1
+ * /max_iteration: 3
+ * /pcd_save/interval: -1
+ * /pcd_save/pcd_save_en: False
+ * /point_filter_num: 3
+ * /preprocess/blind: 0.5
+ * /preprocess/lidar_type: 1
+ * /preprocess/scan_line: 4
+ * /publish/dense_publish_en: False
+ * /publish/path_en: False
+ * /publish/scan_bodyframe_pub_en: True
+ * /publish/scan_publish_en: True
+ * /rosdistro: noetic
+ * /rosversion: 1.17.0
+ * /runtime_pos_log_enable: False
+ * /use_sim_time: False
+
+NODES
+  /
+    fusion (fast_lio/fast_fusion)
+    laserMapping (fast_lio/fastlio_mapping)
+
+[1mROS_MASTER_URI=http://localhost:11311[0m
+]2;/home/nvidia/libo/lidar-slam-v2/src/fast-lio/launch/create_mode.launch http://localhost:11311
+[1mprocess[laserMapping-1]: started with pid [8635][0m
+[1mprocess[fusion-2]: started with pid [8636][0m
+[laserMapping-1] killing on exit
+[fusion-2] killing on exit
+shutting down processing monitor...
+... shutting down processing monitor complete
+[1mdone[0m

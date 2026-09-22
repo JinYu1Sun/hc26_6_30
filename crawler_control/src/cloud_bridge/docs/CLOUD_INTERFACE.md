@@ -162,6 +162,25 @@
 {"maps": ["map_0630", "map_0701"], "stamp": 1751356800.8}
 ```
 
+### 2.5 地图原点 `mower/{id}/state/map_origin`
+
+车端收到 `/signal` 选图信号 `use_map/<编号>` 时（云平台 `cmd/task start` 带 `map_name`、或安卓端选图，都会触发），从 `map_dir`（launch 可配）读取 `<编号>.mp` 原点文件后回传一次，云平台可据此把 `state/location` 的局部坐标换算成经纬度。
+
+```json
+{"map_name": "map_0630", "found": true, "map_index": 0,
+ "latitude": 28.236557, "longitude": 112.876617, "height": 86.60,
+ "gauss_yaw": 73.89, "stamp": 1751356800.9}
+```
+
+| 字段 | 说明 |
+|---|---|
+| map_name | 请求的地图编号 |
+| found | 是否找到并解析成功；文件缺失时为 false（此时无以下字段） |
+| map_index | 地图内部索引（int） |
+| latitude / longitude / height | 地图原点 WGS84 纬度 / 经度 / 椭球高（米） |
+| gauss_yaw | 建图时的高斯坐标系偏航角（度） |
+| stamp | Unix 秒（double，车端 ROS 时间） |
+
 ## 三、联调示例（mosquitto 客户端模拟云平台）
 
 ```bash

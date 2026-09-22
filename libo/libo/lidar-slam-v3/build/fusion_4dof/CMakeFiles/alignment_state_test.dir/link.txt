@@ -1,0 +1,1 @@
+/usr/bin/c++    -rdynamic CMakeFiles/alignment_state_test.dir/test/alignment_state_test.cpp.o  -o /home/nvidia/libo/lidar-slam-v3/devel/lib/fusion_4dof/alignment_state_test 

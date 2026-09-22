@@ -1,0 +1,6 @@
+schema_version: 1
+map_uuid: a257783b-6bbc-44d9-be4c-976200fdc46d
+logical_name: 0603
+coordinate_frame: ENU_V1
+origin_checksum: fnv1a64:e3980809d4dae36a
+created_unix_ns: 1789702898038885419

@@ -1,0 +1,2 @@
+glonavin_ins_driver
+-DCATKIN_DEVEL_PREFIX=/home/nvidia/libo/gnss/devel -DCMAKE_INSTALL_PREFIX=/home/nvidia/libo/gnss/install -G Unix Makefiles

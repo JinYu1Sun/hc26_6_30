@@ -1,0 +1,2 @@
+FAST_LIO:android_manager:util
+-DCATKIN_WHITELIST_PACKAGES=fast_lio -DCATKIN_DEVEL_PREFIX=/home/nvidia/libo/slam/devel -DCMAKE_INSTALL_PREFIX=/home/nvidia/libo/slam/install -G Unix Makefiles

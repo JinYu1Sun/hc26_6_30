@@ -1,0 +1,43 @@
+<launch>
+    <arg name="location_mode" default="true" />
+    <!-- ============================================================= -->
+    <!-- 仅启动/fusion_4dof（4DoF版），不启动/laserMapping。              -->
+    <!-- fusion运行方式由location_mode决定：true=跟踪已保存地图原点，      -->
+    <!-- false=创建并提交建图原点。                                      -->
+    <!-- 供 android_manager_4dof 的 LioSlamCallback 看门狗使用：当"仍在收到      -->
+    <!-- /Mower/lio_slam 但 /Mower/position 断流>10s"时，诊断明确为 /fusion_4dof -->
+    <!-- 自身卡死/退出（LIO 健在），故只重启 /fusion_4dof，保留正在运行的        -->
+    <!-- /laserMapping（不丢 LIO 地图、无需重新 bootstrap）。新 /fusion_4dof 起  -->
+    <!-- 来后先按“同LIO代际+同地图原点”恢复已落盘的4DoF；不满足 -->
+    <!-- 严格校验时才使用仍在运行的LIO+RTK重新对齐。                 -->
+    <!-- 默认以 location runtime 拉起；manager在建图原点尚未提交时会显式传 -->
+    <!-- location_mode:=false，提交后则传true并保持外层MAPPING workflow。 -->
+    <!-- node 名为 "fusion_4dof"。                                      -->
+    <!-- ============================================================= -->
+
+    <node name="fusion_4dof" pkg="fusion_4dof" type="fusion_4dof_node" output="screen">
+        <param name="location_mode" type="bool" value="$(arg location_mode)" />
+        <param name="gps_topic" type="string" value="/nanobot/gpsposition" />
+        <!-- 仅fusion重启时/laserMapping仍在，因而继续消费同一代已冻结R_H_W的位姿。 -->
+        <param name="lio_slam_topic" type="string" value="/Mower/lio_slam_level" />
+        <param name="fusion_topic" type="string" value="/Mower/position" />
+        <param name="algorithm_status_topic" type="string" value="/Mower/localization_algorithm_status" />
+        <param name="map_service" type="string" value="/Mower/manage_localization_map" />
+        <param name="android_topic" type="string" value="/signal" />
+        <param name="last_pub_pos_path" type="string" value="/home/nvidia/libo/lidar-slam-v2/src/fast-lio/Pos/last_pub_pos.txt" />
+        <param name="map_index" type="int" value="0" />
+        <param name="map_path" type="string" value="/home/nvidia/libo/lidar-slam-v2/src/fast-lio/Map/my_map.mp" />
+        <param name="pub_fusion" type="int" value="1" />
+
+        <param name="enable_viz" type="bool" value="false" />
+        <param name="viz_frame_id" type="string" value="map" />
+        <param name="viz_path_max" type="int" value="3000" />
+
+        <rosparam param="lio_to_base_trans_baseframe">[-0.9017618, -0.02329, -0.2135034]</rosparam>
+        <rosparam param="lio_to_base_rpy_deg">[0.0, -12.0, 0.0]</rosparam>
+
+        <!-- 4DoF/代际检测运行参数：三 launch 共用单一文件 config/fusion_4dof_params.yaml -->
+        <rosparam command="load" file="$(find fusion_4dof)/config/fusion_4dof_params.yaml" />
+    </node>
+
+</launch>

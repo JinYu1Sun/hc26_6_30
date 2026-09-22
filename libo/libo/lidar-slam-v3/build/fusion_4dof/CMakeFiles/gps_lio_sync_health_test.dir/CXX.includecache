@@ -1,0 +1,24 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/nvidia/libo/lidar-slam-v3/src/fusion_4dof/include/fusion/gps_lio_sync_health.h
+algorithm
+-
+cstddef
+-
+limits
+-
+
+/home/nvidia/libo/lidar-slam-v3/src/fusion_4dof/test/gps_lio_sync_health_test.cpp
+fusion/gps_lio_sync_health.h
+/home/nvidia/libo/lidar-slam-v3/src/fusion_4dof/test/fusion/gps_lio_sync_health.h
+cassert
+-
+iostream
+-
+

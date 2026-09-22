@@ -1,0 +1,183 @@
+ if(!ualign){
+   if(*itr != 0x01) continue;
+   ++itr;
+   if(*itr != 0xCE) continue;
+   ++itr;
+   if(*itr != 0x3A) continue;
+   ++itr;
+   if(*itr != 0x55) continue;
+   ++itr;
+   ualign = true; 
+   // std::cout<<"ualign true "<<std::endl;
+ }
+ chrBuffer[index] = *itr;
+ index++;
+ std::cout<<"the index is "<<index<<std::endl;
+ 
+ 
+ std::cout<<"the index is "<<index<<std::endl;
+        if(index <= 93 ){
+          // std::cout<<"the index < 93 "<<std::endl;
+          continue;
+        }else{
+          std::cout<<"enter data copy "<<std::endl;
+          index -= 93;
+          memcpy(&pGnavp16,&chrBuffer[0],93);
+          memcpy(&chrBuffer[0],&chrBuffer[93],index);
+        }
+        std::cout<<pGnavp16.head<<'\n'
+                 <<pGnavp16.hour<<" "
+                 <<pGnavp16.min<<" "
+                 <<pGnavp16.sec<<" "
+                 <<pGnavp16.msec<<" "
+                 <<pGnavp16.yaw<<'\n'
+                 <<pGnavp16.pitch<<'\n'
+                 <<pGnavp16.roll<<'\n'
+                 <<pGnavp16.accx<<'\n'
+                 <<pGnavp16.accy<<'\n'
+                 <<pGnavp16.accz<<std::endl;
+                 
+        /*  int a = 0x1234; //判断电脑是大端模式还是小端模式
+    char b = static_cast<char>(a);
+    if (b == 0x12)
+    {
+        std::cout << "本计算机是___《大端》___存储模式．" << std::endl;
+    }
+    else if (b == 0x34)
+    {
+        std::cout << "本计算机是___《小端》___存储模式." << std::endl;
+  }*/ 
+  
+  
+            
+//----------------ROS Publish IMU Topics----------------------------
+//本司IMU的定义以飞机为例y轴向前，x轴向左，z轴向下.传统imu定义为x轴向前代表roll，y轴向左代表pitch，z轴向上代表yaw。
+//因而在使用时imu的roll,pitch互换yaw取反
+          if(!inited)
+          {
+            // std::cout<<"correct gravity --- "<<std::flush;
+            imu_time_end += 0.01;
+            Eigen::Vector3f rpy;
+          
+            rpy(0) =   pGnavp16.pitch;
+            rpy(1) =   pGnavp16.roll;
+            rpy(2) = - pGnavp16.yaw;
+            
+            Eigen::Vector3f input_acc;
+            input_acc(0) = pGnavp16.accx;
+            input_acc(1) = pGnavp16.accy;
+            input_acc(2) = pGnavp16.accz;
+              
+            imu_num++ ;
+            get_off_set(rpy, input_acc, acc_offset, gravity_acc, imu_num); //获取重力场平均值并在后续的计算中减去
+            /*进行重力估计*/
+            if((imu_time_end -imu_time_start) > 5.0)
+            {
+              inited =true;
+              
+              float roll, pitch, yaw;
+              roll  = pGnavp16.pitch;
+              pitch = pGnavp16.roll;
+              yaw  = -pGnavp16.yaw;
+              
+              geometry_msgs::Quaternion quat = tf::createQuaternionMsgFromRollPitchYaw(roll, pitch, yaw);
+              // avec_back = Eigen::Quaternionf(quat.w,quat.x,quat.y,quat.z);//vec_back
+              // vec_back = avec_back.axis();
+              // vec_back(0) = vec_back(0)>=0?1:-1;
+              // vec_back(1) = vec_back(1)>=0?1:-1;
+              // vec_back(2) = vec_back(2)>=0?1:-1;
+              // init_vec = vec_back;
+
+              geometry_msgs::Vector3 angular_velocity;
+              
+              angular_velocity.x = (pGnavp16.gyrox)*M_PI/180;
+              angular_velocity.y = (pGnavp16.gyroy)*M_PI/180;
+              angular_velocity.z = (pGnavp16.gyroz)*M_PI/180; 
+              
+              geometry_msgs::Vector3 linear_acceleration;
+              
+              Eigen::Vector3f euler,offset;
+              euler(0) = roll;
+              euler(1) = pitch;
+              euler(2) = yaw;
+              
+              Eigen::Matrix3f rotaton;
+              rpyTmatrix(euler,rotaton);
+              offset = rotaton.transpose() * acc_offset;
+              
+              
+              linear_acceleration.x = pGnavp16.accx - offset(0);
+              linear_acceleration.y = pGnavp16.accy - offset(1);
+              linear_acceleration.z = pGnavp16.accz - offset(2);
+              acc_back_ = Eigen::Vector3f(linear_acceleration.x,linear_acceleration.y,linear_acceleration.z);
+              std::cout<<"offset x "<<offset.transpose()<<std::endl;
+              std::cout<<"isnan x "<<linear_acceleration.x<<std::endl;
+              std::cout<<"isnan y "<<linear_acceleration.y<<std::endl;
+              std::cout<<"isnan z "<<linear_acceleration.z<<std::endl;
+
+              sensor_msgs::Imu ImuData;
+              ImuData.header.stamp = ros::Time::now();
+              ImuData.header.frame_id = rsFrame;
+              ImuData.orientation = quat;
+              ImuData.angular_velocity = angular_velocity;
+              ImuData.linear_acceleration = linear_acceleration;
+              ImuData.header.seq = nCnt;
+              
+              Publisher.publish(ImuData);
+              ++nCnt;
+            }
+          }
+          else/*正常发布imu数据。*/
+          {
+            float roll, pitch, yaw;
+            roll  = pGnavp16.pitch;
+            pitch = pGnavp16.roll;
+            yaw  = -pGnavp16.yaw;
+            
+            geometry_msgs::Quaternion quat = tf::createQuaternionMsgFromRollPitchYaw(roll, pitch, yaw);
+
+            geometry_msgs::Vector3 angular_velocity;
+            
+            angular_velocity.x =     (pGnavp16.gyrox)* M_PI/180;
+            angular_velocity.y =     (pGnavp16.gyroy)* M_PI/180;
+            angular_velocity.z = -1 *(pGnavp16.gyroz)* M_PI/180; 
+            
+            Eigen::Vector3f euler, offset;
+            euler(0) = roll;
+            euler(1) = pitch;
+            euler(2) = yaw;
+            Eigen::Matrix3f rotaton;
+            rpyTmatrix(euler,rotaton);
+            offset = rotaton.transpose() * acc_offset;
+            
+            geometry_msgs::Vector3 linear_acceleration;
+            
+            acc_(0) = pGnavp16.accx - offset(0);
+            acc_(1) = pGnavp16.accy - offset(1);
+            acc_(2) = pGnavp16.accz - offset(2);
+            // if(!inited){
+            //   acc_back_ = acc_;
+            // }else{
+            //   acc_ = ka * acc_ + (1-ka)*acc_back_;           //低通滤波
+            // } 
+            
+            linear_acceleration.x = acc_(0);
+            linear_acceleration.y = acc_(1);
+            linear_acceleration.z = acc_(2);
+
+            // acc_back_ = acc_;
+            sensor_msgs::Imu ImuData;
+            ImuData.header.stamp = ros::Time::now();
+            // end_time = clock();
+            // std::cout<<"imu run time is "<<(double)(end_time-start_time)/CLOCKS_PER_SEC<<std::endl;
+            // imu_time2 = ImuData.header.stamp.toSec();
+            //std::cout<<"time diff is "<<imu_time2 - imu_time1<<std::endl;
+            ImuData.header.frame_id = rsFrame;
+            ImuData.orientation = quat;
+            ImuData.angular_velocity = angular_velocity;
+            ImuData.linear_acceleration = linear_acceleration;
+            ImuData.header.seq = nCnt;
+            // imu_time1 = imu_time2;
+            Publisher.publish(ImuData);
+            ++nCnt;
+        }                 

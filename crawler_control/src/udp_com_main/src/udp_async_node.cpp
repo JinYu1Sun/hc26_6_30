@@ -107,10 +107,10 @@ public:
         recv_thread_ = std::thread(&UdpAsyncNode::receiveLoop, this);
         
         height_echo_timer_ = nh_.createTimer(ros::Duration(0.5), &UdpAsyncNode::heightEchoCallback, this);
-        ROS_INFO("UDP Async Node started");
-        ROS_INFO("  Local port: %d", local_port_);
-        ROS_INFO("  Remote: %s:%d", remote_ip_.c_str(), remote_port_);
-        ROS_INFO("  Max RX queue: %d", max_queue_size_);
+        // ROS_INFO("UDP Async Node started");
+        // ROS_INFO("  Local port: %d", local_port_);
+        // ROS_INFO("  Remote: %s:%d", remote_ip_.c_str(), remote_port_);
+        // ROS_INFO("  Max RX queue: %d", max_queue_size_);
     }
     
     ~UdpAsyncNode() {
@@ -133,10 +133,10 @@ private:
             sendStopCommand();
             close(udp_socket_);
             udp_socket_ = -1;
-            ROS_INFO("UDP socket closed");
+            // ROS_INFO("UDP socket closed");
         }
         
-        ROS_INFO("UDP Async Node shut down");
+        // ROS_INFO("UDP Async Node shut down");
     }
     
     void loadParameters() {
@@ -145,10 +145,10 @@ private:
         private_nh_.param<int>("local_port", local_port_, 8888);
         private_nh_.param<int>("max_queue_size", max_queue_size_, 100);
         
-        ROS_INFO("Parameters loaded:");
-        ROS_INFO("  Remote IP: %s", remote_ip_.c_str());
-        ROS_INFO("  Remote Port: %d", remote_port_);
-        ROS_INFO("  Local Port: %d", local_port_);
+        // ROS_INFO("Parameters loaded:");
+        // ROS_INFO("  Remote IP: %s", remote_ip_.c_str());
+        // ROS_INFO("  Remote Port: %d", remote_port_);
+        // ROS_INFO("  Local Port: %d", local_port_);
     }
     
     bool initializeUdpSocket() {
@@ -177,7 +177,7 @@ private:
             udp_socket_ = -1;
             return false;
         }
-        ROS_INFO("Bound to local port: %d", local_port_);
+        // ROS_INFO("Bound to local port: %d", local_port_);
         
         // 配置远程地址
         memset(&remote_addr_, 0, sizeof(remote_addr_));
@@ -251,6 +251,8 @@ private:
                 ROS_WARN("bad frame header, drop [%zu bytes] from %s:%d",
                          pkt.data.size(), pkt.src_ip.c_str(), pkt.src_port);
                 continue;   // 不是我们的帧或长度不够，直接丢弃
+            }else{
+                PC_or_Remote_pub_.publish(PC_or_Remote_msg);
             }
             
             uint8_t msg_id = pkt.data[2];
@@ -299,7 +301,7 @@ private:
                 std_msgs::UInt16 height_msg;
                 height_msg.data = std::min<int>(906, static_cast<uint16_t>(pkt.data[3] << 8 | pkt.data[4]));
         
-                ROS_INFO("pulsenum=%d",height_msg.data);
+                // ROS_INFO("pulsenum=%d",height_msg.data);
                 // 每收到一帧就把最新值追加到文件，只保留最近 kMaxHeightLines 条
                 const std::string height_path = "/home/nvidia/crawler_control/src/udp_com_main/height_msg.txt";
                 const size_t kMaxHeightLines = 100;   // 想保存多少条就改这里
@@ -334,15 +336,16 @@ private:
                 PC_or_Remote_msg.data = pkt.data[3];
             
                 PC_or_Remote_pub_.publish(PC_or_Remote_msg);
+                break;
             }
             default:
                 ROS_WARN("unknown msg id: 0x%02X", msg_id);
                 break;
             }
             
-            ROS_INFO("RX [%zd bytes] from %s:%d | queue=%zu/%d",
-                     n, pkt.src_ip.c_str(), pkt.src_port,
-                     rx_queue_.size(), max_queue_size_);
+            // ROS_INFO("RX [%zd bytes] from %s:%d | queue=%zu/%d",
+                    //  n, pkt.src_ip.c_str(), pkt.src_port,
+                    //  rx_queue_.size(), max_queue_size_);
         }
     }
     
@@ -405,7 +408,7 @@ private:
         uint16_t height = static_cast<uint16_t>(std::atoi(chosen.c_str()));
         std_msgs::UInt16 height_to_app_;
         height_to_app_.data = round(11 - 9*height/906);
-        ROS_INFO("height=%d,height_to_app=%d", height, height_to_app_.data);
+        // ROS_INFO("height=%d,height_to_app=%d", height, height_to_app_.data);
         height_pub_.publish(height_to_app_);
         // 组帧回发：AA 55 + 0x04 + 2字节数据（大端）
         uint8_t tx[5] = {0xAA, 0x55, 0x06,
@@ -447,7 +450,7 @@ private:
     }
  
     void sendStopCommand() {
-        ROS_INFO("Sending stop command...");
+        // ROS_INFO("Sending stop command...");
         std::vector<uint8_t> stop_data = createUdpPacket(0, 0, 0, 0,0);
         stop_data[0] = '1'; stop_data[1] = '2';
         stop_data[2] = '3'; stop_data[3] = '4';
@@ -478,7 +481,7 @@ public:
 
 int main(int argc, char** argv) {
     ros::init(argc, argv, "udp_async_node");
-    ROS_INFO("Starting UDP Async Node...");
+    // ROS_INFO("Starting UDP Async Node...");
     
     UdpAsyncNode node;
     if (!node.isInitialized()) {
@@ -487,6 +490,6 @@ int main(int argc, char** argv) {
     }
     
     ros::spin();
-    ROS_INFO("UDP Async Node terminated");
+    // ROS_INFO("UDP Async Node terminated");
     return 0;
 }

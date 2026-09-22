@@ -1,0 +1,1 @@
+/usr/bin/c++    -rdynamic CMakeFiles/map_switch_state_test.dir/test/map_switch_state_test.cpp.o CMakeFiles/map_switch_state_test.dir/src/global_fusion.cc.o  -o /home/nvidia/libo/lidar-slam-v3/devel/lib/fusion_4dof/map_switch_state_test 

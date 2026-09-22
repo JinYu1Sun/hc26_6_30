@@ -1,0 +1,35 @@
+<launch>
+    <!-- A/B variant selected for every automatic restart. -->
+    <arg name="fusion_package" default="fusion_4dof" />
+    <!-- android_manager_4dof：android_manager 的 fusion_4dof 配套版本，整体替换部署
+         （不再与旧版 android.launch 同时运行——旧版能拿到的定位结果本身就是
+         fusion_4dof 的能力子集，见 README §10）。话题名与旧版完全相同，下游
+         （pure_pursuit 等）无需改动；节点名不同（android_manager_4dof），便于
+         rosnode list 确认当前部署版本。 -->
+    <param name="use_sim_time" value="false" />
+    <node name="android_manager_4dof" pkg="android_manager_4dof" type="android_manager_4dof_node" output="screen">
+        <param name="fusion_package" type="string" value="$(arg fusion_package)" />
+        <param name="android_topic"    type="string"   value="/signal" />
+        <param name="gps_topic"        type="string"   value="/nanobot/gpsposition" />
+        <param name="fusion_topic"     type="string"   value="/Mower/position" />
+        <param name="reboot_topic"     type="string"   value="/Mower/reboot" />
+        <param name="stop_car_topic"   type="string"   value="/mower/manager_stop_car" />
+        <param name="fusion_stop_car_topic" type="string" value="/mower/fusion_stop_car" />
+        <param name="final_stop_car_topic"  type="string" value="/mower/stop_car" />
+        <param name="lio_static_status_topic" type="string" value="/Mower/lio_static_initialized" />
+        <param name="imu_odometry_ready_topic" type="string" value="/Mower/imu_odometry/ready" />
+        <param name="algorithm_status_topic" type="string" value="/Mower/localization_algorithm_status" />
+        <param name="status_topic" type="string" value="/Mower/localization_status" />
+        <param name="map_service" type="string" value="/Mower/manage_localization_map" />
+        <param name="require_imu_odometry_ready" type="bool" value="true" />
+        <!-- 仅用于进程启动/换代后首个新鲜算法状态；稳态心跳超时仍为2秒。 -->
+        <param name="transition_status_timeout_sec" type="double" value="10.0" />
+        <!-- 验证被重启进程的generation确实变化；静态初始化/对齐不设硬超时，
+             但已就绪后仍无新鲜输出会进入位置看门狗。 -->
+        <param name="restart_generation_timeout_sec" type="double" value="30.0" />
+        <!-- 只有源时间新鲜的 LIO/position 才能刷新 manager 健康看门狗。 -->
+        <param name="measurement_max_age_sec" type="double" value="0.50" />
+        <param name="measurement_max_future_sec" type="double" value="0.05" />
+        <param name="map_path"         type="string"   value="/home/nvidia/libo/lidar-slam-v2/src/fast-lio/Map/my_map.mp" />
+    </node>
+</launch>

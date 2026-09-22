@@ -1,0 +1,2 @@
+android_manager:fast-lio:util
+-DCATKIN_WHITELIST_PACKAGES=fast_lio -DCATKIN_DEVEL_PREFIX=/home/nvidia/libo/lidar-slam-v2/devel -DCMAKE_INSTALL_PREFIX=/home/nvidia/libo/lidar-slam-v2/install -G Unix Makefiles

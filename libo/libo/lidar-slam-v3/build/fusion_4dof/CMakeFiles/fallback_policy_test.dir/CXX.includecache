@@ -1,0 +1,18 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/nvidia/libo/lidar-slam-v3/src/fusion_4dof/include/fusion/fallback_policy.h
+
+/home/nvidia/libo/lidar-slam-v3/src/fusion_4dof/test/fallback_policy_test.cpp
+fusion/fallback_policy.h
+/home/nvidia/libo/lidar-slam-v3/src/fusion_4dof/test/fusion/fallback_policy.h
+cassert
+-
+iostream
+-
+

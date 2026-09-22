@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<launch>
+
+  <!--start MK4052-->
+     <node  name="mtk" pkg="gps_imu" type="mkt" output="screen">
+        <param name="frame" value="imu" />
+        <param name="topic" value="/imu2" />
+        <param name="port" value="/dev/ttyTHS1" />
+        <param name="baudrate" value="115200" />
+        <param name="gnTopic" value ="/gnss"/>
+        <param name="gpsTopic" value ="/nanobot/gpsposition"/>
+      </node>
+    <!--end MK4052-->
+
+</launch>
+

@@ -1,0 +1,8 @@
+<launch>
+	<node pkg="serial_reader" name="sant_rtk_imu" type="read_serial" output="screen">
+		<param name="sport" type="string" value="/dev/ttyTHS1" />
+		<param name="baud" type="int" value="115200" />
+		<param name="gps_topic" type="string" value="/nanobot/gpsposition" />
+		<param name="yawsig_threshold" type="double" value="-1" />
+	</node>
+</launch>

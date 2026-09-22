@@ -1,0 +1,7 @@
+<launch>
+    <param name="use_sim_time" value="false" />
+    <node name="Android_manager" pkg="android_manager" type="android_manager_node" output="screen">
+        <param name="android_topic"    type="string"   value="/signal" />
+        <param name="map_path"         type="string"   value="/home/nvidia/libo/lidar-slam-v2/src/fast-lio/Map/my_map.mp" />
+    </node>
+</launch>

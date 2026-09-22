@@ -1,0 +1,13 @@
+# FAST-LIO权威静止初始化窗口统计。消息由/laserMapping锁存发布；
+# header.stamp是该静止窗口最后一帧IMU的传感器时间，header.frame_id是原始IMU坐标系。
+Header header
+bool valid
+time lio_generation
+string imu_topic
+float64 duration_sec
+uint32 sample_count
+float64[3] mean_acceleration_mps2
+float64[3] mean_angular_velocity_radps
+float64[3] acceleration_variance
+float64[3] angular_velocity_variance
+float64 max_angular_velocity_norm_radps

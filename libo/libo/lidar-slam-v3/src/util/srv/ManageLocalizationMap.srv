@@ -1,0 +1,19 @@
+# Transactional map lifecycle API owned by fusion_4dof.
+uint8 SAVE_CURRENT_AND_ACTIVATE=1
+uint8 ACTIVATE_EXISTING=2
+
+uint8 command
+string map_name
+bool overwrite
+---
+bool success
+bool alignment_preserved
+bool switch_pending
+string active_map
+string active_map_uuid
+string pending_map
+string pending_map_uuid
+uint32 map_schema_version
+string coordinate_frame
+string origin_checksum
+string reason

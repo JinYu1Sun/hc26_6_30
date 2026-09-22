@@ -1,0 +1,1 @@
+/usr/bin/c++  -std=c++14 -O3 -std=c++14 -pthread -std=c++0x -std=c++14 -fexceptions -fopenmp  -O3 -DNDEBUG    -rdynamic CMakeFiles/imu_static_detector_test.dir/test/imu_static_detector_test.cpp.o  -o /home/nvidia/libo/lidar-slam-v3/devel/lib/fast_lio/imu_static_detector_test 

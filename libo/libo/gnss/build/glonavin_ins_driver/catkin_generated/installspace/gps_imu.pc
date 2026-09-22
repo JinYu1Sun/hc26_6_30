@@ -1,0 +1,8 @@
+prefix=/home/nvidia/libo/gnss/install
+
+Name: gps_imu
+Description: Description of gps_imu
+Version: 0.1.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

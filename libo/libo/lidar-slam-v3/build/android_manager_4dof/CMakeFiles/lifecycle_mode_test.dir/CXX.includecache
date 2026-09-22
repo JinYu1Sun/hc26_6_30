@@ -1,0 +1,24 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/nvidia/libo/lidar-slam-v3/src/android_manager_4dof/include/android_manager_4dof/lifecycle_mode.h
+cmath
+-
+cstdint
+-
+
+/home/nvidia/libo/lidar-slam-v3/src/android_manager_4dof/test/lifecycle_mode_test.cpp
+android_manager_4dof/lifecycle_mode.h
+/home/nvidia/libo/lidar-slam-v3/src/android_manager_4dof/test/android_manager_4dof/lifecycle_mode.h
+cassert
+-
+iostream
+-
+limits
+-
+

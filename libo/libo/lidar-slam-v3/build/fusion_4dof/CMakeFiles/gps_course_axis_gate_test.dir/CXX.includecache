@@ -1,0 +1,24 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/nvidia/libo/lidar-slam-v3/src/fusion_4dof/include/fusion/gps_course_axis_gate.h
+algorithm
+-
+cmath
+-
+deque
+-
+
+/home/nvidia/libo/lidar-slam-v3/src/fusion_4dof/test/gps_course_axis_gate_test.cpp
+fusion/gps_course_axis_gate.h
+/home/nvidia/libo/lidar-slam-v3/src/fusion_4dof/test/fusion/gps_course_axis_gate.h
+cassert
+-
+cmath
+-
+

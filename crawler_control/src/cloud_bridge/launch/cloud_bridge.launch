@@ -33,6 +33,11 @@
     <param name="task_step_delay" value="0.5"/>     <!-- start 流程中各 /signal 的间隔（秒） -->
     <param name="task_stop_delay" value="2.0"/>     <!-- stop 后延时发 stop_execution（秒） -->
 
+    <!-- ===== 地图原点 ===== -->
+    <!-- .mp 原点文件目录，cmd/task start 带 map_name 时读取并回传 state/map_origin -->
+    <param name="map_dir" value="/home/nvidia/libo/lidar-slam-v2/src/fast-lio/Map"/>
+    <param name="map_origin_hz" value="1.0"/>        <!-- 选图后地图原点周期上发频率（Hz） -->
+
     <!-- ===== 刀盘 ===== -->
     <param name="mow_height" value="11"/>            <!-- 默认割草高度档位 2~11 -->
   </node>

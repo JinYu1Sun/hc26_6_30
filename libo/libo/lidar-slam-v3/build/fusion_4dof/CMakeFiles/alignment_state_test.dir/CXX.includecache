@@ -1,0 +1,30 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/nvidia/libo/lidar-slam-v3/src/fusion_4dof/include/fusion/alignment_state.h
+array
+-
+cstddef
+-
+cstdint
+-
+cstring
+-
+string
+-
+
+/home/nvidia/libo/lidar-slam-v3/src/fusion_4dof/test/alignment_state_test.cpp
+fusion/alignment_state.h
+/home/nvidia/libo/lidar-slam-v3/src/fusion_4dof/test/fusion/alignment_state.h
+cassert
+-
+cstring
+-
+iostream
+-
+

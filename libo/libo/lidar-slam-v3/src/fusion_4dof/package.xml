@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>fusion_4dof</name>
+  <version>0.0.1</version>
+  <description>
+    GPS/LIO 融合定位节点（重力约束4DoF在线对齐版）。用滑窗Umeyama估计水平
+    变换取代原 ceres 位姿图；纯 ENU 位置帧；状态机 N_RTK/N_LIO/RESET/RECOVER/FAULT；
+    LIO 帧代际检测（自触发标志 + header.seq + 跳变兜底）；RECOVER 仅重启 /laserMapping。
+    由 fast_lio 的 ceres 版 fast_fusion 演进而来，作为独立包整体替换部署。
+  </description>
+
+  <maintainer email="dev@example.com">libo</maintainer>
+  <license>TODO</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <depend>roscpp</depend>
+  <depend>std_msgs</depend>
+  <depend>nav_msgs</depend>
+  <depend>geometry_msgs</depend>
+  <depend>sensor_msgs</depend>
+  <depend>tf</depend>
+  <depend>util</depend>
+  <depend>yaml-cpp</depend>
+
+  <build_depend>eigen</build_depend>
+  <!-- launch/laserMapping_only.launch directly starts fast_lio. -->
+  <exec_depend>fast_lio</exec_depend>
+  <exec_depend>rosbash</exec_depend>
+  <exec_depend>roslaunch</exec_depend>
+  <exec_depend>rosnode</exec_depend>
+  <exec_depend>message_runtime</exec_depend>
+</package>

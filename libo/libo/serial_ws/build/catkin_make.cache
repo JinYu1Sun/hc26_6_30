@@ -1,0 +1,2 @@
+serial
+-DCATKIN_DEVEL_PREFIX=/home/nvidia/libo/serial_ws/devel -DCMAKE_INSTALL_PREFIX=/home/nvidia/libo/serial_ws/install -G Unix Makefiles

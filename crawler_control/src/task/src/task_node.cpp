@@ -427,7 +427,7 @@ int main(int argc, char **argv)
                 ROS_INFO("Finished phase, figure8_count=%d", figure8_count);
             }
             
-        }else if(has_position && !init_finish)
+        }else if(has_position && !init_finish&&lio_static_initialized_flag)
         {
             if(ros::Time::now().toSec() - init_end_time.toSec() < 5.0)
             {

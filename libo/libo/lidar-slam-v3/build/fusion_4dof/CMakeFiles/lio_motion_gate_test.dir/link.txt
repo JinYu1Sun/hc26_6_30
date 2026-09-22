@@ -1,0 +1,1 @@
+/usr/bin/c++    -rdynamic CMakeFiles/lio_motion_gate_test.dir/test/lio_motion_gate_test.cpp.o  -o /home/nvidia/libo/lidar-slam-v3/devel/lib/fusion_4dof/lio_motion_gate_test 

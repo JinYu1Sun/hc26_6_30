@@ -1,0 +1,2 @@
+binary_serial_reader
+-DCATKIN_DEVEL_PREFIX=/home/nvidia/libo/binary_1ant/devel -DCMAKE_INSTALL_PREFIX=/home/nvidia/libo/binary_1ant/install -G Unix Makefiles

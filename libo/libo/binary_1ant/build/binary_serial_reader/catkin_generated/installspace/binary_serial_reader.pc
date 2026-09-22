@@ -1,0 +1,8 @@
+prefix=/home/nvidia/libo/binary_1ant/install
+
+Name: binary_serial_reader
+Description: Description of binary_serial_reader
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

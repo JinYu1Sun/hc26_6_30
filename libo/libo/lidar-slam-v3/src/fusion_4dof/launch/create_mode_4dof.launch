@@ -1,0 +1,40 @@
+<launch>
+    <!-- ============================================================= -->
+    <!-- 建图模式（重力约束4DoF版，整体替换 ceres 版 create_mode.launch， -->
+    <!-- 配套 android_manager_4dof 部署，见 README §10）。                     -->
+    <!--   - location_mode=false：建图并保存地图原点（建图前请长期静态后再记录， -->
+    <!--     以获得可靠的 ENU 原点；航向由起步运动得到）；                       -->
+    <!--   - fusion 节点名为 "fusion_4dof"，话题名（/Mower/position 等）与旧      -->
+    <!--     ceres 版完全相同；                                                 -->
+    <!--   - 纯 ENU 位置帧：本版记录的地图/边界与旧 ceres 旋转帧不兼容。         -->
+    <!-- ============================================================= -->
+
+    <include file="$(find fusion_4dof)/launch/laserMapping_only.launch" />
+
+    <!-- Fusion create (gravity-constrained 4DoF) -->
+    <node name="fusion_4dof" pkg="fusion_4dof" type="fusion_4dof_node" output="screen">
+        <param name="location_mode" type="bool" value="false" />
+        <param name="gps_topic" type="string" value="/nanobot/gpsposition" />
+        <param name="lio_slam_topic" type="string" value="/Mower/lio_slam_level" />
+        <param name="fusion_topic" type="string" value="/Mower/position" />
+        <param name="algorithm_status_topic" type="string" value="/Mower/localization_algorithm_status" />
+        <param name="map_service" type="string" value="/Mower/manage_localization_map" />
+        <param name="android_topic" type="string" value="/signal" />
+        <param name="last_pub_pos_path" type="string" value="/home/nvidia/libo/lidar-slam-v2/src/fast-lio/Pos/last_pub_pos.txt" />
+        <param name="map_index" type="int" value="0" />
+        <param name="map_path" type="string" value="/home/nvidia/libo/lidar-slam-v2/src/fast-lio/Map/my_map.mp" />
+        <param name="pub_fusion" type="int" value="1" />
+
+        <param name="enable_viz" type="bool" value="false" />
+        <param name="viz_frame_id" type="string" value="map" />
+        <param name="viz_path_max" type="int" value="3000" />
+
+        <!-- /Mower/lio_slam_level是重力扶正后的IMU位姿(H<-I)；已合入LiDAR-IMU偏移。 -->
+        <rosparam param="lio_to_base_trans_baseframe">[-0.9017618, -0.02329, -0.2135034]</rosparam>
+        <rosparam param="lio_to_base_rpy_deg">[0.0, -12.0, 0.0]</rosparam>
+
+        <!-- 4DoF/代际检测运行参数：三 launch 共用单一文件 config/fusion_4dof_params.yaml -->
+        <rosparam command="load" file="$(find fusion_4dof)/config/fusion_4dof_params.yaml" />
+    </node>
+
+</launch>

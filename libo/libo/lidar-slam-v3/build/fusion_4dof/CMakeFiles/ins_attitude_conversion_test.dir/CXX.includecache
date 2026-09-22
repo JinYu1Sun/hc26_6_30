@@ -1,0 +1,22 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/nvidia/libo/lidar-slam-v3/src/fusion_4dof/include/fusion/ins_attitude_conversion.h
+cmath
+-
+
+/home/nvidia/libo/lidar-slam-v3/src/fusion_4dof/test/ins_attitude_conversion_test.cpp
+fusion/ins_attitude_conversion.h
+/home/nvidia/libo/lidar-slam-v3/src/fusion_4dof/test/fusion/ins_attitude_conversion.h
+cmath
+-
+iostream
+-
+limits
+-
+

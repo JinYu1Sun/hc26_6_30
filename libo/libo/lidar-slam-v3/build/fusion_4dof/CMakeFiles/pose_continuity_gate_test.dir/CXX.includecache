@@ -1,0 +1,22 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/nvidia/libo/lidar-slam-v3/src/fusion_4dof/include/fusion/pose_continuity_gate.h
+algorithm
+-
+cmath
+-
+
+/home/nvidia/libo/lidar-slam-v3/src/fusion_4dof/test/pose_continuity_gate_test.cpp
+fusion/pose_continuity_gate.h
+/home/nvidia/libo/lidar-slam-v3/src/fusion_4dof/test/fusion/pose_continuity_gate.h
+cassert
+-
+cmath
+-
+

@@ -1,0 +1,84 @@
+# ============================================================================
+# fusion_4dof 单次定位运行参数（唯一来源）
+#
+# 由各 launch 用 <rosparam command="load" file=".../fusion_4dof_params.yaml"/>
+# 载入 /fusion_4dof 节点私有命名空间 → 参数名变为
+# /fusion_4dof/se2_max_window 等，与节点内的读取键一致。
+#
+# 三种 launch（location_mode_4dof / create_mode_4dof / fusion_only）共用本文件，
+# 不在各 launch 重复，避免多处不一致。改这里、重启节点即生效，无需重编译。
+#
+# 缺省以【精度为主】：更长滑窗多平均、拐弯清晰才锁定旋转；冷启动由 RTK/INS
+# 航向种子兜底（详见 README §4）。
+# ============================================================================
+
+# ===== 实测诊断日志 =====
+# 每个周期输出同stamp的[4DOF-SYNC]/[4DOF-INS]/[4DOF-STATE]，
+# 包含同步原始数据、外参补偿后H系base_link、4DoF质量和最终输出。
+diagnostic_log_enable: true
+diagnostic_log_period_sec: 0.20 # 5Hz; 长直线位移/速度分析足够，且避免rosout过大
+
+# ===== SE(2) 在线对齐（估计 LIO 坐标系 -> ENU 坐标系 的二维刚体变换）=====
+# SE(2)=平面刚体变换=一个旋转角+一个平移(x,y)。
+se2_max_window: 400          # 配对滑窗最大帧数；约 = se2_window_span_sec × GPS频率
+se2_window_span_sec: 45.0    # 滑窗时间跨度(s)：越大越平滑、越能跨长直线保住上次锁定
+se2_match_tol_sec: 0.05      # GPS 与 LIO 配对的时间容差(s)
+se2_seed_along_std: 0.50     # 沿行进方向的展布(标准差,m)达此值才用“窗口平均方向”
+se2_lock_cross_std: 0.10     # 垂直行进方向的展布(标准差,m)，需清晰拐弯才“锁定”旋转。
+                              # 原默认 0.35 对本机牛耕式作业(掉头前后两条直线间距
+                              # 0.4m)过高：常规掉头能达到的 cross_std 理论上限约为
+                              # 行距的一半(≈0.2m)，07062.log 实测常规掉头众数仅
+                              # 0.135m，从未摸到 0.35——导致锁定只能靠罕见的大转弯
+                              # 触发（该次实测等了 15.6 分钟）。现改为 0.10：低于
+                              # 实测常规掉头众数 0.135m 留足余量，同时明显高于直线
+                              # 段噪声地板(实测 0.003-0.04m)，让常规掉头也能可靠
+                              # 触发/巩固锁定（详见 README §13）。
+
+# ===== “锁定”稳健性 + 异常值鲁棒拟合（防小样本/单帧噪声误锁、防 GPS 野点污染整窗）=====
+se2_lock_min_samples: 15         # 窗口至少这么多配对点才允许提交“锁定”（防小样本误锁）
+se2_lock_confirm_frames: 3       # cross_std 需连续这么多帧达标才真正提交锁定（防单帧噪声/
+                                  # 多径瞬时误锁；真实拐弯的 cross_std 抬升会持续多帧，
+                                  # 正常情况下不影响锁定时效）
+se2_outlier_residual_thresh: 0.5 # 鲁棒重拟合的残差剔除阈值(m)：先用全窗口拟合作参考，
+                                  # 剔除残差超此值的点，内点占多数时用内点重新拟合，
+                                  # 抵御单次 GPS 多径/野值把整窗估计带偏
+
+# ===== GPS 失效/恢复迟滞 =====
+# 失效后计数保留在 28，是为了不要求重新累计完整 50 帧；恢复仍需
+# 50-28=22 个“连续且被 Is_GPS_GOOD 接受”的同步样本。恢复确认期间 GPS 只进入
+# 候选配对窗，不修改生产 SE(2)；第 22 个样本到达时才提交并同步切到状态 1。
+gps_initial_stable_count: 45 # 冷启动所需好样本数 = 50-45=5（保持原行为）
+gps_recovery_floor: 28       # 失效后的计数下限（保持原设计意图）
+gps_stable_threshold: 50     # GPS 恢复可用门限
+
+# ===== 对外 roll/pitch =====
+# GpsPosition.msg: roll绕前向y轴、pitch绕右向x轴，单位0.01度。
+# ROS base_link: x前、y左、z上，因此默认映射为 roll=+INS.roll,
+# pitch=-INS.pitch。INS超时/无效时当帧自动回退到重力扶正后的LIO姿态。
+roll_pitch_source: "ins"                 # "ins" or "lio"
+ins_roll_scale_rad: 0.000174532925199433  # +0.01 deg -> rad
+ins_pitch_scale_rad: -0.000174532925199433 # right-axis -> ROS left-axis
+ins_attitude_max_age_sec: 0.30
+ins_attitude_max_abs_deg: 45.0
+ins_lio_max_disagreement_deg: 15.0 # 超限则拒绝INS姿态并回退LIO
+# positionStatus是1ant的运动航向匹配结果，不是roll/pitch有效标志；停车时也允许
+# 使用通过新鲜度、幅值和INS/LIO一致性检查的DRPVA roll/pitch。
+ins_attitude_require_position_status: false
+
+# ===== 4DoF竖直对齐：z_map = z_lio_H + tz =====
+# GPS高程只用于稳健估计tz；对外z连续使用LIO相对高程+tz，
+# 避免每帧跟随GNSS高程噪声。任一门限不满足时冻结已提交tz。
+vertical_min_samples: 10
+vertical_max_std: 0.30              # m, 内点dz标准差
+vertical_outlier_threshold: 0.80    # m, 相对dz中位数的剔除阈值
+vertical_max_abs_offset: 1000.0     # m, 拒绝单位/高程基准明显错误
+vertical_require_ins_height_std: false # 确认组导字段单位/语义后再开启
+vertical_max_ins_height_std: 0.50       # m, 仅在上项=true时生效
+
+# ===== LIO 帧代际检测（识别 /laserMapping 重启，从而做节点内局部复位）=====
+require_gravity_level_lio_frame: true # 拒绝误接回原始倾斜 /Mower/lio_slam
+lio_static_status_topic: "/Mower/lio_static_initialized" # latched; false时禁止正常融合输出
+lio_generation_topic: "/Mower/lio_level_transform" # latched stamp作为LIO代际标识
+lio_epoch_near_thresh: 0.5   # 判“回到原点附近”的距离阈值(m)
+lio_epoch_far_thresh: 3.0    # 判“已远离原点”的距离阈值(m)
+lio_epoch_jump_thresh: 2.0   # 判“单帧瞬时大跳变(非物理)”的位移阈值(m)

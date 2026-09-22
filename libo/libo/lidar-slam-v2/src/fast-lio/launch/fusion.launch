@@ -1,0 +1,18 @@
+<launch>
+    <!-- 设置使用真实时间 -->
+    <param name="use_sim_time" value="false" />
+    <!-- Main node -->
+    <node name="fusion" pkg="fast_lio" type="fast_fusion" output="screen">
+        <param name="location_mode" type="bool" value="true" />
+        <param name="gps_topic" type="string" value="/nanobot/gpsposition" />
+        <param name="lio_slam_topic" type="string" value="/Mower/lio_slam" />
+        <param name="fusion_topic" type="string" value="/Mower/position" />
+        <param name="init_threshold" type="int" value="30" />
+        <param name="map_index" type="int" value="0" />
+        <param name="map_path" type="string" value="../ROS/Lidar/Lidar-SLAM-V2/src/FAST_LIO/Map/my_map.mp" />
+        <!-- /Mower/lio_slam 输出坐标系 -> base_link，单位: m / deg -->
+        <!-- 雷达向下倾斜12°安装，原点位于base_link前方900.1752mm、上方258.9463mm -->
+        <rosparam param="lio_to_base_trans_baseframe">[-0.9001752, 0.0, -0.2589463]</rosparam>
+        <rosparam param="lio_to_base_rpy_deg">[0.0, 12.0, 0.0]</rosparam>
+    </node>
+</launch>
