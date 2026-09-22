@@ -1,21 +1,21 @@
 Performing C SOURCE FILE Test CMAKE_HAVE_LIBC_PTHREAD failed with the following output:
 Change Dir: /home/huilian/hc26_6_30/crawler_control/build/util/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/usr/bin/make cmTC_8f4e7/fast && /usr/bin/make -f CMakeFiles/cmTC_8f4e7.dir/build.make CMakeFiles/cmTC_8f4e7.dir/build
+Run Build Command(s):/usr/bin/make cmTC_5e001/fast && /usr/bin/make -f CMakeFiles/cmTC_5e001.dir/build.make CMakeFiles/cmTC_5e001.dir/build
 make[1]: 进入目录“/home/huilian/hc26_6_30/crawler_control/build/util/CMakeFiles/CMakeTmp”
-Building C object CMakeFiles/cmTC_8f4e7.dir/src.c.o
-/usr/bin/cc   -DCMAKE_HAVE_LIBC_PTHREAD   -o CMakeFiles/cmTC_8f4e7.dir/src.c.o   -c /home/huilian/hc26_6_30/crawler_control/build/util/CMakeFiles/CMakeTmp/src.c
-Linking C executable cmTC_8f4e7
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_8f4e7.dir/link.txt --verbose=1
-/usr/bin/cc  -DCMAKE_HAVE_LIBC_PTHREAD    -rdynamic CMakeFiles/cmTC_8f4e7.dir/src.c.o  -o cmTC_8f4e7 
-/usr/bin/ld: CMakeFiles/cmTC_8f4e7.dir/src.c.o: in function `main':
+Building C object CMakeFiles/cmTC_5e001.dir/src.c.o
+/usr/bin/cc   -DCMAKE_HAVE_LIBC_PTHREAD   -o CMakeFiles/cmTC_5e001.dir/src.c.o   -c /home/huilian/hc26_6_30/crawler_control/build/util/CMakeFiles/CMakeTmp/src.c
+Linking C executable cmTC_5e001
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_5e001.dir/link.txt --verbose=1
+/usr/bin/cc  -DCMAKE_HAVE_LIBC_PTHREAD    -rdynamic CMakeFiles/cmTC_5e001.dir/src.c.o  -o cmTC_5e001 
+/usr/bin/ld: CMakeFiles/cmTC_5e001.dir/src.c.o: in function `main':
 src.c:(.text+0x46): undefined reference to `pthread_create'
 /usr/bin/ld: src.c:(.text+0x52): undefined reference to `pthread_detach'
 /usr/bin/ld: src.c:(.text+0x63): undefined reference to `pthread_join'
 collect2: error: ld returned 1 exit status
-make[1]: *** [CMakeFiles/cmTC_8f4e7.dir/build.make:87：cmTC_8f4e7] 错误 1
+make[1]: *** [CMakeFiles/cmTC_5e001.dir/build.make:87：cmTC_5e001] 错误 1
 make[1]: 离开目录“/home/huilian/hc26_6_30/crawler_control/build/util/CMakeFiles/CMakeTmp”
-make: *** [Makefile:121：cmTC_8f4e7/fast] 错误 2
+make: *** [Makefile:121：cmTC_5e001/fast] 错误 2
 
 
 Source file was:
@@ -41,18 +41,18 @@ int main(void)
 Determining if the function pthread_create exists in the pthreads failed with the following output:
 Change Dir: /home/huilian/hc26_6_30/crawler_control/build/util/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/usr/bin/make cmTC_d6980/fast && /usr/bin/make -f CMakeFiles/cmTC_d6980.dir/build.make CMakeFiles/cmTC_d6980.dir/build
+Run Build Command(s):/usr/bin/make cmTC_d1978/fast && /usr/bin/make -f CMakeFiles/cmTC_d1978.dir/build.make CMakeFiles/cmTC_d1978.dir/build
 make[1]: 进入目录“/home/huilian/hc26_6_30/crawler_control/build/util/CMakeFiles/CMakeTmp”
-Building C object CMakeFiles/cmTC_d6980.dir/CheckFunctionExists.c.o
-/usr/bin/cc   -DCHECK_FUNCTION_EXISTS=pthread_create   -o CMakeFiles/cmTC_d6980.dir/CheckFunctionExists.c.o   -c /usr/share/cmake-3.16/Modules/CheckFunctionExists.c
-Linking C executable cmTC_d6980
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_d6980.dir/link.txt --verbose=1
-/usr/bin/cc  -DCHECK_FUNCTION_EXISTS=pthread_create    -rdynamic CMakeFiles/cmTC_d6980.dir/CheckFunctionExists.c.o  -o cmTC_d6980  -lpthreads 
+Building C object CMakeFiles/cmTC_d1978.dir/CheckFunctionExists.c.o
+/usr/bin/cc   -DCHECK_FUNCTION_EXISTS=pthread_create   -o CMakeFiles/cmTC_d1978.dir/CheckFunctionExists.c.o   -c /usr/share/cmake-3.16/Modules/CheckFunctionExists.c
+Linking C executable cmTC_d1978
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_d1978.dir/link.txt --verbose=1
+/usr/bin/cc  -DCHECK_FUNCTION_EXISTS=pthread_create    -rdynamic CMakeFiles/cmTC_d1978.dir/CheckFunctionExists.c.o  -o cmTC_d1978  -lpthreads 
 /usr/bin/ld: 找不到 -lpthreads
 collect2: error: ld returned 1 exit status
-make[1]: *** [CMakeFiles/cmTC_d6980.dir/build.make:87：cmTC_d6980] 错误 1
+make[1]: *** [CMakeFiles/cmTC_d1978.dir/build.make:87：cmTC_d1978] 错误 1
 make[1]: 离开目录“/home/huilian/hc26_6_30/crawler_control/build/util/CMakeFiles/CMakeTmp”
-make: *** [Makefile:121：cmTC_d6980/fast] 错误 2
+make: *** [Makefile:121：cmTC_d1978/fast] 错误 2
 
 
 

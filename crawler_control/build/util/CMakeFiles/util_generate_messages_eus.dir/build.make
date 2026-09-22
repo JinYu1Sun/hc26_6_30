@@ -106,8 +106,8 @@ CMakeFiles/util_generate_messages_eus: /home/huilian/hc26_6_30/crawler_control/d
 /home/huilian/hc26_6_30/crawler_control/devel/share/roseus/ros/util/msg/PolygonWithHolesStamped.l: /home/huilian/hc26_6_30/crawler_control/src/minibus_msg_util/msg/PolygonWithHolesStamped.msg
 /home/huilian/hc26_6_30/crawler_control/devel/share/roseus/ros/util/msg/PolygonWithHolesStamped.l: /opt/ros/noetic/share/geometry_msgs/msg/Point32.msg
 /home/huilian/hc26_6_30/crawler_control/devel/share/roseus/ros/util/msg/PolygonWithHolesStamped.l: /opt/ros/noetic/share/geometry_msgs/msg/Polygon.msg
-/home/huilian/hc26_6_30/crawler_control/devel/share/roseus/ros/util/msg/PolygonWithHolesStamped.l: /home/huilian/hc26_6_30/crawler_control/src/minibus_msg_util/msg/PolygonWithHoles.msg
 /home/huilian/hc26_6_30/crawler_control/devel/share/roseus/ros/util/msg/PolygonWithHolesStamped.l: /opt/ros/noetic/share/std_msgs/msg/Header.msg
+/home/huilian/hc26_6_30/crawler_control/devel/share/roseus/ros/util/msg/PolygonWithHolesStamped.l: /home/huilian/hc26_6_30/crawler_control/src/minibus_msg_util/msg/PolygonWithHoles.msg
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/huilian/hc26_6_30/crawler_control/build/util/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Generating EusLisp code from util/PolygonWithHolesStamped.msg"
 	catkin_generated/env_cached.sh /usr/bin/python3 /opt/ros/noetic/share/geneus/cmake/../../../lib/geneus/gen_eus.py /home/huilian/hc26_6_30/crawler_control/src/minibus_msg_util/msg/PolygonWithHolesStamped.msg -Iutil:/home/huilian/hc26_6_30/crawler_control/src/minibus_msg_util/msg -Istd_msgs:/opt/ros/noetic/share/std_msgs/cmake/../msg -Igeometry_msgs:/opt/ros/noetic/share/geometry_msgs/cmake/../msg -p util -o /home/huilian/hc26_6_30/crawler_control/devel/share/roseus/ros/util/msg
 

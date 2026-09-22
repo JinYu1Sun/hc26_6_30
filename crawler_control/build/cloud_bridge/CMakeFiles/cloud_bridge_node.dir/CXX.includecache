@@ -108,6 +108,14 @@ vector
 cloud_bridge/mqtt_client.h
 /home/huilian/hc26_6_30/crawler_control/src/cloud_bridge/src/cloud_bridge/mqtt_client.h
 
+/home/huilian/hc26_6_30/crawler_control/src/cloud_bridge/src/mqtt_client.cpp
+cloud_bridge/mqtt_client.h
+/home/huilian/hc26_6_30/crawler_control/src/cloud_bridge/src/cloud_bridge/mqtt_client.h
+algorithm
+-
+chrono
+-
+
 /opt/ros/noetic/include/ros/advertise_options.h
 ros/forwards.h
 /opt/ros/noetic/include/ros/ros/forwards.h
