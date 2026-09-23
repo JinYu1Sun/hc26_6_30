@@ -1,0 +1,21 @@
+<launch>
+  <!--
+    系统辨识数据记录节点
+    用法：roslaunch sysid_recorder sysid_recorder.launch
+    然后向 /sysid_recorder/config 发 JSON 切换测试，例如：
+      rostopic pub -1 /sysid_recorder/config std_msgs/String \
+      "data: '{\"mode\":\"dynamic_turn\",\"turn\":{\"type\":\"sine\",\"A\":4000,\"B\":0.5,\"T\":0.0}}'"
+    停车：{"mode":"stop"}
+    注意：试验前先停掉 task_node 和 pure_pursuit，避免 /vehicle/cmd 指令冲突
+  -->
+  <node pkg="sysid_recorder" type="sysid_recorder_node"
+        name="sysid_recorder" output="screen">
+    <param name="gps_topic"    value="/nanobot/gpsposition"/>
+    <param name="cmd_topic"    value="/vehicle/cmd"/>
+    <param name="sample_rate"  value="20.0"/>   <!-- 发指令/记录的采样率 Hz -->
+    <param name="drive_limit"  value="10000"/>  <!-- 前进指令安全限幅 -->
+    <param name="turn_limit"   value="12566"/>  <!-- 转向指令安全限幅 -->
+    <param name="mower_height" value="11"/>
+    <!-- output_dir 不设置则默认 ~/sysid_data -->
+  </node>
+</launch>

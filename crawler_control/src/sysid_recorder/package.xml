@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>sysid_recorder</name>
+  <version>0.1.0</version>
+  <description>
+    System identification data recorder for the crawler mower.
+    Sends drive/turn commands (static const, step, or A*sin(B*t+T) waveforms)
+    on /vehicle/cmd and records the response from /nanobot/gpsposition
+    into CSV files, one folder per test type:
+    static_calibration / dynamic_identification / coupling_identification.
+    Switch tests at runtime by publishing a JSON string to
+    /sysid_recorder/config.
+  </description>
+  <maintainer email="you@todo.todo">you</maintainer>
+  <license>TODO</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <depend>roscpp</depend>
+  <depend>std_msgs</depend>
+  <depend>mower_msgs</depend>
+  <depend>minibus_msg_util</depend>
+</package>
