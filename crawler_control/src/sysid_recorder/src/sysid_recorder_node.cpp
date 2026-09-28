@@ -6,9 +6,9 @@
 #include <nlohmann/json.hpp>                    // 解析 JSON 配置
 
 #include <algorithm>    // std::max / std::min（限幅）
-#include <cmath>        // sin / cos / hypot / lround
+#include <cmath>        // sin / cos / fmod / hypot / lround
 #include <cstdlib>      // getenv
-#include <ctime>        // 生成时间戳文件名
+#include <ctime>        // 生成日期/时间戳
 #include <fstream>      // ofstream 写 CSV
 #include <sstream>      // ostringstream 拼一行数据
 #include <string>
@@ -16,28 +16,66 @@
 #include <sys/stat.h>   // mkdir() 建输出目录
 
 // 每个 CSV 文件首行写入的列名，顺序必须与 buildRow() 严格对应
+// run 列：同一天同一文件里可能有多段试验，用 run（启动时刻 HHMMSS）区分
 const char* kCsvHeader =
-  "ros_time,t_run,mode,drive_cmd,turn_cmd,"
+  "ros_time,t_run,run,mode,drive_cmd,turn_cmd,"
   "v_forward_mps,v_norm_mps,v_north_mps,v_east_mps,"
   "yaw_rate_degs,azimuth_deg,longitude,latitude,height_m,"
   "gaussX_cm,gaussY_cm,gps_flag,gps_confidence";
 
 // 一个通道（前进或转向）的波形参数。
-// 指令值 = offset + 波形(t)，三种波形：
+// 指令值 = offset + 波形(t)，四种波形：
 //   const: 恒定 A（静态标定）
 //   sine : A*sin(B*t + T)（动态/耦合辨识，B 是角频率 rad/s，周期=2π/B）
 //   step : t>=T 时输出 A，否则 0（测时间常数的阶跃响应）
+//   dwell: 带零位保持和极值保持的类正弦（参数 Tr/Th/Tz，见 dwellShape 注释）
 // 默认值设计成 A=0 时输出恒 0：没配置的通道不发指令，安全。
 struct WaveformConfig
 {
   std::string type = "const";
   double A = 0.0, B = 1.0, T = 0.0, offset = 0.0;
+  double Tr = 2.0, Th = 2.0, Tz = 2.0;   // dwell 专用：过渡/极值保持/零位保持（秒）
 
   double eval(double t) const
   {
     if (type == "sine") return offset + A * std::sin(B * t + T);
     if (type == "step") return offset + (t >= T ? A : 0.0);
+    if (type == "dwell") return offset + A * dwellShape(t + T, Tr, Th, Tz);
     return offset + A;  // const
+  }
+
+  // 类正弦波的"形状"：返回值 ∈ [-1, 1]，外面乘 A 加 offset。
+  // 一个周期 = 2*Tz + 2*Th + 4*Tr：
+  //   零位保持Tz -> 余弦上升到+1(Tr) -> 极值保持Th -> 余弦降回0(Tr)
+  //   -> 零位保持Tz -> 余弦降到-1(Tr) -> 极值保持Th -> 余弦升回0(Tr)
+  // 过渡段用 (1-cos)/2 形状：端点斜率为 0，保持段与过渡段平滑衔接，
+  // 不会像方波那样冲击底盘；保持段让车有时间进入稳态，一段波形
+  // 同时包含稳态点（可做静态标定）和过渡段（可做动态辨识）。
+  static double dwellShape(double t, double Tr, double Th, double Tz)
+  {
+    if (Tr <= 0.0) Tr = 0.05;              // 防除零：过渡时间最小 0.05s
+    if (Th < 0.0) Th = 0.0;
+    if (Tz < 0.0) Tz = 0.0;
+    const double P = 2.0*Tz + 2.0*Th + 4.0*Tr;   // 周期
+    double s = std::fmod(t, P);            // 折到一个周期内
+    if (s < 0.0) s += P;                   // fmod 对负数保留符号，修正到 [0,P)
+
+    double u;                              // 段内时间
+    if (s < Tz) return 0.0;                // 零位保持
+    s -= Tz;
+    if (s < Tr) { u = s; return  (1.0 - std::cos(M_PI*u/Tr)) / 2.0; }  // 0 -> +1
+    s -= Tr;
+    if (s < Th) return 1.0;                // +A 极值保持
+    s -= Th;
+    if (s < Tr) { u = s; return  (1.0 + std::cos(M_PI*u/Tr)) / 2.0; }  // +1 -> 0
+    s -= Tr;
+    if (s < Tz) return 0.0;                // 零位保持
+    s -= Tz;
+    if (s < Tr) { u = s; return -(1.0 - std::cos(M_PI*u/Tr)) / 2.0; }  // 0 -> -1
+    s -= Tr;
+    if (s < Th) return -1.0;               // -A 极值保持
+    s -= Th;
+    u = s; return -(1.0 + std::cos(M_PI*u/Tr)) / 2.0;                  // -1 -> 0
   }
 };
 
@@ -52,6 +90,9 @@ WaveformConfig parseWave(const nlohmann::json& j, const char* key)
     w.B      = c.value("B", 1.0);
     w.T      = c.value("T", 0.0);
     w.offset = c.value("offset", 0.0);
+    w.Tr     = c.value("Tr", 2.0);
+    w.Th     = c.value("Th", 2.0);
+    w.Tz     = c.value("Tz", 2.0);
   }
   return w;
 }
@@ -60,20 +101,23 @@ WaveformConfig parseWave(const nlohmann::json& j, const char* key)
 class CsvLogger
 {
 public:
-  // 开始一段新试验：关掉旧文件（数据落盘），在 dir 下新建 模式_时间戳.csv
-  void openRun(const std::string& dir, const std::string& mode)
+  // 开始一段新试验：同一天同一类测试共用一个文件 {dir}/{base}_{YYYYMMDD}.csv，
+  // 在文件里追加一段新数据，用 run_id（HHMMSS）区分不同试验段
+  void openRun(const std::string& dir, const std::string& base)
   {
     close();
     ::mkdir(dir.c_str(), 0755);            // 目录已存在会返回错误，忽略即可
-    path_ = dir + "/" + mode + "_" + nowStamp() + ".csv";
-    ofs_.open(path_, std::ios::out | std::ios::trunc);
+    path_ = dir + "/" + base + "_" + dayStamp() + ".csv";
+    bool exists = fileExists(path_);
+    ofs_.open(path_, std::ios::out | std::ios::app);   // 追加，不覆盖当天已有数据
     if (!ofs_) {
       ROS_ERROR("无法创建文件: %s", path_.c_str());
       return;
     }
-    ofs_ << kCsvHeader << "\n";            // 首行写表头
+    if (!exists) ofs_ << kCsvHeader << "\n";           // 只有新文件才写表头
+    run_id_ = timeStamp();
     rows_ = 0;
-    ROS_INFO("开始记录: %s", path_.c_str());
+    ROS_INFO("开始记录: %s (run=%s)", path_.c_str(), run_id_.c_str());
   }
 
   void log(const std::string& row)
@@ -90,17 +134,34 @@ public:
     if (ofs_.is_open()) { ofs_.flush(); ofs_.close(); }
   }
 
+  const std::string& runId() const { return run_id_; }
+
 private:
-  static std::string nowStamp()            // 20260706_153012 格式时间戳
+  static bool fileExists(const std::string& path)
+  {
+    std::ifstream f(path.c_str());
+    return f.good();
+  }
+
+  static std::string dayStamp()            // 20260706：文件名用的日期
   {
     std::time_t t = std::time(nullptr);
-    char buf[32];
-    std::strftime(buf, sizeof(buf), "%Y%m%d_%H%M%S", std::localtime(&t));
+    char buf[16];
+    std::strftime(buf, sizeof(buf), "%Y%m%d", std::localtime(&t));
+    return buf;
+  }
+
+  static std::string timeStamp()           // 153012：run_id 用的时刻
+  {
+    std::time_t t = std::time(nullptr);
+    char buf[16];
+    std::strftime(buf, sizeof(buf), "%H%M%S", std::localtime(&t));
     return buf;
   }
 
   std::ofstream ofs_;
   std::string path_;
+  std::string run_id_;
   int rows_ = 0;
 };
 
@@ -119,6 +180,8 @@ public:
     pnh_.param("drive_limit",  drive_limit_, 10000.0); // 安全限幅
     pnh_.param("turn_limit",   turn_limit_, 12566.0);
     pnh_.param("mower_height", mower_height_, 11);
+
+    ::mkdir(output_dir_.c_str(), 0755);    // 提前建好根目录（openRun 只建子目录）
 
     // ---- 通信接口 ----
     // queue_size=1：指令只保留最新一条，防止积压发出过时指令
@@ -174,10 +237,13 @@ private:
     drive_cfg_ = parseWave(j, "drive");       // 前进通道波形
     turn_cfg_  = parseWave(j, "turn");        // 转向通道波形
     t0_        = ros::Time::now();            // 新试验 t_run 从 0 开始
+    run_id_.clear();
 
     std::string subdir = modeToDir(mode_);
     if (!subdir.empty()) {
-      logger_.openRun(output_dir_ + "/" + subdir, mode_);  // 新试验 = 新 CSV
+      // 文件名按"测试类型_日期"：当天同类测试的数据都进同一个文件
+      logger_.openRun(output_dir_ + "/" + subdir, subdir);
+      run_id_ = logger_.runId();
     } else {
       ROS_INFO("收到 stop，停车");
     }
@@ -226,7 +292,8 @@ private:
     std::ostringstream os;
     os.precision(6);
     os << std::fixed
-       << ros::Time::now().toSec() << ',' << t_run << ',' << mode_ << ','
+       << ros::Time::now().toSec() << ',' << t_run << ',' << run_id_ << ','
+       << mode_ << ','
        << drive << ',' << turn << ','
        << v_fwd << ',' << v_norm << ',' << vn << ',' << ve << ','
        << gps_.rot_z << ','                          // 横摆角速度 deg/s
@@ -252,6 +319,7 @@ private:
   std::string mode_ = "stop";       // 上电默认停车，收到配置才动
   WaveformConfig drive_cfg_, turn_cfg_;
   ros::Time t0_;                    // 本段试验起始时刻
+  std::string run_id_;              // 本段试验在同日文件里的编号（HHMMSS）
   minibus_msg_util::GpsPosition gps_;
   bool have_gps_ = false;
   CsvLogger logger_;

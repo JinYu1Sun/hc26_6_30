@@ -5,7 +5,11 @@
     然后向 /sysid_recorder/config 发 JSON 切换测试，例如：
       rostopic pub -1 /sysid_recorder/config std_msgs/String \
       "data: '{\"mode\":\"dynamic_turn\",\"turn\":{\"type\":\"sine\",\"A\":4000,\"B\":0.5,\"T\":0.0}}'"
+    类正弦（零位保持Tz + 极值保持Th + 过渡时间Tr，秒）：
+      "data: '{\"mode\":\"dynamic_turn\",\"turn\":{\"type\":\"dwell\",\"A\":4000,\"Tr\":2.0,\"Th\":3.0,\"Tz\":3.0}}'"
     停车：{"mode":"stop"}
+    数据按 测试类型_日期.csv 存到 ~/sysid_data/ 下三个文件夹，
+    当天同一类测试的所有试验追加在同一个 csv 里，用 run 列区分
     注意：试验前先停掉 task_node 和 pure_pursuit，避免 /vehicle/cmd 指令冲突
   -->
   <node pkg="sysid_recorder" type="sysid_recorder_node"
