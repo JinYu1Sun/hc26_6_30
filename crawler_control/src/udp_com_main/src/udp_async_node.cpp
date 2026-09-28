@@ -251,8 +251,6 @@ private:
                 ROS_WARN("bad frame header, drop [%zu bytes] from %s:%d",
                          pkt.data.size(), pkt.src_ip.c_str(), pkt.src_port);
                 continue;   // 不是我们的帧或长度不够，直接丢弃
-            }else{
-                PC_or_Remote_pub_.publish(PC_or_Remote_msg);
             }
             
             uint8_t msg_id = pkt.data[2];

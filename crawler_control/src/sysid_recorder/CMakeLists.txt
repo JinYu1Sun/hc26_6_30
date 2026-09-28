@@ -7,7 +7,7 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   std_msgs
   mower_msgs
-  minibus_msg_util
+  util
 )
 
 # nlohmann_json（apt: nlohmann-json3-dev），与 cloud_bridge 相同的查找逻辑
@@ -20,7 +20,7 @@ if(NOT nlohmann_json_FOUND)
 endif()
 
 catkin_package(
-  CATKIN_DEPENDS roscpp std_msgs mower_msgs minibus_msg_util
+  CATKIN_DEPENDS roscpp std_msgs mower_msgs util
 )
 
 include_directories(${catkin_INCLUDE_DIRS})
