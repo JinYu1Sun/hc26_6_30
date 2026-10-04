@@ -1,0 +1,8 @@
+[01m[K/home/huilian/hc26_6_30/crawler_control/src/udp_com_main/src/udp_async_node.cpp:[m[K In member function ‘[01m[Kvoid UdpAsyncNode::receiveLoop()[m[K’:
+[01m[K/home/huilian/hc26_6_30/crawler_control/src/udp_com_main/src/udp_async_node.cpp:255:43:[m[K [01;31m[Kerror: [m[K‘[01m[KPC_or_Remote_msg[m[K’ was not declared in this scope; did you mean ‘[01m[KPC_or_Remote_pub_[m[K’?
+  255 |                 PC_or_Remote_pub_.publish([01;31m[KPC_or_Remote_msg[m[K);
+      |                                           [01;31m[K^~~~~~~~~~~~~~~~[m[K
+      |                                           [32m[KPC_or_Remote_pub_[m[K
+make[2]: *** [CMakeFiles/udp_async_node.dir/build.make:63：CMakeFiles/udp_async_node.dir/src/udp_async_node.cpp.o] 错误 1
+make[1]: *** [CMakeFiles/Makefile2:511：CMakeFiles/udp_async_node.dir/all] 错误 2
+make: *** [Makefile:141：all] 错误 2

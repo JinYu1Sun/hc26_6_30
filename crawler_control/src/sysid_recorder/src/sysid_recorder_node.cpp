@@ -1,7 +1,7 @@
 #include <ros/ros.h>
 #include <std_msgs/String.h>                    // 配置话题消息
 #include <mower_msgs/VehicleCmd.h>              // 控制指令
-#include <minibus_msg_util/GpsPosition.h>       // 定位数据
+#include <util/GpsPosition.h>                 // 定位数据
 
 #include <nlohmann/json.hpp>                    // 解析 JSON 配置
 
@@ -214,7 +214,7 @@ private:
     return "";
   }
 
-  void gpsCb(const minibus_msg_util::GpsPosition::ConstPtr& msg)
+  void gpsCb(const util::GpsPosition::ConstPtr& msg)
   {
     gps_ = *msg;          // 只缓存最新一帧，处理留给定时器按固定节奏做
     have_gps_ = true;
@@ -320,7 +320,7 @@ private:
   WaveformConfig drive_cfg_, turn_cfg_;
   ros::Time t0_;                    // 本段试验起始时刻
   std::string run_id_;              // 本段试验在同日文件里的编号（HHMMSS）
-  minibus_msg_util::GpsPosition gps_;
+  util::GpsPosition gps_;
   bool have_gps_ = false;
   CsvLogger logger_;
 };

@@ -1,0 +1,8 @@
+prefix=/home/huilian/hc26_6_30/crawler_control/install
+
+Name: sysid_recorder
+Description: Description of sysid_recorder
+Version: 0.1.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: roscpp std_msgs mower_msgs util
