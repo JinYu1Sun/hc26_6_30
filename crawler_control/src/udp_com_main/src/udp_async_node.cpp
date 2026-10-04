@@ -34,6 +34,7 @@
 #include <mutex>
 #include <thread>
 #include <atomic>
+#include <algorithm>
 
 #define DATA_SIZE 17
 
@@ -251,8 +252,6 @@ private:
                 ROS_WARN("bad frame header, drop [%zu bytes] from %s:%d",
                          pkt.data.size(), pkt.src_ip.c_str(), pkt.src_port);
                 continue;   // 不是我们的帧或长度不够，直接丢弃
-            }else{
-                PC_or_Remote_pub_.publish(PC_or_Remote_msg);
             }
             
             uint8_t msg_id = pkt.data[2];
@@ -285,15 +284,15 @@ private:
             }
             case 0x02: {   // ===== 右轮转速帧 =====
                 std_msgs::Int16 speed_msg;
-                speed_msg.data = static_cast<int16_t>(pkt.data[6] << 8 | pkt.data[5]);
-                ROS_INFO("rightspeed=%d,data3=%x,data4=%x",speed_msg.data,pkt.data[5],pkt.data[6]);
+                speed_msg.data = static_cast<int16_t>(pkt.data[3] << 8 | pkt.data[4]);
+                ROS_INFO("rightspeed=%d,data3=%x,data4=%x",speed_msg.data,pkt.data[3],pkt.data[4]);
                 right_speed_pub_.publish(speed_msg);
                 break;
             }
             case 0x03: {   // ===== 左轮转速帧 =====
                 std_msgs::Int16 speed_msg;
-                speed_msg.data = static_cast<int16_t>(pkt.data[6] << 8 | pkt.data[5]);
-                ROS_INFO("leftspeed=%d,data3=%x,data4=%x",speed_msg.data,pkt.data[5],pkt.data[6]);
+                speed_msg.data = static_cast<int16_t>(pkt.data[3] << 8 | pkt.data[4]);
+                ROS_INFO("leftspeed=%d,data3=%x,data4=%x",speed_msg.data,pkt.data[3],pkt.data[4]);
                 left_speed_pub_.publish(speed_msg);
                 break;
             }
@@ -407,10 +406,10 @@ private:
 
         uint16_t height = static_cast<uint16_t>(std::atoi(chosen.c_str()));
         std_msgs::UInt16 height_to_app_;
-        height_to_app_.data = round(11 - 9*height/906);
+        height_to_app_.data = round(11 - 9.0 * height / 906.0);
         // ROS_INFO("height=%d,height_to_app=%d", height, height_to_app_.data);
         height_pub_.publish(height_to_app_);
-        // 组帧回发：AA 55 + 0x04 + 2字节数据（大端）
+        // 组帧回发：AA 55 + 0x06 + 2字节数据（大端）
         uint8_t tx[5] = {0xAA, 0x55, 0x06,
                         static_cast<uint8_t>(height >> 8),
                         static_cast<uint8_t>(height & 0xFF)};
