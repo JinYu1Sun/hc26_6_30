@@ -24,24 +24,78 @@ const char* kCsvHeader =
   "gaussX_cm,gaussY_cm,gps_flag,gps_confidence";
 
 // 一个通道（前进或转向）的波形参数。
-// 指令值 = offset + 波形(t)，四种波形：
+// 指令值 = offset + 波形(t)，五种波形：
 //   const: 恒定 A（静态标定）
 //   sine : A*sin(B*t + T)（动态/耦合辨识，B 是角频率 rad/s，周期=2π/B）
 //   step : t>=T 时输出 A，否则 0（测时间常数的阶跃响应）
 //   dwell: 带零位保持和极值保持的类正弦（参数 Tr/Th/Tz，见 dwellShape 注释）
+//   multisine: 多频正弦 + 过零保持 + 极值保持 + 零阶保持（耦合辨识专用，
+//              转向通道用 1/3/5 次奇谐波、前进通道用 2/4 次偶谐波，
+//              奇偶分频使两通道频谱互不重叠，见 multisineValue 注释）
 // 默认值设计成 A=0 时输出恒 0：没配置的通道不发指令，安全。
 struct WaveformConfig
 {
   std::string type = "const";
   double A = 0.0, B = 1.0, T = 0.0, offset = 0.0;
   double Tr = 2.0, Th = 2.0, Tz = 2.0;   // dwell 专用：过渡/极值保持/零位保持（秒）
+  // multisine 专用
+  double T0 = 60.0;              // 周期（秒）
+  double fc = 50.0;              // 零阶保持频率 Hz：时间先量化到 1/fc 网格再算波形
+  double pZero = 0.10;           // 过零保持比例：每半周期约 pZero 比例时间贴零（建议<=0.10）
+  double pPeak = 0.12;           // 极值保持比例：每半周期约 pPeak 比例时间贴平在峰值
+  double A1 = 0.0, A3 = 0.0, A5 = 0.0;   // 奇次谐波幅值（转向通道用，相位恒 0）
+  double A2 = 0.0, A4 = 0.0;             // 偶次谐波幅值（前进通道用）
+  double P2 = 4.8860, P4 = 4.5729;       // 偶次谐波相位 rad（离线寻优结果，使轨迹近似闭合）
 
   double eval(double t) const
   {
     if (type == "sine") return offset + A * std::sin(B * t + T);
     if (type == "step") return offset + (t >= T ? A : 0.0);
     if (type == "dwell") return offset + A * dwellShape(t + T, Tr, Th, Tz);
+    if (type == "multisine") return offset + multisineValue(t + T);
     return offset + A;  // const
+  }
+
+  // 多频正弦 + 双边保持(zeroPeakHold) + 零阶保持(ZOH)，与离线 MATLAB 设计一致：
+  //   s = A1 sin(wt) + A3 sin(3wt) + A5 sin(5wt)          <- 转向通道（奇次）
+  //     + A2 sin(2wt+P2) + A4 sin(4wt+P4),  w = 2π/T0     <- 前进通道（偶次）
+  // 过零保持：|s| < (Σ|Ai|)·sin(π·pZero/2) 时输出 0，波形每次过零在零值停留
+  //   约 pZero 比例半周期，给车留出回正/稳定时间；前进通道谐波贴零即车速
+  //   保持 offset。
+  // 极值保持：s 超过 ±(Σ|Ai|)·cos(π·pPeak/2) 时钳在该电平，波形在峰值附近
+  //   贴平约 pPeak 比例半周期，让车有时间进入稳态。
+  // 两种保持都是逐点奇对称处理，不破坏奇/偶谐波分频特性（但会引入少量
+  //   高次谐波，pZero 建议 <=0.10）。
+  // 零阶保持：t 先向下量化到 1/fc 网格，输出与控制频率一致的阶梯波。
+  double multisineValue(double t) const
+  {
+    const double T0l = T0 > 0.0 ? T0 : 60.0;         // 防除零
+    const double fcl = fc > 0.0 ? fc : 50.0;
+    const double tq  = std::floor(t * fcl + 1e-9) / fcl;   // ZOH 时间量化
+    // （1e-9 容错：t 恰好落在段边界时，浮点误差不会让相邻时刻量化到不同段）
+    const double w   = 2.0 * M_PI / T0l;
+    const double s   = A1 * std::sin(1.0 * w * tq)
+                     + A3 * std::sin(3.0 * w * tq)
+                     + A5 * std::sin(5.0 * w * tq)
+                     + A2 * std::sin(2.0 * w * tq + P2)
+                     + A4 * std::sin(4.0 * w * tq + P4);
+    const double Asum = std::fabs(A1) + std::fabs(A3) + std::fabs(A5)
+                      + std::fabs(A2) + std::fabs(A4);
+    return zeroPeakHold(s, Asum, pZero, pPeak);
+  }
+
+  // 双边保持：过零贴零 + 峰值贴平（与 MATLAB zeroPeakHold 一致）
+  //   p_zero: 每半周期贴零的时间比例    p_peak: 每半周期贴峰值的时间比例
+  // 判定都基于原始 s：s>=A_h 时即使 A_h 低于贴零阈值也输出 A_h
+  static double zeroPeakHold(double s, double A, double p_zero, double p_peak)
+  {
+    if (p_peak >= 0.95) p_peak = 0.95;   // p_peak->1 时电平趋于 0，波形会被压没
+    const double s_z = p_zero > 0.0 ? A * std::sin(M_PI * p_zero / 2.0) : 0.0;
+    const double A_h = A * std::cos(M_PI * p_peak / 2.0);
+    if (s >=  A_h) return  A_h;          // 正峰值段 -> 平顶
+    if (s <= -A_h) return -A_h;          // 负峰值段 -> 平顶
+    if (std::fabs(s) < s_z) return 0.0;  // 过零段 -> 0
+    return s;
   }
 
   // 类正弦波的"形状"：返回值 ∈ [-1, 1]，外面乘 A 加 offset。
@@ -80,19 +134,37 @@ struct WaveformConfig
 };
 
 // 从 JSON 里读一个通道的波形；key 不存在时返回"恒定0"（即该通道不发指令）
-WaveformConfig parseWave(const nlohmann::json& j, const char* key)
+// is_turn 只影响 multisine 的默认谐波分配：转向=奇次(1/3/5)，前进=偶次(2/4)
+WaveformConfig parseWave(const nlohmann::json& j, const char* key, bool is_turn)
 {
   WaveformConfig w;
   if (j.contains(key)) {
     const auto& c = j[key];
     w.type   = c.value("type", "const");
+    if (w.type == "multisine") {
+      // 未显式给参数时的默认激励：幅值取 500~2500 指令单位，
+      // 偶次谐波相位默认用离线寻优结果（轨迹近似闭合、外接框方正）
+      if (is_turn) { w.A1 = 2500.0; w.A3 = 500.0; w.A5 = 500.0; }
+      else         { w.offset = 2500.0; w.A2 = 1000.0; w.A4 = 500.0; }
+    }
     w.A      = c.value("A", 0.0);
     w.B      = c.value("B", 1.0);
     w.T      = c.value("T", 0.0);
-    w.offset = c.value("offset", 0.0);
+    w.offset = c.value("offset", w.offset);
     w.Tr     = c.value("Tr", 2.0);
     w.Th     = c.value("Th", 2.0);
     w.Tz     = c.value("Tz", 2.0);
+    w.T0     = c.value("T0", 60.0);
+    w.fc     = c.value("fc", 50.0);
+    w.pZero  = c.value("P_ZERO", 0.10);
+    w.pPeak  = c.value("P_PEAK", 0.12);
+    w.A1     = c.value("A1", w.A1);
+    w.A3     = c.value("A3", w.A3);
+    w.A5     = c.value("A5", w.A5);
+    w.A2     = c.value("A2", w.A2);
+    w.A4     = c.value("A4", w.A4);
+    w.P2     = c.value("P2", 4.8860);
+    w.P4     = c.value("P4", 4.5729);
   }
   return w;
 }
@@ -234,8 +306,8 @@ private:
 
     logger_.close();                          // 旧试验数据先落盘
     mode_      = j.value("mode", "stop");
-    drive_cfg_ = parseWave(j, "drive");       // 前进通道波形
-    turn_cfg_  = parseWave(j, "turn");        // 转向通道波形
+    drive_cfg_ = parseWave(j, "drive", false);    // 前进通道波形
+    turn_cfg_  = parseWave(j, "turn", true);      // 转向通道波形
     t0_        = ros::Time::now();            // 新试验 t_run 从 0 开始
     run_id_.clear();
 

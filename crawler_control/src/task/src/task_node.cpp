@@ -44,6 +44,10 @@ ros::Time init_end_time;    // 初始化结束时间
 ros::Time figure8_phase_start; // 当前8字形阶段的开始时间
 ros::Time figure8_phase_end; // 当前8字形阶段的开始时间
 int figure8_last_count = -1;   // 上一次处理的阶段序号，用于检测阶段切换
+bool init_straight_phase = false;  // 初始化开始时的直行阶段标志
+ros::Time init_straight_start;     // 初始化开始直行的起始时间
+bool init_stop_phase = false;      // 初始化开始时的停车阶段标志
+ros::Time init_stop_start;         // 初始化开始停车的起始时间
 
 bool manual_better = false;
 std_msgs::Bool stop_car;
@@ -71,6 +75,18 @@ bool lowpower_flag = false; // 低电量 现定义-30%
 bool appsignal_flag = false; // 默认  /signal == pause | stop  1; continue  0;
 bool init_finish = false;
 bool lio_static_initialized_flag = false;
+void stopCar()
+{
+    mower_msgs::VehicleCmd cmd_msg;
+    cmd_msg.turn_value = 0;
+    cmd_msg.drive_value = 0;
+    cmd_msg.ad_control_enable = 1;
+    cmd_msg.gear_model = 0; // P档停车
+    cmd_msg.mover_bool = 0;
+    cmd_msg.mower_height = 11;
+    cmd_msg.header.stamp = ros::Time::now();
+    pub_vehicle_cmd.publish(cmd_msg);
+}
 void goStraight()
 {
     mower_msgs::VehicleCmd cmd_msg;
@@ -170,8 +186,13 @@ void SingalCallBack(const std_msgs::String &singal_msgs)
             init_confirmed = true;
             init_mode = true;
             init_start_time = ros::Time::now();
-            
+            has_position = false;
             init_finish = false;
+            init_stop_phase = true;          // 初始化开始先停车5秒
+            init_stop_start = ros::Time(0);
+            init_straight_phase = true;      // 停车结束后直行5秒
+            init_straight_start = ros::Time(0);
+            lio_static_initialized_flag = false; // 进入初始化模式时，假设 LIO 已初始化
             ROS_INFO("Initialization confirmed - starting Figure8 pattern");
         }else
         {
@@ -349,7 +370,10 @@ void MowerDynamicFlagCallBack(const std_msgs::Bool &mower_dynamicflag_msgs)
 
 void liostaticinitializedCallBack(const std_msgs::Bool &lio_static_initialized_msgs)
 {
-    lio_static_initialized_flag = lio_static_initialized_msgs.data;
+   lio_static_initialized_flag = lio_static_initialized_msgs.data;
+   if(lio_static_initialized_flag) {
+       has_position = false;
+   }
 }
 int main(int argc, char **argv)
 {
@@ -380,7 +404,7 @@ int main(int argc, char **argv)
     {
         ros::spinOnce();
         
-        ROS_INFO("init_mode=%d, has_position=%d, init_finish=%d", init_mode, has_position, init_finish);
+        ROS_INFO("init_mode=%d, has_position=%d, init_finish=%d,lio_static_initialized_flag=%d", init_mode, has_position, init_finish, lio_static_initialized_flag);
 
         if (init_finish)
         {
@@ -396,38 +420,79 @@ int main(int argc, char **argv)
         // 如果在初始化模式，执行"8"字形控制
         if (init_mode&&!has_position&&lio_static_initialized_flag)
         {
-            // 进入新阶段时记录阶段起始时间（只记录一次，不能每次循环都重置）
-            if (figure8_count != figure8_last_count)
+            // 初始化动作顺序：先停车5秒 -> 直行5秒 -> "8"字形
+            if (init_stop_phase)
             {
-                figure8_last_count = figure8_count;
-                if (figure8_count == 0)
+                if (init_stop_start.isZero())
                 {
-                    ROS_INFO("Waiting 3 seconds before starting straight driving...");
-                    ros::Duration(3.0).sleep(); // 等待RTK重启
+                    init_stop_start = ros::Time::now();
+                    ROS_INFO("Initialization start: stopping for 5 seconds...");
                 }
-                figure8_phase_start = ros::Time::now();
+                if ((ros::Time::now() - init_stop_start).toSec() < 5.0)
+                {
+                    stopCar();
+                    ROS_INFO("Initialization start: stopping for 5 seconds...");
+                }
+                else
+                {
+                    init_stop_phase = false;
+                    ROS_INFO("Initial stop done, starting straight driving");
+                }
+            }
+            else if (init_straight_phase)
+            {
+                if (init_straight_start.isZero())
+                {
+                    init_straight_start = ros::Time::now();
+                    ROS_INFO("Initialization start: driving straight for 5 seconds...");
+                }
+                if ((ros::Time::now() - init_straight_start).toSec() < 5.0)
+                {
+                    goStraight();
+                    ROS_INFO("Initialization start: driving straight for 5 seconds...");
+                }
+                else
+                {
+                    init_straight_phase = false;
+                    figure8_count = 0;
+                    figure8_last_count = -1;
+                    ROS_INFO("Initial straight done, starting Figure8 pattern");
+                }
+            }else
+            {
+                // 进入新阶段时记录阶段起始时间（只记录一次，不能每次循环都重置）
+                if (figure8_count != figure8_last_count)
+                {
+                    figure8_last_count = figure8_count;
+                    if (figure8_count == 0)
+                    {
+                        ROS_INFO("Waiting 3 seconds before starting straight driving...");
+                        ros::Duration(1.0).sleep(); // 等待RTK重启
+                    }
+                    figure8_phase_start = ros::Time::now();
+                    int phase = eight_figure[figure8_count % 4];
+                    if (phase == 0)      ROS_INFO("Starting straight driving...");
+                    else if (phase == 1) ROS_INFO("Starting right turn...");
+                    else                 ROS_INFO("Starting left turn...");
+                }
+
                 int phase = eight_figure[figure8_count % 4];
-                if (phase == 0)      ROS_INFO("Starting straight driving...");
-                else if (phase == 1) ROS_INFO("Starting right turn...");
-                else                 ROS_INFO("Starting left turn...");
-            }
+                double phase_duration = (phase == 0) ? figure8_period / 10.0 : figure8_period / 8.0;
 
-            int phase = eight_figure[figure8_count % 4];
-            double phase_duration = (phase == 0) ? figure8_period / 10.0 : figure8_period / 5.0;
-
-            if (ros::ok() && (ros::Time::now() - figure8_phase_start).toSec() < phase_duration)
-            {
-                if (phase == 0)      goStraight();
-                else if (phase == 1) controlFigure8_turnright();
-                else                 controlFigure8_turnleft();
-            }
-            else
-            {
-                figure8_count++;
-                ROS_INFO("Finished phase, figure8_count=%d", figure8_count);
+                if (ros::ok() && (ros::Time::now() - figure8_phase_start).toSec() < phase_duration)
+                {
+                    if (phase == 0)      goStraight();
+                    else if (phase == 1) controlFigure8_turnright();
+                    else                 controlFigure8_turnleft();
+                }
+                else
+                {
+                    figure8_count++;
+                    ROS_INFO("Finished phase, figure8_count=%d", figure8_count);
+                }
             }
             
-        }else if(has_position && !init_finish&&lio_static_initialized_flag)
+        }else if(has_position && !init_finish)
         {
             if(ros::Time::now().toSec() - init_end_time.toSec() < 5.0)
             {
@@ -437,6 +502,7 @@ int main(int argc, char **argv)
             }else{
                 ROS_INFO("Timeout reached. Exiting initialization mode.");
                 init_finish = true;
+                lio_static_initialized_flag = false;
             }
         }else
         {
