@@ -186,13 +186,13 @@ void SingalCallBack(const std_msgs::String &singal_msgs)
             init_confirmed = true;
             init_mode = true;
             init_start_time = ros::Time::now();
-            has_position = false;
+            // has_position = false;
             init_finish = false;
             init_stop_phase = true;          // 初始化开始先停车5秒
             init_stop_start = ros::Time(0);
             init_straight_phase = true;      // 停车结束后直行5秒
             init_straight_start = ros::Time(0);
-            lio_static_initialized_flag = false; // 进入初始化模式时，假设 LIO 已初始化
+            // lio_static_initialized_flag = false; // 进入初始化模式时，假设 LIO 已初始化
             ROS_INFO("Initialization confirmed - starting Figure8 pattern");
         }else
         {
@@ -371,9 +371,9 @@ void MowerDynamicFlagCallBack(const std_msgs::Bool &mower_dynamicflag_msgs)
 void liostaticinitializedCallBack(const std_msgs::Bool &lio_static_initialized_msgs)
 {
    lio_static_initialized_flag = lio_static_initialized_msgs.data;
-   if(lio_static_initialized_flag) {
-       has_position = false;
-   }
+//    if(lio_static_initialized_flag) {
+//        has_position = false;
+//    }
 }
 int main(int argc, char **argv)
 {
@@ -394,7 +394,7 @@ int main(int argc, char **argv)
     pub_init_request = nh.advertise<std_msgs::Bool>("/init_request", 1); // 添加初始化请求发布器
     pub_stopflag = nh.advertise<std_msgs::Bool>("/mower/stop_car", 1);
     
-    int eight_figure[] = {0, 1, 0, 2};
+    int eight_figure[] = {1, 0, 2, 0};
 
     stop_car.data = false;
     double time = ros::Time::now().toSec();
@@ -418,7 +418,7 @@ int main(int argc, char **argv)
         }
         
         // 如果在初始化模式，执行"8"字形控制
-        if (init_mode&&!has_position&&lio_static_initialized_flag)
+        if (init_mode&&lio_static_initialized_flag)
         {
             // 初始化动作顺序：先停车5秒 -> 直行5秒 -> "8"字形
             if (init_stop_phase)
@@ -426,12 +426,12 @@ int main(int argc, char **argv)
                 if (init_stop_start.isZero())
                 {
                     init_stop_start = ros::Time::now();
-                    ROS_INFO("Initialization start: stopping for 5 seconds...");
+                    ROS_INFO("Initialization start: stopping for 2 seconds...");
                 }
-                if ((ros::Time::now() - init_stop_start).toSec() < 5.0)
+                if ((ros::Time::now() - init_stop_start).toSec() < 2.0)
                 {
                     stopCar();
-                    ROS_INFO("Initialization start: stopping for 5 seconds...");
+                    ROS_INFO("Initialization start: stopping for 2 seconds...");
                 }
                 else
                 {
@@ -446,7 +446,7 @@ int main(int argc, char **argv)
                     init_straight_start = ros::Time::now();
                     ROS_INFO("Initialization start: driving straight for 5 seconds...");
                 }
-                if ((ros::Time::now() - init_straight_start).toSec() < 5.0)
+                if ((ros::Time::now() - init_straight_start).toSec() < 3.0)
                 {
                     goStraight();
                     ROS_INFO("Initialization start: driving straight for 5 seconds...");
@@ -477,7 +477,7 @@ int main(int argc, char **argv)
                 }
 
                 int phase = eight_figure[figure8_count % 4];
-                double phase_duration = (phase == 0) ? figure8_period / 10.0 : figure8_period / 8.0;
+                double phase_duration = (phase == 0) ? figure8_period / 10.0 : figure8_period / 6.0;
 
                 if (ros::ok() && (ros::Time::now() - figure8_phase_start).toSec() < phase_duration)
                 {
@@ -502,7 +502,7 @@ int main(int argc, char **argv)
             }else{
                 ROS_INFO("Timeout reached. Exiting initialization mode.");
                 init_finish = true;
-                lio_static_initialized_flag = false;
+                // lio_static_initialized_flag = false;
             }
         }else
         {
