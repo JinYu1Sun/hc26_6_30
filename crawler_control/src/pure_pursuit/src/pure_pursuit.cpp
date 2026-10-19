@@ -6,6 +6,7 @@ PurePursuit::PurePursuit(const ros::NodeHandle &nh) : nh_(nh)
 	running_state_.store(RunStateValue::Follow);
 	low_speed_flag_.store(false);
 	stop_car_.store(false);
+	should_drop_waypoint_published_ = false;
 	avoid_state_ = 0;
 	follow_count_ =0;
 	outboundary_flag_=0;
@@ -79,6 +80,13 @@ void PurePursuit::localPathCallback(const util::LocalPathConstPtr &msg_planning_
 {
 	std::lock_guard<std::mutex> lock(local_path_mutex_);
 	last_local_path_time_ = ros::Time::now();
+	util::LocalPath compare_path = *msg_planning_result;
+	compare_path.header = last_local_path_.header;
+	if (last_local_path_ != compare_path && msg_planning_result->point_num > 0)
+	{
+		path_finish_wait_start_ = ros::Time(0);
+		should_drop_waypoint_published_ = false;
+	}
 	if (last_local_path_ != *msg_planning_result)
 	{
 		last_local_path_ = *msg_planning_result;
@@ -144,6 +152,8 @@ void PurePursuit::signalCallback(const std_msgs::StringConstPtr &msg_signal)
 		std::lock_guard<std::mutex> lock4(turn_completed_mutex_);
 		low_speed_flag_.store(false);
 		stop_car_.store(false);
+		path_finish_wait_start_ = ros::Time(0);
+		should_drop_waypoint_published_ = false;
 		avoid_state_ = 0;
 		outboundary_flag_=0;
 		last_local_path_.point_num = 0;
@@ -442,9 +452,8 @@ void PurePursuit::state_machine_run()
 				{
 					
 					ROS_INFO("小车已到达路径终点，等待新路径......");
-					std_msgs::Bool msg;
-					msg.data = true;
-					pub_should_drop_waypoint_.publish(msg);
+					if (path_finish_wait_start_.isZero())
+						path_finish_wait_start_ = ros::Time::now();
 					running_state_.store(RunStateValue::Stop);
 					goto STATEMACHINE;
 				}
@@ -594,6 +603,15 @@ void PurePursuit::state_machine_run()
 			turn_count_=0;
 			publishCommand(twist_cmd);
 			break;
+		}
+		if (!path_finish_wait_start_.isZero() && !should_drop_waypoint_published_ &&
+			ros::Time::now() - path_finish_wait_start_ >= ros::Duration(5.0))
+		{
+			std_msgs::Bool msg;
+			msg.data = true;
+			pub_should_drop_waypoint_.publish(msg);
+			should_drop_waypoint_published_ = true;
+			ROS_INFO("等待新路径超过5秒，发布 /should_drop_waypoint: true");
 		}
 		loop_rate.sleep();
 	}
