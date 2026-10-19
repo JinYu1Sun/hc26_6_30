@@ -337,6 +337,15 @@ private:
                 PC_or_Remote_pub_.publish(PC_or_Remote_msg);
                 break;
             }
+            case 0x08:{
+                std_msgs::UInt16 fzt_err_msg;
+
+                fzt_err_msg.data = pkt.data[3];
+            
+                fzt_err_pub_.publish(fzt_err_msg);
+                break;
+
+            }
             default:
                 ROS_WARN("unknown msg id: 0x%02X", msg_id);
                 break;
