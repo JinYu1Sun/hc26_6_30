@@ -62,6 +62,8 @@ private:
 	std::mutex local_path_mutex_;
 	util::LocalPath last_local_path_;   // 最新局部路径
 	ros::Time last_local_path_time_;
+	ros::Time path_finish_wait_start_;
+	bool should_drop_waypoint_published_;
 	
 	std::mutex local_waypoints_mutex_;
 	std::vector<waypoint> local_waypoints_; // 局部路径转换到小车坐标系下
@@ -86,7 +88,7 @@ private:
 	ros::Subscriber sub_PC_or_Remote_;
 
 	ros::Publisher pub_command_;    // 发送控制指令
-
+	ros::Publisher pub_should_drop_waypoint_;
 	ros::ServiceServer turn_completed_srv_;
 
 	float v_min_;   // 最小速度

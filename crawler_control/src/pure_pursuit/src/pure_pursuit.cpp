@@ -30,7 +30,7 @@ PurePursuit::PurePursuit(const ros::NodeHandle &nh) : nh_(nh)
 	sub_signal_ = nh_.subscribe("/signal", 1, &PurePursuit::signalCallback, this);
 	sub_PC_or_Remote_ = nh_.subscribe("/PC_or_Remote", 1, &PurePursuit::PC_or_RemoteCallback, this);
 	pub_command_ = nh_.advertise<mower_msgs::VehicleCmd>("/vehicle/cmd", 1);
-
+	pub_should_drop_waypoint_ = nh_.advertise<std_msgs::Bool>("/should_drop_waypoint", 1);
 	turn_completed_srv_ = nh_.advertiseService("/turn_completed", &PurePursuit::turnCompletedCallback, this);
 
 	ROS_INFO("Pure Pursuit node started");
@@ -440,12 +440,19 @@ void PurePursuit::state_machine_run()
 			{
 				if (nearest_waypoint_index == local_waypoints.size() - 1)
 				{
+					
 					ROS_INFO("小车已到达路径终点，等待新路径......");
+					std_msgs::Bool msg;
+					msg.data = true;
+					pub_should_drop_waypoint_.publish(msg);
 					running_state_.store(RunStateValue::Stop);
 					goto STATEMACHINE;
 				}
 				else
 				{
+					std_msgs::Bool msg;
+					msg.data = false;
+					pub_should_drop_waypoint_.publish(msg);
 					ROS_INFO("point: (%f, %f)转弯完成, gear = %d, 跳过转弯点",
 						local_waypoints[nearest_waypoint_index].global_x, local_waypoints[nearest_waypoint_index].global_y, it->gear);
 					nearest_waypoint_index++;

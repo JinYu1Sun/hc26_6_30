@@ -192,7 +192,7 @@ void SingalCallBack(const std_msgs::String &singal_msgs)
             init_stop_start = ros::Time(0);
             init_straight_phase = true;      // 停车结束后直行5秒
             init_straight_start = ros::Time(0);
-            // lio_static_initialized_flag = false; // 进入初始化模式时，假设 LIO 已初始化
+            lio_static_initialized_flag = false; // 进入初始化模式时，假设 LIO 已初始化
             ROS_INFO("Initialization confirmed - starting Figure8 pattern");
         }else
         {
@@ -310,7 +310,7 @@ void FusionMapCallBack(const mower_msgs::Position &msgs)
     has_position = check_fusion; //(msgs.position_state == -1);//??????
 
     // 如果从无定位变为有定位，且正在初始化模式，则退出初始化
-    if (has_position && init_mode)
+    if (has_position && init_mode && lio_static_initialized_flag)
     {
         init_mode = false;
         init_requested = false;
@@ -492,7 +492,7 @@ int main(int argc, char **argv)
                 }
             }
             
-        }else if(has_position && !init_finish)
+        }else if(has_position && !init_finish && !init_mode)
         {
             if(ros::Time::now().toSec() - init_end_time.toSec() < 5.0)
             {
