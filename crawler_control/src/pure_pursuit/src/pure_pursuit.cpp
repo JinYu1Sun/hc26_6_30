@@ -1,6 +1,10 @@
 #include "pure_pursuit/pure_pursuit.h"
 #include "geometry.h"
 
+// pure_pursuit.cpp 文件顶部
+static uint back_count_plus = 0;
+static uint forward_count_plus = 0;
+
 PurePursuit::PurePursuit(const ros::NodeHandle &nh) : nh_(nh)
 {
 	running_state_.store(RunStateValue::Follow);
@@ -523,7 +527,7 @@ void PurePursuit::state_machine_run()
 				ROS_WARN("小车可能卡住了, follow_count_ = %d", follow_count_);
 				if(follow_count_>300)
 				{
-					uint forward_count = 10;
+					uint forward_count = 10 + forward_count_plus;
 					while (forward_count--)
 					{
 						ROS_WARN("小车卡住了，尝试前进,forward_count = %d", forward_count);
@@ -532,18 +536,25 @@ void PurePursuit::state_machine_run()
 						publishCommand(twist_cmd);
 						loop_rate.sleep();
 					}
+
+					forward_count_plus = (forward_count_plus < 10)? forward_count_plus + 5 : 10;
 					follow_count_=0;
 					break;
 				}
 					
 			}else
 			{
+				if (hypot(last_car_position_.position_x-car_position_.position_x,last_car_position_.position_y-car_position_.position_y) > 0.1)
+				{
+					forward_count_plus = 0;
+				}
 				follow_count_=0;
 			}
 			last_car_position_ = car_position_;
 			last_lookahead_waypoint_ = lookahead_waypoint_;
 			last_lookahead_distance_= lookahead_distance_;
 			publishCommand(twist_cmd);
+			back_count_plus = 0;
 			break;
 		case RunStateValue::Turn:
 			turn_count_++;
@@ -573,14 +584,15 @@ void PurePursuit::state_machine_run()
 				// 进入脱困模式
 				turn_count_ = 0;
 				// 后退脱困
-				uint back_count = 10;
+				uint back_count = 8 + back_count_plus;
 				while (back_count--)
 				{
-					twist_cmd.linear = -0.5;
+					twist_cmd.linear = -1;
 					twist_cmd.angular = 0.0;
 					publishCommand(twist_cmd);
 					loop_rate.sleep();
 				}
+				back_count_plus = (back_count_plus < 17)? back_count_plus + 5:17;
 			}
 			// 旋转
 			twist_cmd.linear = 0.0;
