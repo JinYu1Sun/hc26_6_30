@@ -1,7 +1,8 @@
 #include <ros/ros.h>
 #include <std_msgs/String.h>                    // 配置话题消息
 #include <mower_msgs/VehicleCmd.h>              // 控制指令
-#include <util/GpsPosition.h>                 // 定位数据
+#include <mower_msgs/Position.h>                // 融合定位位姿
+#include <util/GpsPosition.h>                   // 定位数据
 
 #include <nlohmann/json.hpp>                    // 解析 JSON 配置
 
@@ -12,6 +13,7 @@
 #include <fstream>      // ofstream 写 CSV
 #include <sstream>      // ostringstream 拼一行数据
 #include <string>
+#include <vector>       // stair 波形用的幅值列表
 
 #include <sys/stat.h>   // mkdir() 建输出目录
 
@@ -19,19 +21,24 @@
 // run 列：同一天同一文件里可能有多段试验，用 run（启动时刻 HHMMSS）区分
 const char* kCsvHeader =
   "ros_time,t_run,run,mode,drive_cmd,turn_cmd,"
-  "v_forward_mps,v_norm_mps,v_north_mps,v_east_mps,"
-  "yaw_rate_degs,azimuth_deg,longitude,latitude,height_m,"
-  "gaussX_cm,gaussY_cm,gps_flag,gps_confidence";
+  "v_forward_mps,v_norm_mps,yaw_rate_degs,azimuth_deg,"
+  "position_x,position_y,position_z,roll,pitch,yaw,position_state";
 
 // 一个通道（前进或转向）的波形参数。
-// 指令值 = offset + 波形(t)，五种波形：
+// 指令值 = offset + 波形(t)，六种波形：
 //   const: 恒定 A（静态标定）
 //   sine : A*sin(B*t + T)（动态/耦合辨识，B 是角频率 rad/s，周期=2π/B）
 //   step : t>=T 时输出 A，否则 0（测时间常数的阶跃响应）
 //   dwell: 带零位保持和极值保持的类正弦（参数 Tr/Th/Tz，见 dwellShape 注释）
 //   multisine: 多频正弦 + 过零保持 + 极值保持 + 零阶保持（耦合辨识专用，
-//              转向通道用 1/3/5 次奇谐波、前进通道用 2/4 次偶谐波，
+//              转向通道用 1/3/5 次奇谐波、前进通道用 2/4 次偶次谐波，
 //              奇偶分频使两通道频谱互不重叠，见 multisineValue 注释）
+//   stair: 阶梯标定序列，按 amplitudes 列表逐段输出，每段 step_time 秒后
+//          用 stop_time 秒回 offset（中立点）。适合静态死区/对称性标定，
+//          例如 amplitudes=[10,-10,20,-20]、offset=1500 会依次输出
+//          1510,1490,1520,1480，每档 5s，档间 1s 回 1500。
+//          也可以不手写 amplitudes，而是给 min_amp/max_amp/step_amp 让程序
+//          自动生成：+step, -step, +2*step, -2*step, ... 直到 max_amp/min_amp。
 // 默认值设计成 A=0 时输出恒 0：没配置的通道不发指令，安全。
 struct WaveformConfig
 {
@@ -46,6 +53,13 @@ struct WaveformConfig
   double A1 = 0.0, A3 = 0.0, A5 = 0.0;   // 奇次谐波幅值（转向通道用，相位恒 0）
   double A2 = 0.0, A4 = 0.0;             // 偶次谐波幅值（前进通道用）
   double P2 = 4.8860, P4 = 4.5729;       // 偶次谐波相位 rad（离线寻优结果，使轨迹近似闭合）
+  // stair 专用：阶梯序列幅值、每档保持时间、档间回 offset 时间
+  std::vector<double> amplitudes;
+  double step_time = 5.0;        // 每档保持时间（秒）
+  double stop_time = 1.0;        // 档间回 offset 时间（秒）
+  double min_amp = 0.0;          // 自动生成的最小幅值（偏离 offset）
+  double max_amp = 0.0;          // 自动生成的最大幅值（偏离 offset）
+  double step_amp = 0.0;         // 自动生成的幅值步长
 
   double eval(double t) const
   {
@@ -53,7 +67,41 @@ struct WaveformConfig
     if (type == "step") return offset + (t >= T ? A : 0.0);
     if (type == "dwell") return offset + A * dwellShape(t + T, Tr, Th, Tz);
     if (type == "multisine") return offset + multisineValue(t + T);
+    if (type == "stair") return offset + stairValue(t);
     return offset + A;  // const
+  }
+
+  // 根据 min_amp/max_amp/step_amp 自动生成 amplitudes。
+  // 生成顺序：+step, -step, +2*step, -2*step, ... 直到触及 max_amp/min_amp。
+  // 若 amplitudes 已非空则保留原列表（手写列表优先）。
+  void buildStairAmplitudes()
+  {
+    if (!amplitudes.empty() || step_amp <= 0.0) return;
+    const double lo = std::min(min_amp, max_amp);
+    const double hi = std::max(min_amp, max_amp);
+    const double limit = std::max(std::fabs(lo), std::fabs(hi));
+    const double eps = 1e-9;
+    for (double mag = step_amp; mag <= limit + eps; mag += step_amp) {
+      if (mag <= hi + eps) amplitudes.push_back(mag);     // 正幅值
+      if (-mag >= lo - eps) amplitudes.push_back(-mag);   // 负幅值
+    }
+  }
+
+  // 阶梯标定序列：按 amplitudes 逐段输出，每段先 step_time 秒输出幅值，
+  // 再 stop_time 秒回 0（即整体输出 offset）。序列结束后保持 offset。
+  double stairValue(double t) const
+  {
+    if (t < 0.0 || amplitudes.empty()) return 0.0;
+    const double Tstep = step_time > 0.0 ? step_time : 5.0;
+    const double Tstop = stop_time > 0.0 ? stop_time : 1.0;
+    const double Tseg  = Tstep + Tstop;
+    const std::size_t N = amplitudes.size();
+    const double Ttotal = static_cast<double>(N) * Tseg;
+    if (t >= Ttotal) return 0.0;
+    const std::size_t idx = static_cast<std::size_t>(t / Tseg);
+    const double t_in_seg = t - static_cast<double>(idx) * Tseg;
+    if (t_in_seg >= Tstep) return 0.0;          // 档间回中立点
+    return amplitudes[idx];
   }
 
   // 多频正弦 + 双边保持(zeroPeakHold) + 零阶保持(ZOH)，与离线 MATLAB 设计一致：
@@ -165,6 +213,24 @@ WaveformConfig parseWave(const nlohmann::json& j, const char* key, bool is_turn)
     w.A4     = c.value("A4", w.A4);
     w.P2     = c.value("P2", 4.8860);
     w.P4     = c.value("P4", 4.5729);
+    if (c.contains("amplitudes")) {
+      w.amplitudes.clear();
+      for (const auto& a : c["amplitudes"]) {
+        try {
+          w.amplitudes.push_back(a.get<double>());
+        } catch (const std::exception& e) {
+          ROS_WARN("amplitudes 元素不是数字，已跳过: %s", e.what());
+        }
+      }
+    }
+    w.step_time = c.value("step_time", 5.0);
+    w.stop_time = c.value("stop_time", 1.0);
+    w.min_amp   = c.value("min_amp", 0.0);
+    w.max_amp   = c.value("max_amp", 0.0);
+    w.step_amp  = c.value("step_amp", 0.0);
+
+    // 如果 amplitudes 为空且给了 min/max/step，则自动生成阶梯序列
+    if (w.type == "stair") w.buildStairAmplitudes();
   }
   return w;
 }
@@ -245,6 +311,7 @@ public:
     // ---- 参数（launch 里可改，第二个实参是默认值）----
     pnh_.param<std::string>("gps_topic", gps_topic_, "/nanobot/gpsposition");
     pnh_.param<std::string>("cmd_topic", cmd_topic_, "/vehicle/cmd");
+    pnh_.param<std::string>("position_topic", position_topic_, "/Mower/position");
     pnh_.param<std::string>("output_dir", output_dir_,
                             std::string(getenv("HOME") ? getenv("HOME") : "/tmp")
                             + "/sysid_data");
@@ -259,6 +326,7 @@ public:
     // queue_size=1：指令只保留最新一条，防止积压发出过时指令
     pub_cmd_ = nh_.advertise<mower_msgs::VehicleCmd>(cmd_topic_, 1);
     sub_gps_ = nh_.subscribe(gps_topic_, 10, &SysidRecorder::gpsCb, this);
+    sub_position_ = nh_.subscribe(position_topic_, 10, &SysidRecorder::positionCb, this);
     // 用 pnh_ 订阅 "config"，完整话题名解析为 /sysid_recorder/config
     sub_cfg_ = pnh_.subscribe("config", 1, &SysidRecorder::configCb, this);
 
@@ -290,6 +358,12 @@ private:
   {
     gps_ = *msg;          // 只缓存最新一帧，处理留给定时器按固定节奏做
     have_gps_ = true;
+  }
+
+  void positionCb(const mower_msgs::Position::ConstPtr& msg)
+  {
+    position_ = *msg;     // 只缓存最新一帧融合定位位姿
+    have_position_ = true;
   }
 
   // 配置回调：收到新 JSON = 切换测试
@@ -334,7 +408,7 @@ private:
     // 组装并发布控制指令（字段含义参照 task_node 的 goStraight）
     mower_msgs::VehicleCmd cmd;
     cmd.header.stamp      = ros::Time::now();
-    cmd.ad_control_enable = 1;      // 使能自动控制
+    cmd.ad_control_enable = 2;      // 使能自动测试控制
     cmd.gear_model        = 3;      // D 前进档
     cmd.mover_bool        = 0;      // 不割草
     cmd.mower_height      = mower_height_;
@@ -342,8 +416,8 @@ private:
     cmd.turn_value        = (int16_t)std::lround(turn);
     pub_cmd_.publish(cmd);
 
-    // 记录条件：在试验中 且 收到过 GPS；同一行里指令与响应成对出现
-    if (mode_ != "stop" && have_gps_)
+    // 记录条件：在试验中 且 收到过 GPS 和融合定位；同一行里指令与响应成对出现
+    if (mode_ != "stop" && have_gps_ && have_position_)
       logger_.log(buildRow(t_run, cmd.drive_value, cmd.turn_value));
   }
 
@@ -367,12 +441,12 @@ private:
        << ros::Time::now().toSec() << ',' << t_run << ',' << run_id_ << ','
        << mode_ << ','
        << drive << ',' << turn << ','
-       << v_fwd << ',' << v_norm << ',' << vn << ',' << ve << ','
+       << v_fwd << ',' << v_norm << ','
        << gps_.rot_z << ','                          // 横摆角速度 deg/s
        << gps_.azimuth * 0.01 << ','                 // 航向角 deg
-       << gps_.longitude << ',' << gps_.latitude << ',' << gps_.height << ','
-       << gps_.gaussX << ',' << gps_.gaussY << ','
-       << gps_.gps_flag << ',' << gps_.gps_confidence;
+       << position_.position_x << ',' << position_.position_y << ',' << position_.position_z << ','
+       << position_.roll << ',' << position_.pitch << ',' << position_.yaw << ','
+       << position_.position_state;
     return os.str();
   }
 
@@ -381,10 +455,10 @@ private:
   // 若写成构造函数局部变量，构造函数一结束回调就永远不会触发
   ros::NodeHandle nh_, pnh_;
   ros::Publisher  pub_cmd_;
-  ros::Subscriber sub_gps_, sub_cfg_;
+  ros::Subscriber sub_gps_, sub_cfg_, sub_position_;
   ros::Timer      timer_;
 
-  std::string gps_topic_, cmd_topic_, output_dir_;
+  std::string gps_topic_, cmd_topic_, position_topic_, output_dir_;
   double sample_rate_, drive_limit_, turn_limit_;
   int mower_height_;
 
@@ -393,7 +467,9 @@ private:
   ros::Time t0_;                    // 本段试验起始时刻
   std::string run_id_;              // 本段试验在同日文件里的编号（HHMMSS）
   util::GpsPosition gps_;
+  mower_msgs::Position position_;
   bool have_gps_ = false;
+  bool have_position_ = false;
   CsvLogger logger_;
 };
 

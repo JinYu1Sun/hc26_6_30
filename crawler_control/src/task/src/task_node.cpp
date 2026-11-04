@@ -59,13 +59,14 @@ bool has_position = false;    // 是否有定位数据
 // 初始化确认相关变量
 bool init_requested = false;     // 是否请求初始化
 bool init_confirmed = false;     // 是否确认初始化
-
+bool init_request_cleared = false; 
 // init check status
 bool check_fusion = false;
 
 // safe warning  *stop car
 int rangewarn_flag = 0; // 范围停车预警
 int figure8_count = 0; // 8字形初始化动作序号（原名 count，与 std::count 冲突故改名）
+int has_position_count = 0;
 double figure8_period = 20.0; // "8"字形周期（秒）
 pid_t pid_controller_pid = -1; // 全局变量，记录进程 PID
 bool mower_dynamic_flag=false;
@@ -318,6 +319,9 @@ void FusionMapCallBack(const mower_msgs::Position &msgs)
         ROS_INFO("Position acquired! Exiting initialization mode.");
         ROS_INFO("Stopping vehicle after acquiring position");
         init_end_time = ros::Time::now();
+    }else if(has_position&&!init_mode&&init_requested_cleared)
+    {
+        has_position_count++;
     }
 
 }
@@ -410,9 +414,10 @@ int main(int argc, char **argv)
         {
             if (ros::Time::now().toSec() - time > 5.0)
             {
+                has_position_count = 0;
                 std_msgs::Bool init_request_msg;
                 init_request_msg.data = false;
-                pub_init_request.publish(init_request_msg);
+                init_request_cleared = false;
                 time = ros::Time::now().toSec();
             }
         }
@@ -420,6 +425,7 @@ int main(int argc, char **argv)
         // 如果在初始化模式，执行"8"字形控制
         if (init_mode&&lio_static_initialized_flag)
         {
+            has_position_count = 0;
             // 初始化动作顺序：先停车5秒 -> 直行5秒 -> "8"字形
             if (init_stop_phase)
             {
@@ -502,6 +508,8 @@ int main(int argc, char **argv)
             }else{
                 ROS_INFO("Timeout reached. Exiting initialization mode.");
                 init_finish = true;
+                init_request_cleared = true;
+                has_position_count = 0;
                 // lio_static_initialized_flag = false;
             }
         }else
