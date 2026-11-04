@@ -410,16 +410,13 @@ int main(int argc, char **argv)
         
         ROS_INFO("init_mode=%d, has_position=%d, init_finish=%d,lio_static_initialized_flag=%d", init_mode, has_position, init_finish, lio_static_initialized_flag);
 
-        if (init_finish)
+        if (init_finish && has_position_count >=5)
         {
-            if (ros::Time::now().toSec() - time > 5.0)
-            {
-                has_position_count = 0;
-                std_msgs::Bool init_request_msg;
-                init_request_msg.data = false;
-                init_request_cleared = false;
-                time = ros::Time::now().toSec();
-            }
+            has_position_count = 0;
+            std_msgs::Bool init_request_msg;
+            init_request_msg.data = false;
+            init_request_cleared = false;
+            pub_init_request.publish(init_request_msg);
         }
         
         // 如果在初始化模式，执行"8"字形控制
