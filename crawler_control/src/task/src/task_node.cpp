@@ -319,7 +319,7 @@ void FusionMapCallBack(const mower_msgs::Position &msgs)
         ROS_INFO("Position acquired! Exiting initialization mode.");
         ROS_INFO("Stopping vehicle after acquiring position");
         init_end_time = ros::Time::now();
-    }else if(has_position&&!init_mode&&init_requested_cleared)
+    }else if(has_position&&!init_mode&&init_request_cleared)
     {
         has_position_count++;
     }
